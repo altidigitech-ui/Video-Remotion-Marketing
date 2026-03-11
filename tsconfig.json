@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "paths": {
+      "@altidigitech/core": ["./packages/core/src"],
+      "@altidigitech/brand": ["./packages/brand/src"],
+      "@altidigitech/brand/*": ["./packages/brand/src/*"],
+      "@altidigitech/templates": ["./packages/templates/src"],
+      "@altidigitech/utils": ["./packages/utils/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "renders"]
+}

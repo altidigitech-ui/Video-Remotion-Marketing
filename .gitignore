@@ -1,0 +1,16 @@
+renders/
+node_modules/
+.turbo/
+.remotion/
+dist/
+*.mp4
+*.webm
+*.mov
+*.gif
+.env
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*

@@ -1,0 +1,10 @@
+{
+  "name": "@altidigitech/project-template",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}
