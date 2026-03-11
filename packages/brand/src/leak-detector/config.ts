@@ -50,8 +50,8 @@ export const leakDetectorBrand: BrandConfig = {
   },
 
   assets: {
-    logoSvg: '/logo/logo.png',
-    logoPng: '/logo/logo.png',
-    logoWhite: '/logo/logo.png',
+    logoSvg: 'images/leak-detector-logo.png',
+    logoPng: 'images/leak-detector-logo.png',
+    logoWhite: 'images/leak-detector-logo-white.png',
   },
 }
