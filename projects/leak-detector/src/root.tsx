@@ -1,22 +1,91 @@
 import React from 'react'
 import { Composition } from 'remotion'
+import { loadFont } from '@remotion/google-fonts/SpaceGrotesk'
 import {
-  LogoRevealTemplate,
-  ProductDemoTemplate,
-  LaunchAnnouncementTemplate,
   StatsShowcaseTemplate,
   HowItWorksTemplate,
   SocialShortTemplate,
   FeatureHighlightTemplate,
   ScreenMockupTemplate,
 } from '@altidigitech/templates'
+import type {
+  StatsShowcaseProps,
+  HowItWorksProps,
+  SocialShortProps,
+  FeatureHighlightProps,
+  ScreenMockupProps,
+} from '@altidigitech/templates'
 import { leakDetectorBrand } from '@altidigitech/brand'
+import type { BrandConfig } from '@altidigitech/brand'
+import { LeakDetectorScene } from './components/LeakDetectorScene'
+import { LDProductDemo } from './compositions/LDProductDemo'
+import { LDLaunchAnnouncement } from './compositions/LDLaunchAnnouncement'
+import { LDLogoReveal } from './compositions/LDLogoReveal'
+
+// Load Space Grotesk for display text
+const { fontFamily } = loadFont()
+
+// Brand with loaded font override
+const ldBrand: BrandConfig = {
+  ...leakDetectorBrand,
+  typography: {
+    ...leakDetectorBrand.typography,
+    fontDisplay: fontFamily,
+  },
+}
+
+// Brand with transparent background for wrapped generic templates
+const ldBrandTransparent: BrandConfig = {
+  ...ldBrand,
+  colors: {
+    ...ldBrand.colors,
+    background: 'transparent',
+  },
+}
+
+// ── Wrapped generic templates ─────────────────────────────────────────────────
+// These get the premium background + logo + badge from LeakDetectorScene,
+// while the inner template renders with a transparent background.
+
+const LDStatsShowcase: React.FC<StatsShowcaseProps> = (props) => (
+  <LeakDetectorScene brand={ldBrand}>
+    <StatsShowcaseTemplate {...props} brand={ldBrandTransparent} />
+  </LeakDetectorScene>
+)
+
+const LDHowItWorks: React.FC<HowItWorksProps> = (props) => (
+  <LeakDetectorScene brand={ldBrand}>
+    <HowItWorksTemplate {...props} brand={ldBrandTransparent} />
+  </LeakDetectorScene>
+)
+
+const LDSocialShort: React.FC<SocialShortProps> = (props) => (
+  <LeakDetectorScene brand={ldBrand} logoSize={60}>
+    <SocialShortTemplate {...props} brand={ldBrandTransparent} />
+  </LeakDetectorScene>
+)
+
+const LDFeatureHighlight: React.FC<FeatureHighlightProps> = (props) => (
+  <LeakDetectorScene brand={ldBrand}>
+    <FeatureHighlightTemplate {...props} brand={ldBrandTransparent} />
+  </LeakDetectorScene>
+)
+
+const LDScreenMockup: React.FC<ScreenMockupProps> = (props) => (
+  <LeakDetectorScene brand={ldBrand}>
+    <ScreenMockupTemplate {...props} brand={ldBrandTransparent} />
+  </LeakDetectorScene>
+)
+
+// ── Timing helpers ────────────────────────────────────────────────────────────
 
 const FPS_60 = 60
 const FPS_30 = 30
 const sec = (s: number, fps: number) => Math.round(s * fps)
 const sec60 = (s: number) => sec(s, FPS_60)
 const sec30 = (s: number) => sec(s, FPS_30)
+
+// ── Root ──────────────────────────────────────────────────────────────────────
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -25,26 +94,26 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-logo-reveal"
-        component={LogoRevealTemplate}
+        component={LDLogoReveal}
         durationInFrames={sec(3, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           showTagline: true,
         }}
       />
 
       <Composition
         id="leak-detector-product-demo"
-        component={ProductDemoTemplate}
+        component={LDProductDemo}
         durationInFrames={sec(10, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'Your landing page leaks conversions',
           subline: 'Leak Detector scans your pages and finds the CRO issues killing your growth.',
           features: [
@@ -61,13 +130,13 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-launch"
-        component={LaunchAnnouncementTemplate}
+        component={LDLaunchAnnouncement}
         durationInFrames={sec(15, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'Leak Detector is live',
           subline: 'The CRO audit tool that finds what your landing page is missing.',
           launchDate: 'Available now — Free audit',
@@ -78,13 +147,13 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-stats"
-        component={StatsShowcaseTemplate}
+        component={LDStatsShowcase}
         durationInFrames={sec(8, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'What we found scanning 1,000+ pages',
           stats: [
             { value: 73, label: 'Average CRO score', prefix: '', suffix: '/100' },
@@ -97,13 +166,13 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-how-it-works"
-        component={HowItWorksTemplate}
+        component={LDHowItWorks}
         durationInFrames={sec(12, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'How Leak Detector works',
           steps: [
             {
@@ -125,84 +194,15 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* ===== VERTICAL 1080x1920 @ 30fps ===== */}
-
-      <Composition
-        id="leak-detector-social-vertical"
-        component={SocialShortTemplate}
-        durationInFrames={sec(15, FPS_30)}
-        fps={FPS_30}
-        width={1080}
-        height={1920}
-        defaultProps={{
-          brand: leakDetectorBrand,
-          hookText: '58% of landing pages have zero social proof',
-          bodyText: 'Leak Detector scans your page and tells you exactly what to fix.',
-          ctaText: 'Free audit — link in bio',
-        }}
-      />
-
-      <Composition
-        id="leak-detector-social-stats-vertical"
-        component={StatsShowcaseTemplate}
-        durationInFrames={sec(10, FPS_30)}
-        fps={FPS_30}
-        width={1080}
-        height={1920}
-        defaultProps={{
-          brand: leakDetectorBrand,
-          headline: 'Is your landing page leaking?',
-          stats: [
-            { value: 73, label: 'Average score', prefix: '', suffix: '/100' },
-            { value: 58, label: 'No social proof', prefix: '', suffix: '%' },
-            { value: 42, label: 'Weak CTAs', prefix: '', suffix: '%' },
-          ],
-        }}
-      />
-
-      {/* ===== SQUARE 1080x1080 @ 30fps ===== */}
-
-      <Composition
-        id="leak-detector-social-square"
-        component={SocialShortTemplate}
-        durationInFrames={sec(10, FPS_30)}
-        fps={FPS_30}
-        width={1080}
-        height={1080}
-        defaultProps={{
-          brand: leakDetectorBrand,
-          hookText: 'Your landing page is losing customers',
-          bodyText: 'Find the CRO leaks in 30 seconds with Leak Detector.',
-          ctaText: 'Scan free now',
-        }}
-      />
-
-      <Composition
-        id="leak-detector-stats-square"
-        component={StatsShowcaseTemplate}
-        durationInFrames={sec(8, FPS_30)}
-        fps={FPS_30}
-        width={1080}
-        height={1080}
-        defaultProps={{
-          brand: leakDetectorBrand,
-          headline: 'CRO audit results',
-          stats: [
-            { value: 73, label: 'Average CRO score', prefix: '', suffix: '/100' },
-            { value: 58, label: 'Missing social proof', prefix: '', suffix: '%' },
-          ],
-        }}
-      />
-
       <Composition
         id="leak-detector-feature-cro"
-        component={FeatureHighlightTemplate}
+        component={LDFeatureHighlight}
         durationInFrames={sec(10, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           featureTitle: '8 CRO categories analyzed',
           featureDescription:
             'Leak Detector covers every angle of your landing page conversion funnel.',
@@ -217,30 +217,99 @@ export const RemotionRoot: React.FC = () => {
           ctaText: 'Run your free audit',
         }}
       />
-      {/* ===== SCREEN MOCKUP — démos interface réelle ===== */}
-      {/* Ces compositions nécessitent les screenshots dans public/screenshots/ */}
+
+      {/* ===== VERTICAL 1080x1920 @ 30fps ===== */}
+
+      <Composition
+        id="leak-detector-social-vertical"
+        component={LDSocialShort}
+        durationInFrames={sec(15, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          brand: ldBrand,
+          hookText: '58% of landing pages have zero social proof',
+          bodyText: 'Leak Detector scans your page and tells you exactly what to fix.',
+          ctaText: 'Free audit — link in bio',
+        }}
+      />
+
+      <Composition
+        id="leak-detector-social-stats-vertical"
+        component={LDStatsShowcase}
+        durationInFrames={sec(10, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          brand: ldBrand,
+          headline: 'Is your landing page leaking?',
+          stats: [
+            { value: 73, label: 'Average score', prefix: '', suffix: '/100' },
+            { value: 58, label: 'No social proof', prefix: '', suffix: '%' },
+            { value: 42, label: 'Weak CTAs', prefix: '', suffix: '%' },
+          ],
+        }}
+      />
+
+      {/* ===== SQUARE 1080x1080 @ 30fps ===== */}
+
+      <Composition
+        id="leak-detector-social-square"
+        component={LDSocialShort}
+        durationInFrames={sec(10, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{
+          brand: ldBrand,
+          hookText: 'Your landing page is losing customers',
+          bodyText: 'Find the CRO leaks in 30 seconds with Leak Detector.',
+          ctaText: 'Scan free now',
+        }}
+      />
+
+      <Composition
+        id="leak-detector-stats-square"
+        component={LDStatsShowcase}
+        durationInFrames={sec(8, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{
+          brand: ldBrand,
+          headline: 'CRO audit results',
+          stats: [
+            { value: 73, label: 'Average CRO score', prefix: '', suffix: '/100' },
+            { value: 58, label: 'Missing social proof', prefix: '', suffix: '%' },
+          ],
+        }}
+      />
+
+      {/* ===== SCREEN MOCKUP ===== */}
 
       <Composition
         id="leak-detector-screen-dashboard"
-        component={ScreenMockupTemplate}
+        component={LDScreenMockup}
         durationInFrames={sec60(12)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'See your full CRO report in 60 seconds',
           slides: [
             {
-              src: 'projects/leak-detector/public/screenshots/dashboard.png',
+              src: 'screenshots/dashboard.png',
               caption: 'Your analysis dashboard',
             },
             {
-              src: 'projects/leak-detector/public/screenshots/report.png',
+              src: 'screenshots/report.png',
               caption: 'Detailed report with actionable fixes',
             },
             {
-              src: 'projects/leak-detector/public/screenshots/report-detail.png',
+              src: 'screenshots/report-detail.png',
               caption: 'Category breakdown with severity levels',
             },
           ],
@@ -253,17 +322,17 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-screen-hero-vertical"
-        component={ScreenMockupTemplate}
+        component={LDScreenMockup}
         durationInFrames={sec30(15)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           headline: 'AI audits your landing page in 60s',
           slides: [
             {
-              src: 'projects/leak-detector/public/screenshots/report.png',
+              src: 'screenshots/report.png',
               caption: '73/100 — real Stripe.com analysis',
             },
           ],
@@ -276,16 +345,16 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="leak-detector-screen-square"
-        component={ScreenMockupTemplate}
+        component={LDScreenMockup}
         durationInFrames={sec30(10)}
         fps={FPS_30}
         width={1080}
         height={1080}
         defaultProps={{
-          brand: leakDetectorBrand,
+          brand: ldBrand,
           slides: [
             {
-              src: 'projects/leak-detector/public/screenshots/report.png',
+              src: 'screenshots/report.png',
               caption: 'Real CRO audit — Stripe.com scored 78/100',
             },
           ],
