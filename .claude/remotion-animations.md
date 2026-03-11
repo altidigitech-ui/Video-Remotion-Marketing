@@ -1,4 +1,5 @@
 # .claude/remotion-animations.md
+
 # Skill : Remotion Animations — Spring, Interpolate, Easing & Motion Design
 
 > **Quand lire ce fichier** : Avant de créer toute animation dans une composition.
@@ -9,6 +10,7 @@
 ## 1. LES DEUX FONCTIONS D'ANIMATION CORE
 
 ### `interpolate()` — Mapping linéaire (ou avec easing)
+
 Mappe une valeur d'entrée vers une valeur de sortie.
 
 ```typescript
@@ -18,13 +20,13 @@ const frame = useCurrentFrame()
 
 // Syntaxe de base
 const value = interpolate(
-  frame,          // valeur d'entrée (la frame courante)
-  [0, 60],        // plage d'entrée [début, fin]
-  [0, 1],         // plage de sortie [début, fin]
+  frame, // valeur d'entrée (la frame courante)
+  [0, 60], // plage d'entrée [début, fin]
+  [0, 1], // plage de sortie [début, fin]
   {
-    extrapolateLeft: 'clamp',   // TOUJOURS mettre clamp
-    extrapolateRight: 'clamp',  // TOUJOURS mettre clamp
-  }
+    extrapolateLeft: 'clamp', // TOUJOURS mettre clamp
+    extrapolateRight: 'clamp', // TOUJOURS mettre clamp
+  },
 )
 // frame 0  → 0
 // frame 30 → 0.5
@@ -37,6 +39,7 @@ const value = interpolate(
 > Sans clamp, les valeurs sortent de la plage et créent des bugs visuels.
 
 ### `spring()` — Animation physique (recommandé pour les mouvements)
+
 Simule un ressort physique. Produit des animations organiques et cinématiques.
 
 ```typescript
@@ -46,17 +49,17 @@ const frame = useCurrentFrame()
 const { fps } = useVideoConfig()
 
 const value = spring({
-  frame,          // frame courante
-  fps,            // fps de la composition (OBLIGATOIRE)
+  frame, // frame courante
+  fps, // fps de la composition (OBLIGATOIRE)
   config: {
-    damping: 12,  // amortissement (plus élevé = s'arrête plus vite)
-    mass: 1,      // masse (plus élevé = plus lent et plus overshoot)
+    damping: 12, // amortissement (plus élevé = s'arrête plus vite)
+    mass: 1, // masse (plus élevé = plus lent et plus overshoot)
     stiffness: 100, // rigidité (plus élevé = plus rapide)
     overshootClamping: false, // true = pas de dépassement
   },
-  from: 0,        // valeur de départ
-  to: 1,          // valeur d'arrivée
-  delay: 30,      // délai en frames avant de démarrer
+  from: 0, // valeur de départ
+  to: 1, // valeur d'arrivée
+  delay: 30, // délai en frames avant de démarrer
 })
 ```
 
@@ -73,40 +76,60 @@ const frame = useCurrentFrame()
 const { fps } = useVideoConfig()
 
 // 🎯 SNAPPY — Rapide et précis, idéal pour les UI elements
-const snappy = spring({ frame, fps, config: {
-  damping: 200,
-  mass: 0.5,
-  stiffness: 400,
-}})
+const snappy = spring({
+  frame,
+  fps,
+  config: {
+    damping: 200,
+    mass: 0.5,
+    stiffness: 400,
+  },
+})
 
 // 🌊 SMOOTH — Fluide et élégant, idéal pour les titres
-const smooth = spring({ frame, fps, config: {
-  damping: 12,
-  mass: 1,
-  stiffness: 100,
-}})
+const smooth = spring({
+  frame,
+  fps,
+  config: {
+    damping: 12,
+    mass: 1,
+    stiffness: 100,
+  },
+})
 
 // 💫 BOUNCY — Rebond expressif, idéal pour les logos et accents
-const bouncy = spring({ frame, fps, config: {
-  damping: 8,
-  mass: 0.8,
-  stiffness: 150,
-  overshootClamping: false,
-}})
+const bouncy = spring({
+  frame,
+  fps,
+  config: {
+    damping: 8,
+    mass: 0.8,
+    stiffness: 150,
+    overshootClamping: false,
+  },
+})
 
 // 🎬 CINEMATIC — Lent et dramatique, idéal pour les reveals
-const cinematic = spring({ frame, fps, config: {
-  damping: 20,
-  mass: 2,
-  stiffness: 80,
-}})
+const cinematic = spring({
+  frame,
+  fps,
+  config: {
+    damping: 20,
+    mass: 2,
+    stiffness: 80,
+  },
+})
 
 // ⚡ INSTANT — Quasi-immédiat, idéal pour les micro-interactions
-const instant = spring({ frame, fps, config: {
-  damping: 500,
-  mass: 0.3,
-  stiffness: 800,
-}})
+const instant = spring({
+  frame,
+  fps,
+  config: {
+    damping: 500,
+    mass: 0.3,
+    stiffness: 800,
+  },
+})
 ```
 
 ---
@@ -114,6 +137,7 @@ const instant = spring({ frame, fps, config: {
 ## 3. ANIMATIONS D'ENTRÉE (ENTER ANIMATIONS)
 
 ### Fade In
+
 ```typescript
 const FadeIn: React.FC<{ children: React.ReactNode; delay?: number }> = ({
   children,
@@ -133,6 +157,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; delay?: number }> = ({
 ```
 
 ### Slide Up (avec spring)
+
 ```typescript
 const SlideUp: React.FC<{ children: React.ReactNode; delay?: number }> = ({
   children,
@@ -168,6 +193,7 @@ const SlideUp: React.FC<{ children: React.ReactNode; delay?: number }> = ({
 ```
 
 ### Scale In
+
 ```typescript
 const ScaleIn: React.FC<{ children: React.ReactNode; delay?: number }> = ({
   children,
@@ -204,6 +230,7 @@ const ScaleIn: React.FC<{ children: React.ReactNode; delay?: number }> = ({
 ```
 
 ### Slide In depuis la gauche/droite
+
 ```typescript
 type Direction = 'left' | 'right' | 'top' | 'bottom'
 
@@ -310,6 +337,7 @@ const Animated: React.FC<AnimatedProps> = ({
 ## 5. TRANSITIONS ENTRE SCÈNES
 
 ### Cross Fade (fondu enchaîné)
+
 ```typescript
 const CrossFade: React.FC<{
   sceneA: React.ReactNode
@@ -340,6 +368,7 @@ const CrossFade: React.FC<{
 ```
 
 ### Wipe (balayage horizontal)
+
 ```typescript
 const WipeTransition: React.FC<{
   sceneA: React.ReactNode
@@ -374,6 +403,7 @@ const WipeTransition: React.FC<{
 ```
 
 ### Zoom Transition
+
 ```typescript
 const ZoomTransition: React.FC<{
   scene: React.ReactNode
@@ -416,6 +446,7 @@ const ZoomTransition: React.FC<{
 ## 6. ANIMATIONS DE TEXTE
 
 ### Typewriter Effect
+
 ```typescript
 const Typewriter: React.FC<{
   text: string
@@ -456,6 +487,7 @@ const Typewriter: React.FC<{
 ```
 
 ### Word by Word Reveal
+
 ```typescript
 const WordReveal: React.FC<{
   text: string
@@ -516,6 +548,7 @@ const WordReveal: React.FC<{
 ```
 
 ### Character Stagger (lettre par lettre)
+
 ```typescript
 const CharStagger: React.FC<{
   text: string
@@ -659,7 +692,7 @@ const easeInOut = interpolate(frame, [0, 60], [0, 1], {
 
 // Cubic Bezier custom (comme CSS cubic-bezier)
 const custom = interpolate(frame, [0, 60], [0, 1], {
-  easing: Easing.bezier(0.16, 1, 0.3, 1),  // Expo out
+  easing: Easing.bezier(0.16, 1, 0.3, 1), // Expo out
   extrapolateRight: 'clamp',
 })
 
@@ -793,6 +826,7 @@ const MotionBlurElement: React.FC = () => {
 ## 11. ANIMATIONS DE FOND (BACKGROUND)
 
 ### Gradient animé
+
 ```typescript
 const AnimatedGradient: React.FC<{
   colorA: string
@@ -818,6 +852,7 @@ const AnimatedGradient: React.FC<{
 ```
 
 ### Particules flottantes
+
 ```typescript
 const FloatingParticles: React.FC<{
   count?: number
@@ -860,6 +895,7 @@ const FloatingParticles: React.FC<{
 ```
 
 ### Grille / Grid animée
+
 ```typescript
 const AnimatedGrid: React.FC<{
   color?: string
@@ -1008,5 +1044,5 @@ Avant de valider une animation, vérifier :
 
 ---
 
-*Skill : remotion-animations.md — Altidigitech Video Templates*
-*Lire ensuite : `.claude/brand-system.md` pour l'application des couleurs et fonts*
+_Skill : remotion-animations.md — Altidigitech Video Templates_
+_Lire ensuite : `.claude/brand-system.md` pour l'application des couleurs et fonts_

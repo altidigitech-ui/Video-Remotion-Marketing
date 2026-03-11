@@ -17,7 +17,7 @@ const FORMATS: Record<string, RenderFormat> = {
 
 function getSaasArg(): string | null {
   const arg = process.argv.find((a) => a.startsWith('--saas='))
-  return arg ? arg.split('=')[1] ?? null : null
+  return arg ? (arg.split('=')[1] ?? null) : null
 }
 
 async function renderAllFormats(): Promise<void> {

@@ -22,9 +22,9 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   const logoSrc =
     variant === 'white'
-      ? brand.assets.logoWhite ?? brand.assets.logoSvg
+      ? (brand.assets.logoWhite ?? brand.assets.logoSvg)
       : variant === 'dark'
-        ? brand.assets.logoDark ?? brand.assets.logoPng
+        ? (brand.assets.logoDark ?? brand.assets.logoPng)
         : brand.assets.logoSvg
 
   const scale = animate

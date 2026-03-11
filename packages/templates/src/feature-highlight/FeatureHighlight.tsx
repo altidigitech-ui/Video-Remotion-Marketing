@@ -101,59 +101,9 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: brand.spacing.md }}>
-            {bulletPoints.map((point, i) => {
-              const itemDelay = i * 15
-              const itemFrame = useCurrentFrame()
-
-              const itemOpacity = interpolate(itemFrame, [itemDelay, itemDelay + 20], [0, 1], {
-                extrapolateLeft: 'clamp',
-                extrapolateRight: 'clamp',
-              })
-
-              const itemX = spring({
-                frame: itemFrame - itemDelay,
-                fps,
-                from: -40,
-                to: 0,
-                config: brand.motion.springSmooth,
-              })
-
-              return (
-                <div
-                  key={i}
-                  style={{
-                    opacity: itemOpacity,
-                    transform: `translateX(${itemX}px)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: brand.spacing.sm,
-                    color: brand.colors.textPrimary,
-                    fontFamily: brand.typography.fontBody,
-                    fontSize: brand.typography.sizeXl,
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      backgroundColor: brand.colors.accent,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontFamily: brand.typography.fontDisplay,
-                      fontSize: brand.typography.sizeSm,
-                      fontWeight: brand.typography.weightBold,
-                      color: brand.colors.white,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {i + 1}
-                  </div>
-                  {point}
-                </div>
-              )
-            })}
+            {bulletPoints.map((point, i) => (
+              <BulletItem key={i} brand={brand} point={point} index={i} />
+            ))}
           </div>
         </AbsoluteFill>
       </Sequence>
@@ -165,6 +115,65 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
         </Sequence>
       )}
     </AbsoluteFill>
+  )
+}
+
+const BulletItem: React.FC<{ brand: BrandConfig; point: string; index: number }> = ({
+  brand,
+  point,
+  index,
+}) => {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+
+  const itemDelay = index * 15
+
+  const itemOpacity = interpolate(frame, [itemDelay, itemDelay + 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  const itemX = spring({
+    frame: frame - itemDelay,
+    fps,
+    from: -40,
+    to: 0,
+    config: brand.motion.springSmooth,
+  })
+
+  return (
+    <div
+      style={{
+        opacity: itemOpacity,
+        transform: `translateX(${itemX}px)`,
+        display: 'flex',
+        alignItems: 'center',
+        gap: brand.spacing.sm,
+        color: brand.colors.textPrimary,
+        fontFamily: brand.typography.fontBody,
+        fontSize: brand.typography.sizeXl,
+      }}
+    >
+      <div
+        style={{
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          backgroundColor: brand.colors.accent,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontFamily: brand.typography.fontDisplay,
+          fontSize: brand.typography.sizeSm,
+          fontWeight: brand.typography.weightBold,
+          color: brand.colors.white,
+          flexShrink: 0,
+        }}
+      >
+        {index + 1}
+      </div>
+      {point}
+    </div>
   )
 }
 

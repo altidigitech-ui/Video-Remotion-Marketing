@@ -3,6 +3,10 @@ import path from 'path'
 
 const ROOT = path.resolve(import.meta.dir, '..')
 
+function toCamelCase(str: string): string {
+  return str.replace(/-([a-z0-9])/g, (_, char: string) => char.toUpperCase())
+}
+
 function copyDirRecursive(src: string, dest: string): void {
   fs.mkdirSync(dest, { recursive: true })
 
@@ -33,7 +37,12 @@ function replaceInDir(dirPath: string, replacements: Record<string, string>): vo
     const fullPath = path.join(dirPath, entry.name)
     if (entry.isDirectory()) {
       replaceInDir(fullPath, replacements)
-    } else if (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx') || entry.name.endsWith('.json') || entry.name.endsWith('.md')) {
+    } else if (
+      entry.name.endsWith('.ts') ||
+      entry.name.endsWith('.tsx') ||
+      entry.name.endsWith('.json') ||
+      entry.name.endsWith('.md')
+    ) {
       replaceInFile(fullPath, replacements)
     }
   }
@@ -89,7 +98,7 @@ function main(): void {
 
   // 3. Replace placeholders
   const replacements: Record<string, string> = {
-    'TODO_SAAS_ID': saasName,
+    TODO_SAAS_ID: saasName,
     '@altidigitech/project-template': `@altidigitech/project-${saasName}`,
   }
 
@@ -97,24 +106,29 @@ function main(): void {
   replaceInDir(projectDest, replacements)
   replaceInDir(brandDest, replacements)
 
+  // 4. Auto-export brand in packages/brand/src/index.ts
+  const brandIndexPath = path.join(ROOT, 'packages', 'brand', 'src', 'index.ts')
+  const camelName = toCamelCase(saasName)
+  const exportLine = `\nexport { templateBrand as ${camelName}Brand } from './${saasName}/config'\n`
+
+  console.log('  Adding brand export to packages/brand/src/index.ts...')
+  fs.appendFileSync(brandIndexPath, exportLine, 'utf-8')
+
   console.log('')
   console.log('Done! Next steps:')
   console.log('')
   console.log(`  1. Fill the brand config:`)
   console.log(`     packages/brand/src/${saasName}/config.ts`)
   console.log('')
-  console.log(`  2. Export the brand from packages/brand/src/index.ts:`)
-  console.log(`     export { templateBrand as ${saasName}Brand } from './${saasName}/config'`)
-  console.log('')
-  console.log(`  3. Add assets to projects/${saasName}/public/`)
+  console.log(`  2. Add assets to projects/${saasName}/public/`)
   console.log(`     - logo.svg (required)`)
   console.log(`     - logo.png (required)`)
   console.log(`     - screenshots/ (recommended)`)
   console.log('')
-  console.log(`  4. Create compositions in projects/${saasName}/src/root.tsx`)
+  console.log(`  3. Create compositions in projects/${saasName}/src/root.tsx`)
   console.log('')
-  console.log(`  5. Preview: bun dev`)
-  console.log(`  6. Render: bun render ${saasName}-product-demo`)
+  console.log(`  4. Preview: bun dev`)
+  console.log(`  5. Render: bun render ${saasName}-product-demo`)
 }
 
 main()

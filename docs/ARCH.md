@@ -117,27 +117,29 @@ projects/[saas]        (depend de templates, brand, core)
 
 ## Conventions de nommage
 
-| Element | Convention | Exemple |
-|---------|-----------|---------|
-| Composant React | PascalCase | `BrandHeadline` |
-| Fichier composant | PascalCase.tsx | `BrandHeadline.tsx` |
-| Dossier composant | PascalCase | `BrandHeadline/` |
-| Template | PascalCase + "Template" | `ProductDemoTemplate` |
-| Dossier template | kebab-case | `product-demo/` |
-| ID de composition | kebab-case | `golddesk-product-demo` |
-| Type / Interface | PascalCase | `BrandConfig`, `ProductDemoProps` |
-| Variable / fonction | camelCase | `useAnimationSequence` |
-| Constante | UPPER_SNAKE_CASE | `DEFAULT_FPS` |
-| Package | @altidigitech/[nom] | `@altidigitech/core` |
+| Element             | Convention              | Exemple                           |
+| ------------------- | ----------------------- | --------------------------------- |
+| Composant React     | PascalCase              | `BrandHeadline`                   |
+| Fichier composant   | PascalCase.tsx          | `BrandHeadline.tsx`               |
+| Dossier composant   | PascalCase              | `BrandHeadline/`                  |
+| Template            | PascalCase + "Template" | `ProductDemoTemplate`             |
+| Dossier template    | kebab-case              | `product-demo/`                   |
+| ID de composition   | kebab-case              | `golddesk-product-demo`           |
+| Type / Interface    | PascalCase              | `BrandConfig`, `ProductDemoProps` |
+| Variable / fonction | camelCase               | `useAnimationSequence`            |
+| Constante           | UPPER_SNAKE_CASE        | `DEFAULT_FPS`                     |
+| Package             | @altidigitech/[nom]     | `@altidigitech/core`              |
 
 ---
 
 ## Ajouter un nouveau SaaS -- pas a pas
 
 1. **Scaffolder le projet**
+
    ```bash
    bun new:saas [nom-du-saas]
    ```
+
    Cree automatiquement `projects/[nom]/` et `packages/brand/src/[nom]/`.
 
 2. **Remplir le BrandConfig**
@@ -153,6 +155,7 @@ projects/[saas]        (depend de templates, brand, core)
    Ajouter l'export dans `packages/brand/src/index.ts`.
 
 6. **Tester**
+
    ```bash
    bun dev  # Ouvrir le studio Remotion
    ```

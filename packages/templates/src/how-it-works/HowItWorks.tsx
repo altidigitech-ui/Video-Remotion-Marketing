@@ -30,10 +30,12 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
   steps,
   ctaText,
 }) => {
-  const { fps, durationInFrames } = useVideoConfig()
+  const { durationInFrames } = useVideoConfig()
 
   const stepsStart = 60
-  const stepsPerStep = Math.floor((durationInFrames - stepsStart - (ctaText ? 90 : 0)) / steps.length)
+  const stepsPerStep = Math.floor(
+    (durationInFrames - stepsStart - (ctaText ? 90 : 0)) / steps.length,
+  )
 
   return (
     <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
@@ -50,42 +52,48 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
           durationInFrames={stepsPerStep}
           name={`Step ${i + 1}`}
         >
-          <StepSection
-            brand={brand}
-            step={step}
-            stepNumber={i + 1}
-            totalSteps={steps.length}
-          />
+          <StepSection brand={brand} step={step} stepNumber={i + 1} totalSteps={steps.length} />
         </Sequence>
       ))}
 
       {/* CTA */}
       {ctaText && (
         <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
-          <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
-            <div
-              style={{
-                transform: `scale(${spring({
-                  frame: useCurrentFrame(),
-                  fps,
-                  from: 0.8,
-                  to: 1,
-                  config: brand.motion.springBouncy,
-                })})`,
-                backgroundColor: brand.colors.accent,
-                color: brand.colors.white,
-                fontFamily: brand.typography.fontDisplay,
-                fontSize: brand.typography.sizeLg,
-                fontWeight: brand.typography.weightBold,
-                padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-                borderRadius: brand.spacing.borderRadius,
-              }}
-            >
-              {ctaText}
-            </div>
-          </AbsoluteFill>
+          <CTAButton brand={brand} text={ctaText} />
         </Sequence>
       )}
+    </AbsoluteFill>
+  )
+}
+
+const CTAButton: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+
+  const scale = spring({
+    frame,
+    fps,
+    from: 0.8,
+    to: 1,
+    config: brand.motion.springBouncy,
+  })
+
+  return (
+    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          backgroundColor: brand.colors.accent,
+          color: brand.colors.white,
+          fontFamily: brand.typography.fontDisplay,
+          fontSize: brand.typography.sizeLg,
+          fontWeight: brand.typography.weightBold,
+          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
+          borderRadius: brand.spacing.borderRadius,
+        }}
+      >
+        {text}
+      </div>
     </AbsoluteFill>
   )
 }
@@ -234,8 +242,7 @@ const StepSection: React.FC<{
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                backgroundColor:
-                  i + 1 === stepNumber ? brand.colors.accent : brand.colors.border,
+                backgroundColor: i + 1 === stepNumber ? brand.colors.accent : brand.colors.border,
               }}
             />
           ))}

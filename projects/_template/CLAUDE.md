@@ -33,6 +33,7 @@
 ## Notes specifiques
 
 <!-- Claude Code : lire cette section avant de creer les compositions -->
+
 - TODO: Ajouter toute instruction specifique a ce SaaS
 - TODO: Particularites visuelles ou de brand
 - TODO: Restrictions ou elements obligatoires

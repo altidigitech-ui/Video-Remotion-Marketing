@@ -1,4 +1,5 @@
 # .claude/brand-system.md
+
 # Skill : Brand System — BrandKit, Design Tokens & Identité Visuelle
 
 > **Quand lire ce fichier** : Avant de créer ou modifier tout composant
@@ -10,6 +11,7 @@
 ## 1. PHILOSOPHIE DU BRAND SYSTEM
 
 ### Principe fondamental
+
 **Un seul endroit de vérité pour chaque valeur de design.**
 
 ```
@@ -21,6 +23,7 @@ packages/brand/
 ```
 
 ### Hiérarchie des tokens
+
 ```
 Base Altidigitech (défaut)
         ↓ override
@@ -79,7 +82,7 @@ export type ColorScale = {
   200: string
   300: string
   400: string
-  500: string   // Couleur principale
+  500: string // Couleur principale
   600: string
   700: string
   800: string
@@ -89,20 +92,20 @@ export type ColorScale = {
 
 export type BrandColors = {
   // Couleurs sémantiques
-  primary: string       // Couleur principale de la marque
-  secondary: string     // Couleur secondaire
-  accent: string        // Couleur d'accentuation (CTA, highlights)
-  accentAlt: string     // Variante accent (dégradés)
+  primary: string // Couleur principale de la marque
+  secondary: string // Couleur secondaire
+  accent: string // Couleur d'accentuation (CTA, highlights)
+  accentAlt: string // Variante accent (dégradés)
 
   // Backgrounds
-  background: string    // Fond principal
+  background: string // Fond principal
   backgroundAlt: string // Fond alternatif (cards, sections)
-  surface: string       // Surface élevée (modals, tooltips)
+  surface: string // Surface élevée (modals, tooltips)
 
   // Texte
-  textPrimary: string   // Texte principal
+  textPrimary: string // Texte principal
   textSecondary: string // Texte secondaire
-  textMuted: string     // Texte discret
+  textMuted: string // Texte discret
 
   // États
   success: string
@@ -111,8 +114,8 @@ export type BrandColors = {
   info: string
 
   // Utilitaires
-  border: string        // Couleur des bordures
-  overlay: string       // Overlay semi-transparent (rgba)
+  border: string // Couleur des bordures
+  overlay: string // Overlay semi-transparent (rgba)
   white: string
   black: string
 }
@@ -123,61 +126,61 @@ export type FontWeight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900
 
 export type BrandTypography = {
   // Familles de fonts
-  fontDisplay: string   // Headlines, titres
-  fontBody: string      // Corps de texte
-  fontMono: string      // Code, données
+  fontDisplay: string // Headlines, titres
+  fontBody: string // Corps de texte
+  fontMono: string // Code, données
 
   // Tailles (en px, pour Remotion)
-  sizeXs: number        // 12
-  sizeSm: number        // 16
-  sizeMd: number        // 20
-  sizeLg: number        // 24
-  sizeXl: number        // 32
-  size2xl: number       // 40
-  size3xl: number       // 48
-  size4xl: number       // 64
-  size5xl: number       // 80
-  size6xl: number       // 96
-  size7xl: number       // 128
+  sizeXs: number // 12
+  sizeSm: number // 16
+  sizeMd: number // 20
+  sizeLg: number // 24
+  sizeXl: number // 32
+  size2xl: number // 40
+  size3xl: number // 48
+  size4xl: number // 64
+  size5xl: number // 80
+  size6xl: number // 96
+  size7xl: number // 128
 
   // Poids
-  weightLight: FontWeight    // 300
-  weightRegular: FontWeight  // 400
-  weightMedium: FontWeight   // 500
+  weightLight: FontWeight // 300
+  weightRegular: FontWeight // 400
+  weightMedium: FontWeight // 500
   weightSemibold: FontWeight // 600
-  weightBold: FontWeight     // 700
+  weightBold: FontWeight // 700
   weightExtrabold: FontWeight // 800
-  weightBlack: FontWeight    // 900
+  weightBlack: FontWeight // 900
 
   // Line heights
-  lineHeightTight: number    // 1.1
-  lineHeightNormal: number   // 1.5
-  lineHeightRelaxed: number  // 1.75
+  lineHeightTight: number // 1.1
+  lineHeightNormal: number // 1.5
+  lineHeightRelaxed: number // 1.75
 
   // Letter spacing (em)
-  trackingTight: number     // -0.02
-  trackingNormal: number    // 0
-  trackingWide: number      // 0.05
-  trackingWidest: number    // 0.15
+  trackingTight: number // -0.02
+  trackingNormal: number // 0
+  trackingWide: number // 0.05
+  trackingWidest: number // 0.15
 }
 
 // ─── ESPACEMENT ──────────────────────────────────────────────────────────────
 
 export type BrandSpacing = {
-  xs: number    // 8
-  sm: number    // 16
-  md: number    // 24
-  lg: number    // 40
-  xl: number    // 64
-  xxl: number   // 96
-  xxxl: number  // 160
+  xs: number // 8
+  sm: number // 16
+  md: number // 24
+  lg: number // 40
+  xl: number // 64
+  xxl: number // 96
+  xxxl: number // 160
 
   // Layout
-  paddingScreen: number     // Padding latéral de la composition (80)
-  paddingSection: number    // Padding entre sections (120)
-  gutter: number            // Espacement entre éléments (24)
-  borderRadius: number      // Border radius standard (16)
-  borderRadiusLg: number    // Border radius large (32)
+  paddingScreen: number // Padding latéral de la composition (80)
+  paddingSection: number // Padding entre sections (120)
+  gutter: number // Espacement entre éléments (24)
+  borderRadius: number // Border radius standard (16)
+  borderRadiusLg: number // Border radius large (32)
 }
 
 // ─── MOTION ──────────────────────────────────────────────────────────────────
@@ -191,10 +194,10 @@ export type SpringConfig = {
 
 export type BrandMotion = {
   // Durées en frames (à 60fps)
-  durationFast: number      // 20 frames (~0.33s)
-  durationNormal: number    // 30 frames (0.5s)
-  durationSlow: number      // 60 frames (1s)
-  durationVerySlow: number  // 120 frames (2s)
+  durationFast: number // 20 frames (~0.33s)
+  durationNormal: number // 30 frames (0.5s)
+  durationSlow: number // 60 frames (1s)
+  durationVerySlow: number // 120 frames (2s)
 
   // Configs spring prêtes à l'emploi
   springSnappy: SpringConfig
@@ -206,22 +209,22 @@ export type BrandMotion = {
 // ─── ASSETS ──────────────────────────────────────────────────────────────────
 
 export type BrandAssets = {
-  logoSvg: string           // Chemin vers le logo SVG
-  logoPng: string           // Chemin vers le logo PNG
-  logoWhite?: string        // Version logo blanc (sur fond sombre)
-  logoDark?: string         // Version logo noir (sur fond clair)
-  favicon?: string          // Icône carrée
-  backgroundMusic?: string  // Musique de fond par défaut
-  transitionSound?: string  // Son de transition
+  logoSvg: string // Chemin vers le logo SVG
+  logoPng: string // Chemin vers le logo PNG
+  logoWhite?: string // Version logo blanc (sur fond sombre)
+  logoDark?: string // Version logo noir (sur fond clair)
+  favicon?: string // Icône carrée
+  backgroundMusic?: string // Musique de fond par défaut
+  transitionSound?: string // Son de transition
 }
 
 // ─── BRAND KIT COMPLET ───────────────────────────────────────────────────────
 
 export type BrandConfig = {
-  id: string                // Identifiant unique du SaaS (ex: 'my-saas')
-  name: string              // Nom affiché (ex: 'My SaaS')
-  tagline: string           // Tagline courte
-  description: string       // Description une phrase
+  id: string // Identifiant unique du SaaS (ex: 'my-saas')
+  name: string // Nom affiché (ex: 'My SaaS')
+  tagline: string // Tagline courte
+  description: string // Description une phrase
 
   colors: BrandColors
   typography: BrandTypography
@@ -242,10 +245,10 @@ import type { BrandColors } from '../types'
 export const baseColors: BrandColors = {
   primary: '#FFFFFF',
   secondary: '#A5B4FC',
-  accent: '#6366F1',        // Indigo — couleur signature Altidigitech
-  accentAlt: '#8B5CF6',     // Violet
+  accent: '#6366F1', // Indigo — couleur signature Altidigitech
+  accentAlt: '#8B5CF6', // Violet
 
-  background: '#0A0A0A',    // Noir profond
+  background: '#0A0A0A', // Noir profond
   backgroundAlt: '#111111',
   surface: '#1A1A1A',
 
@@ -371,10 +374,10 @@ import type { BrandColors } from '../types'
 export const mySaasColors: BrandColors = {
   primary: '#FFFFFF',
   secondary: '#B3B3B3',
-  accent: 'TODO_ACCENT_COLOR',        // ex: '#6366F1' — couleur signature du SaaS
+  accent: 'TODO_ACCENT_COLOR', // ex: '#6366F1' — couleur signature du SaaS
   accentAlt: 'TODO_ACCENT_ALT_COLOR', // ex: '#8B5CF6' — variante plus foncée
 
-  background: 'TODO_BG_COLOR',        // ex: '#0A0A0A'
+  background: 'TODO_BG_COLOR', // ex: '#0A0A0A'
   backgroundAlt: '#141414',
   surface: '#1F1F1F',
 
@@ -403,8 +406,8 @@ import { baseSpacing } from '../base/spacing'
 import { baseMotion } from '../base/motion'
 
 export const mySaasBrand: BrandConfig = {
-  id: 'TODO_SAAS_ID',           // ex: 'my-saas'
-  name: 'TODO_SAAS_NAME',       // ex: 'My SaaS'
+  id: 'TODO_SAAS_ID', // ex: 'my-saas'
+  name: 'TODO_SAAS_NAME', // ex: 'My SaaS'
   tagline: 'TODO_TAGLINE',
   description: 'TODO_DESCRIPTION',
 
@@ -455,17 +458,17 @@ import { baseSpacing } from '../base/spacing'
 import { baseMotion } from '../base/motion'
 
 export const templateBrand: BrandConfig = {
-  id: 'TODO_SAAS_ID',           // ex: 'golddesk'
-  name: 'TODO_SAAS_NAME',       // ex: 'Gold Desk AI'
-  tagline: 'TODO_TAGLINE',      // ex: 'Trade smarter with AI'
+  id: 'TODO_SAAS_ID', // ex: 'golddesk'
+  name: 'TODO_SAAS_NAME', // ex: 'Gold Desk AI'
+  tagline: 'TODO_TAGLINE', // ex: 'Trade smarter with AI'
   description: 'TODO_DESCRIPTION',
 
   colors: {
     ...baseColors,
     // TODO: Override les couleurs spécifiques au SaaS
-    accent: 'TODO_ACCENT_COLOR',        // ex: '#F59E0B' pour or/gold
+    accent: 'TODO_ACCENT_COLOR', // ex: '#F59E0B' pour or/gold
     accentAlt: 'TODO_ACCENT_ALT_COLOR', // ex: '#D97706'
-    background: 'TODO_BG_COLOR',        // ex: '#0A0A0A'
+    background: 'TODO_BG_COLOR', // ex: '#0A0A0A'
   },
 
   typography: {
@@ -498,6 +501,7 @@ export const templateBrand: BrandConfig = {
 ## 7. UTILISATION DANS LES COMPOSANTS
 
 ### Import du BrandKit
+
 ```typescript
 // ✅ Import depuis le package brand — TOUJOURS comme ça
 import { mySaasBrand } from '@altidigitech/brand/[saas-name]'
@@ -527,6 +531,7 @@ export const MyComponent: React.FC<MyComponentProps> = ({ brand, text }) => {
 ```
 
 ### Dégradés depuis les couleurs brand
+
 ```typescript
 // Dégradé accent → accentAlt
 const accentGradient = (brand: BrandConfig) =>
@@ -543,6 +548,7 @@ const darkOverlay = (brand: BrandConfig, opacity = 0.8) =>
 ```
 
 ### Utiliser les springs brand
+
 ```typescript
 import { spring, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
@@ -589,6 +595,7 @@ const AnimatedTitle: React.FC<{ brand: BrandConfig; text: string }> = ({
 ## 8. COMPOSANTS DE BRAND PRÊTS À L'EMPLOI
 
 ### `<BrandLogo>`
+
 ```typescript
 // packages/core/src/components/BrandLogo/BrandLogo.tsx
 import { Img, staticFile, spring, useCurrentFrame, useVideoConfig } from 'remotion'
@@ -650,6 +657,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 ```
 
 ### `<BrandHeadline>`
+
 ```typescript
 // packages/core/src/components/BrandHeadline/BrandHeadline.tsx
 import type { BrandConfig } from '@altidigitech/brand'
@@ -703,6 +711,7 @@ export const BrandHeadline: React.FC<BrandHeadlineProps> = ({
 ```
 
 ### `<BrandBackground>`
+
 ```typescript
 // packages/core/src/components/BrandBackground/BrandBackground.tsx
 import { AbsoluteFill, useCurrentFrame } from 'remotion'
@@ -757,6 +766,7 @@ bun new:saas [nom-du-saas]
 ```
 
 Cela crée automatiquement :
+
 ```
 packages/brand/src/golddesk/   ← BrandKit à remplir
 projects/golddesk/             ← Projet Remotion
@@ -789,48 +799,48 @@ Pour créer rapidement un BrandKit cohérent selon le type de SaaS :
 ```typescript
 // SaaS Finance / Trading (Gold Desk AI, etc.)
 const financeColors = {
-  accent: '#F59E0B',      // Or ambré
-  accentAlt: '#D97706',   // Or foncé
+  accent: '#F59E0B', // Or ambré
+  accentAlt: '#D97706', // Or foncé
   background: '#0A0A0A',
   surface: '#1A1A1A',
 }
 
 // SaaS Tech / Dev Tools
 const techColors = {
-  accent: '#6366F1',      // Indigo (Altidigitech base)
-  accentAlt: '#8B5CF6',   // Violet
+  accent: '#6366F1', // Indigo (Altidigitech base)
+  accentAlt: '#8B5CF6', // Violet
   background: '#0F0F0F',
   surface: '#1A1A1A',
 }
 
 // SaaS Créatif / Vidéo / Média
 const creativeColors = {
-  accent: '#E50914',      // Rouge
-  accentAlt: '#B20710',   // Rouge foncé
+  accent: '#E50914', // Rouge
+  accentAlt: '#B20710', // Rouge foncé
   background: '#000000',
   surface: '#1F1F1F',
 }
 
 // SaaS Santé / Wellness
 const healthColors = {
-  accent: '#10B981',      // Vert émeraude
-  accentAlt: '#059669',   // Vert foncé
+  accent: '#10B981', // Vert émeraude
+  accentAlt: '#059669', // Vert foncé
   background: '#0A0F0E',
   surface: '#111A18',
 }
 
 // SaaS Marketing / Growth
 const marketingColors = {
-  accent: '#F97316',      // Orange
-  accentAlt: '#EA580C',   // Orange foncé
+  accent: '#F97316', // Orange
+  accentAlt: '#EA580C', // Orange foncé
   background: '#0A0805',
   surface: '#1A1410',
 }
 
 // SaaS B2B / Enterprise
 const enterpriseColors = {
-  accent: '#3B82F6',      // Bleu
-  accentAlt: '#2563EB',   // Bleu foncé
+  accent: '#3B82F6', // Bleu
+  accentAlt: '#2563EB', // Bleu foncé
   background: '#0A0C10',
   surface: '#111520',
 }
@@ -855,5 +865,5 @@ Avant de livrer un composant ou template, vérifier :
 
 ---
 
-*Skill : brand-system.md — Altidigitech Video Templates*
-*Lire ensuite : `.claude/new-template.md` pour créer un nouveau template vidéo*
+_Skill : brand-system.md — Altidigitech Video Templates_
+_Lire ensuite : `.claude/new-template.md` pour créer un nouveau template vidéo_

@@ -1,4 +1,5 @@
 # .claude/remotion-rendering.md
+
 # Skill : Remotion Rendering — Export Local, Lambda & Automation
 
 > **Quand lire ce fichier** : Avant tout export vidéo, configuration de rendu,
@@ -10,6 +11,7 @@
 ## 1. CONCEPTS DU RENDU REMOTION
 
 ### Pipeline de rendu
+
 ```
 Composition React
        ↓
@@ -25,9 +27,10 @@ MP4 / WebM / GIF / AAC
 ```
 
 ### Deux modes de rendu
-| Mode | Usage | Commande |
-|------|-------|----------|
-| **Local** | Développement, petits volumes | `npx remotion render` |
+
+| Mode       | Usage                               | Commande                     |
+| ---------- | ----------------------------------- | ---------------------------- |
+| **Local**  | Développement, petits volumes       | `npx remotion render`        |
 | **Lambda** | Production, gros volumes, parallèle | `npx remotion lambda render` |
 
 ---
@@ -35,6 +38,7 @@ MP4 / WebM / GIF / AAC
 ## 2. RENDU LOCAL — CLI
 
 ### Commande de base
+
 ```bash
 # Rendre une composition par son ID
 npx remotion render [entry-point] [composition-id] [output]
@@ -44,6 +48,7 @@ npx remotion render src/index.ts [saas-name]-product-demo renders/[saas-name]-pr
 ```
 
 ### Avec les scripts Bun du projet
+
 ```bash
 # Rendre une composition spécifique
 bun render [saas-name]-product-demo
@@ -59,6 +64,7 @@ bun render:all
 ```
 
 ### Options CLI importantes
+
 ```bash
 npx remotion render src/index.ts my-comp output.mp4 \
   --codec=h264 \                    # h264 | h265 | vp8 | vp9 | prores | gif
@@ -76,6 +82,7 @@ npx remotion render src/index.ts my-comp output.mp4 \
 ```
 
 ### Exemples concrets par format
+
 ```bash
 # Widescreen 1920x1080
 npx remotion render src/index.ts [saas-name]-product-demo \
@@ -139,6 +146,7 @@ Config.setJpegQuality(80)
 ## 4. SCRIPTS DE RENDU AUTOMATISÉS
 
 ### Script de rendu multi-formats
+
 ```typescript
 // scripts/render-formats.ts
 import { renderMedia, selectComposition } from '@remotion/renderer'
@@ -222,6 +230,7 @@ renderAllFormats().catch(console.error)
 ```
 
 ### Script de rendu avec props dynamiques
+
 ```typescript
 // scripts/render-with-props.ts
 import { renderMedia, selectComposition, bundle } from '@remotion/renderer'
@@ -263,7 +272,7 @@ async function renderWithConfig(config: SaaSVideoConfig) {
     concurrency: 4,
     onProgress: ({ progress, renderedFrames, totalFrames }) => {
       process.stdout.write(
-        `\r  ${renderedFrames}/${totalFrames} frames (${(progress * 100).toFixed(1)}%)`
+        `\r  ${renderedFrames}/${totalFrames} frames (${(progress * 100).toFixed(1)}%)`,
       )
     },
   })
@@ -284,6 +293,7 @@ renderWithConfig({
 ```
 
 ### Script de rendu en batch (tous les SaaS)
+
 ```typescript
 // scripts/render-all.ts
 import { execSync } from 'child_process'
@@ -294,8 +304,8 @@ import path from 'path'
 const PROJECTS_DIR = path.resolve('./projects')
 const saasProjects = fs
   .readdirSync(PROJECTS_DIR)
-  .filter(dir => dir !== '_template' && !dir.startsWith('.'))
-  .filter(dir => fs.existsSync(path.join(PROJECTS_DIR, dir, 'src/index.ts')))
+  .filter((dir) => dir !== '_template' && !dir.startsWith('.'))
+  .filter((dir) => fs.existsSync(path.join(PROJECTS_DIR, dir, 'src/index.ts')))
 
 console.log(`🎬 Projets détectés : ${saasProjects.join(', ')}`)
 
@@ -317,6 +327,7 @@ console.log('\n🎉 Batch complet !')
 ## 5. RENDU LAMBDA (AWS)
 
 ### Setup initial Lambda
+
 ```bash
 # 1. Installer les dépendances Lambda
 bun add @remotion/lambda
@@ -343,6 +354,7 @@ npx remotion lambda sites ls
 ```
 
 ### Rendre sur Lambda via CLI
+
 ```bash
 # Rendu Lambda d'une composition
 npx remotion lambda render \
@@ -353,18 +365,15 @@ npx remotion lambda render \
 ```
 
 ### Rendu Lambda via API (pour automation)
+
 ```typescript
 // scripts/render-lambda.ts
-import {
-  renderMediaOnLambda,
-  getRenderProgress,
-  downloadMedia,
-} from '@remotion/lambda/client'
+import { renderMediaOnLambda, getRenderProgress, downloadMedia } from '@remotion/lambda/client'
 
 type LambdaRenderConfig = {
   compositionId: string
   inputProps?: Record<string, unknown>
-  outputKey: string  // Chemin dans S3
+  outputKey: string // Chemin dans S3
 }
 
 async function renderOnLambda(config: LambdaRenderConfig) {
@@ -393,7 +402,7 @@ async function renderOnLambda(config: LambdaRenderConfig) {
   // Polling du statut
   let done = false
   while (!done) {
-    await new Promise(resolve => setTimeout(resolve, 3000))
+    await new Promise((resolve) => setTimeout(resolve, 3000))
 
     const progress = await getRenderProgress({
       renderId,
@@ -427,6 +436,7 @@ renderOnLambda({
 ```
 
 ### Variables d'environnement Lambda requises
+
 ```bash
 # .env.local (jamais commité)
 REMOTION_LAMBDA_FUNCTION_NAME=remotion-render-3-3-78-mem3009mb-disk10240mb-900sec
@@ -472,6 +482,7 @@ AWS_REGION=eu-west-3
 ## 7. OPTIMISATION DES PERFORMANCES DE RENDU
 
 ### Accélérer le rendu local
+
 ```typescript
 // remotion.config.ts
 import os from 'os'
@@ -481,14 +492,15 @@ Config.setConcurrency(os.cpus().length)
 
 // JPEG est 3x plus rapide que PNG pour les frames intermédiaires
 Config.setVideoImageFormat('jpeg')
-Config.setJpegQuality(80)  // 80 = bon compromis
+Config.setJpegQuality(80) // 80 = bon compromis
 
 // Désactiver le GPU si pas de WebGL nécessaire
 // Config.setChromiumOpenGlRenderer('swiftshader') // Plus lent mais stable
-Config.setChromiumOpenGlRenderer('angle')          // Plus rapide
+Config.setChromiumOpenGlRenderer('angle') // Plus rapide
 ```
 
 ### Estimation du temps de rendu
+
 ```
 Règle approximative en local (machine standard) :
 - 60fps × 1920×1080 × JPEG = ~2-4 frames/seconde
@@ -501,6 +513,7 @@ Lambda (mem=3009MB, concurrency=200) :
 ```
 
 ### Éviter les re-renders inutiles
+
 ```typescript
 // ❌ Recalcule à chaque frame
 const MyComp = () => {
@@ -530,53 +543,63 @@ const MyComp = ({ items }: { items: string[] }) => {
 ## 8. FORMATS DE SORTIE — GUIDE COMPLET
 
 ### H.264 MP4 (défaut — recommandé)
+
 ```bash
 npx remotion render src/index.ts my-comp output.mp4 \
   --codec=h264 \
   --image-format=jpeg \
   --jpeg-quality=85
 ```
+
 - ✅ Compatible partout (YouTube, social media, web, mobile)
 - ✅ Taille de fichier raisonnable
 - ✅ Rendu rapide
 - ❌ Pas de transparence (canal alpha)
 
 ### H.265 HEVC (meilleure compression)
+
 ```bash
 npx remotion render src/index.ts my-comp output.mp4 \
   --codec=h265
 ```
+
 - ✅ 50% plus petit que H.264 à qualité égale
 - ❌ Pas supporté partout (pas sur tous les navigateurs)
 - Usage : archives, partage interne
 
 ### VP9 WebM (web optimisé)
+
 ```bash
 npx remotion render src/index.ts my-comp output.webm \
   --codec=vp9
 ```
+
 - ✅ Open source, bon pour le web
 - ✅ Supporte la transparence
 - ❌ Rendu lent
 - Usage : embed web avec transparence
 
 ### ProRes (post-production)
+
 ```bash
 npx remotion render src/index.ts my-comp output.mov \
   --codec=prores \
   --image-format=png  # PNG obligatoire pour ProRes
 ```
+
 - ✅ Qualité maximale, idéal pour After Effects / Premiere
 - ❌ Fichiers très volumineux
 - Usage : livraison à un motion designer
 
 ### GIF (animations courtes)
+
 ```bash
 npx remotion render src/index.ts my-comp output.gif \
   --codec=gif \
   --scale=0.5 \      # Réduire la résolution pour le GIF
   --fps-override=15  # 15fps suffit pour un GIF
 ```
+
 - ✅ Compatible partout, pas besoin de player vidéo
 - ❌ Qualité limitée, fichiers lourds
 - ❌ Max 256 couleurs
@@ -594,14 +617,15 @@ npx remotion render src/index.ts my-comp output.gif \
 // Solution : vérifier que continueRender() est appelé dans tous les cas
 
 const handle = delayRender('Loading font')
-font.load()
+font
+  .load()
   .then(() => {
     document.fonts.add(font)
-    continueRender(handle)          // ✅ Cas succès
+    continueRender(handle) // ✅ Cas succès
   })
   .catch((err) => {
     console.error('Font load error:', err)
-    continueRender(handle)          // ✅ Cas erreur aussi ! Ne jamais bloquer.
+    continueRender(handle) // ✅ Cas erreur aussi ! Ne jamais bloquer.
   })
 ```
 
@@ -621,13 +645,10 @@ const MyComp = ({ logoUrl }: { logoUrl?: string }) => {
 ```
 
 ### Script de retry automatique
+
 ```typescript
 // scripts/render-with-retry.ts
-async function renderWithRetry(
-  renderFn: () => Promise<void>,
-  maxRetries = 3,
-  delayMs = 2000
-) {
+async function renderWithRetry(renderFn: () => Promise<void>, maxRetries = 3, delayMs = 2000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await renderFn()
@@ -635,18 +656,20 @@ async function renderWithRetry(
     } catch (error) {
       if (attempt === maxRetries) throw error
       console.warn(`⚠️ Tentative ${attempt} échouée, retry dans ${delayMs}ms...`)
-      await new Promise(resolve => setTimeout(resolve, delayMs))
+      await new Promise((resolve) => setTimeout(resolve, delayMs))
     }
   }
 }
 
 // Usage
-await renderWithRetry(() => renderMedia({
-  composition,
-  serveUrl: bundleLocation,
-  codec: 'h264',
-  outputLocation: 'renders/output.mp4',
-}))
+await renderWithRetry(() =>
+  renderMedia({
+    composition,
+    serveUrl: bundleLocation,
+    codec: 'h264',
+    outputLocation: 'renders/output.mp4',
+  }),
+)
 ```
 
 ---
@@ -656,6 +679,7 @@ await renderWithRetry(() => renderMedia({
 Si le pipeline n8n est activé, voici comment déclencher un rendu depuis n8n :
 
 ### Webhook endpoint (script Express minimal)
+
 ```typescript
 // scripts/render-server.ts
 // Serveur HTTP minimal pour recevoir les webhooks n8n
@@ -672,7 +696,9 @@ const server = createServer(async (req, res) => {
   }
 
   let body = ''
-  req.on('data', chunk => { body += chunk })
+  req.on('data', (chunk) => {
+    body += chunk
+  })
   req.on('end', async () => {
     try {
       const config = JSON.parse(body) as {
@@ -704,10 +730,12 @@ const server = createServer(async (req, res) => {
       })
 
       res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({
-        success: true,
-        outputPath: config.outputPath,
-      }))
+      res.end(
+        JSON.stringify({
+          success: true,
+          outputPath: config.outputPath,
+        }),
+      )
     } catch (error) {
       console.error('❌ Erreur rendu:', error)
       res.writeHead(500, { 'Content-Type': 'application/json' })
@@ -722,6 +750,7 @@ server.listen(3099, () => {
 ```
 
 ### Payload n8n → render server
+
 ```json
 {
   "saasId": "[saas-name]",
@@ -787,5 +816,5 @@ npm-debug.log*
 
 ---
 
-*Skill : remotion-rendering.md — Altidigitech Video Templates*
-*Lire ensuite : `.claude/brand-system.md` pour la gestion des BrandKits*
+_Skill : remotion-rendering.md — Altidigitech Video Templates_
+_Lire ensuite : `.claude/brand-system.md` pour la gestion des BrandKits_

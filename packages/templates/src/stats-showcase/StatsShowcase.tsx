@@ -26,11 +26,7 @@ export const statsShowcaseSchema = z.object({
 
 export type StatsShowcaseProps = z.infer<typeof statsShowcaseSchema>
 
-export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
-  brand,
-  headline,
-  stats,
-}) => {
+export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({ brand, headline, stats }) => {
   const { durationInFrames } = useVideoConfig()
 
   return (

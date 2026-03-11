@@ -26,15 +26,15 @@ et utilitaires.
 
 ## Stack technique
 
-| Technologie | Role |
-|-------------|------|
-| Remotion v4 | Framework de rendu video programmatique (chaque frame = composant React) |
-| React 18 | Bibliotheque UI pour les composants |
-| TypeScript 5 | Typage strict, pas de `any`, pas de `@ts-ignore` |
-| Bun | Package manager et runtime (jamais npm ou yarn) |
-| Turborepo | Orchestration du monorepo (build, lint, typecheck en parallele) |
-| Zod | Validation des schemas de props pour les templates |
-| FFmpeg | Assemblage des frames en video (gere par Remotion) |
+| Technologie  | Role                                                                     |
+| ------------ | ------------------------------------------------------------------------ |
+| Remotion v4  | Framework de rendu video programmatique (chaque frame = composant React) |
+| React 18     | Bibliotheque UI pour les composants                                      |
+| TypeScript 5 | Typage strict, pas de `any`, pas de `@ts-ignore`                         |
+| Bun          | Package manager et runtime (jamais npm ou yarn)                          |
+| Turborepo    | Orchestration du monorepo (build, lint, typecheck en parallele)          |
+| Zod          | Validation des schemas de props pour les templates                       |
+| FFmpeg       | Assemblage des frames en video (gere par Remotion)                       |
 
 ---
 
@@ -73,13 +73,13 @@ la video finale (MP4, WebM, GIF).
 
 ## Formats video standards
 
-| ID | Dimensions | FPS | Usage |
-|----|-----------|-----|-------|
-| widescreen | 1920x1080 | 60 | YouTube, demos, presentations |
-| square | 1080x1080 | 30 | Instagram feed, LinkedIn |
-| vertical | 1080x1920 | 30 | TikTok, Reels, Shorts |
-| ultrawide | 2560x1080 | 60 | Bannieres web, hero sections |
-| thumbnail | 1280x720 | 30 | Miniatures YouTube |
+| ID         | Dimensions | FPS | Usage                         |
+| ---------- | ---------- | --- | ----------------------------- |
+| widescreen | 1920x1080  | 60  | YouTube, demos, presentations |
+| square     | 1080x1080  | 30  | Instagram feed, LinkedIn      |
+| vertical   | 1080x1920  | 30  | TikTok, Reels, Shorts         |
+| ultrawide  | 2560x1080  | 60  | Bannieres web, hero sections  |
+| thumbnail  | 1280x720   | 30  | Miniatures YouTube            |
 
 Chaque template doit supporter au minimum `widescreen` et `vertical`.
 
@@ -110,13 +110,13 @@ Chaque template doit supporter au minimum `widescreen` et `vertical`.
 
 ## Glossaire
 
-| Terme | Definition |
-|-------|-----------|
-| BrandKit / BrandConfig | Objet TypeScript contenant toutes les valeurs de design d'un SaaS |
-| Template | Composant React generique parametre par un BrandConfig |
-| Composition | Assemblage final d'un template avec un brand et des props specifiques |
-| Sequence | Composant Remotion qui controle quand un enfant est visible dans la timeline |
-| Frame | Unite de temps dans Remotion (1 frame = 1 screenshot React) |
-| FPS | Frames par seconde (60 pour widescreen, 30 pour social) |
-| Spring | Fonction d'animation physique (ressort) de Remotion |
-| Interpolate | Fonction de mapping lineaire (ou avec easing) de Remotion |
+| Terme                  | Definition                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| BrandKit / BrandConfig | Objet TypeScript contenant toutes les valeurs de design d'un SaaS            |
+| Template               | Composant React generique parametre par un BrandConfig                       |
+| Composition            | Assemblage final d'un template avec un brand et des props specifiques        |
+| Sequence               | Composant Remotion qui controle quand un enfant est visible dans la timeline |
+| Frame                  | Unite de temps dans Remotion (1 frame = 1 screenshot React)                  |
+| FPS                    | Frames par seconde (60 pour widescreen, 30 pour social)                      |
+| Spring                 | Fonction d'animation physique (ressort) de Remotion                          |
+| Interpolate            | Fonction de mapping lineaire (ou avec easing) de Remotion                    |

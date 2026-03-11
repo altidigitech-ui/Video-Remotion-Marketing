@@ -18,10 +18,7 @@ export const logoRevealSchema = z.object({
 
 export type LogoRevealProps = z.infer<typeof logoRevealSchema>
 
-export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({
-  brand,
-  showTagline = true,
-}) => {
+export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagline = true }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 

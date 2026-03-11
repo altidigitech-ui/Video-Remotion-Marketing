@@ -146,32 +146,9 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
                 gap: brand.spacing.lg,
               }}
             >
-              {features.map((feature, i) => {
-                const featureFrame = useCurrentFrame()
-                const featureOpacity = interpolate(
-                  featureFrame,
-                  [i * 15, i * 15 + 20],
-                  [0, 1],
-                  { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-                )
-
-                return (
-                  <div
-                    key={i}
-                    style={{
-                      opacity: featureOpacity,
-                      color: brand.colors.textSecondary,
-                      fontFamily: brand.typography.fontBody,
-                      fontSize: brand.typography.sizeMd,
-                      padding: `${brand.spacing.sm}px ${brand.spacing.md}px`,
-                      border: `1px solid ${brand.colors.border}`,
-                      borderRadius: brand.spacing.borderRadius,
-                    }}
-                  >
-                    {feature}
-                  </div>
-                )
-              })}
+              {features.map((feature, i) => (
+                <FeatureItem key={i} brand={brand} feature={feature} index={i} />
+              ))}
             </div>
           </AbsoluteFill>
         </Sequence>
@@ -179,29 +156,69 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
 
       {/* CTA */}
       <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
-        <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
-          <div
-            style={{
-              transform: `scale(${spring({
-                frame: useCurrentFrame(),
-                fps,
-                from: 0.8,
-                to: 1,
-                config: brand.motion.springBouncy,
-              })})`,
-              backgroundColor: brand.colors.accent,
-              color: brand.colors.white,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.sizeLg,
-              fontWeight: brand.typography.weightBold,
-              padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-              borderRadius: brand.spacing.borderRadius,
-            }}
-          >
-            {ctaText}
-          </div>
-        </AbsoluteFill>
+        <CTAButton brand={brand} text={ctaText} />
       </Sequence>
+    </AbsoluteFill>
+  )
+}
+
+const FeatureItem: React.FC<{ brand: BrandConfig; feature: string; index: number }> = ({
+  brand,
+  feature,
+  index,
+}) => {
+  const frame = useCurrentFrame()
+
+  const featureOpacity = interpolate(frame, [index * 15, index * 15 + 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  return (
+    <div
+      style={{
+        opacity: featureOpacity,
+        color: brand.colors.textSecondary,
+        fontFamily: brand.typography.fontBody,
+        fontSize: brand.typography.sizeMd,
+        padding: `${brand.spacing.sm}px ${brand.spacing.md}px`,
+        border: `1px solid ${brand.colors.border}`,
+        borderRadius: brand.spacing.borderRadius,
+      }}
+    >
+      {feature}
+    </div>
+  )
+}
+
+const CTAButton: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+
+  const scale = spring({
+    frame,
+    fps,
+    from: 0.8,
+    to: 1,
+    config: brand.motion.springBouncy,
+  })
+
+  return (
+    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          backgroundColor: brand.colors.accent,
+          color: brand.colors.white,
+          fontFamily: brand.typography.fontDisplay,
+          fontSize: brand.typography.sizeLg,
+          fontWeight: brand.typography.weightBold,
+          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
+          borderRadius: brand.spacing.borderRadius,
+        }}
+      >
+        {text}
+      </div>
     </AbsoluteFill>
   )
 }

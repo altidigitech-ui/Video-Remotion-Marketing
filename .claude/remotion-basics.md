@@ -1,4 +1,5 @@
 # .claude/remotion-basics.md
+
 # Skill : Remotion Basics — API Core, Hooks & Patterns Fondamentaux
 
 > **Quand lire ce fichier** : Avant de créer ou modifier tout composant Remotion.
@@ -9,6 +10,7 @@
 ## 1. CONCEPTS FONDAMENTAUX REMOTION
 
 ### Comment Remotion fonctionne
+
 Remotion rend chaque frame **indépendamment** en prenant un screenshot React à chaque frame number.
 
 ```
@@ -22,6 +24,7 @@ Frame N   → React render → screenshot PNG
 ```
 
 **Conséquences critiques :**
+
 - Pas de `setTimeout`, `setInterval`, `Date.now()` → tout doit dépendre de `useCurrentFrame()`
 - Pas de `useState` pour l'état d'animation → les frames sont indépendantes
 - Pas de requêtes réseau dans les composants → tout fetch en dehors, passer en props
@@ -32,6 +35,7 @@ Frame N   → React render → screenshot PNG
 ## 2. HOOKS FONDAMENTAUX
 
 ### `useCurrentFrame()`
+
 Retourne le numéro de frame actuel (commence à 0).
 
 ```typescript
@@ -45,6 +49,7 @@ const MyComp = () => {
 ```
 
 ### `useVideoConfig()`
+
 Retourne la configuration de la composition courante.
 
 ```typescript
@@ -67,6 +72,7 @@ const MyComp = () => {
 ```
 
 ### Calculs de temps courants
+
 ```typescript
 const frame = useCurrentFrame()
 const { fps, durationInFrames } = useVideoConfig()
@@ -89,6 +95,7 @@ const windowProgress = Math.min(1, Math.max(0, (frame - 30) / (120 - 30)))
 ## 3. COMPOSANTS DE LAYOUT
 
 ### `<AbsoluteFill>`
+
 Div qui couvre 100% de la composition (position absolute, top/left/right/bottom = 0).
 **C'est le wrapper de base pour tout composant Remotion.**
 
@@ -111,6 +118,7 @@ const MyComp = () => (
 ```
 
 ### `<Sequence>`
+
 Contrôle **quand** un composant est visible dans la timeline.
 
 ```typescript
@@ -151,6 +159,7 @@ const MyComp = () => (
 ```
 
 ### `<Series>`
+
 Enchaîne des séquences automatiquement sans calculer les offsets.
 
 ```typescript
@@ -173,6 +182,7 @@ const MyComp = () => (
 ```
 
 ### `<Loop>`
+
 Répète un composant en boucle.
 
 ```typescript
@@ -198,6 +208,7 @@ const InfiniteLoop = () => (
 ## 4. COMPOSITION ROOT
 
 ### Définition d'une composition
+
 ```typescript
 import { Composition } from 'remotion'
 import { MyVideo } from './MyVideo'
@@ -238,14 +249,15 @@ export const RemotionRoot: React.FC = () => {
 ```
 
 ### Calculs de durée utiles
+
 ```typescript
 // Convertir secondes → frames
 const secondsToFrames = (seconds: number, fps: number) => Math.round(seconds * fps)
 
 // Exemples
-const INTRO_DURATION = secondsToFrames(2, 60)    // 120 frames
-const MAIN_DURATION  = secondsToFrames(5, 60)    // 300 frames
-const OUTRO_DURATION = secondsToFrames(2, 60)    // 120 frames
+const INTRO_DURATION = secondsToFrames(2, 60) // 120 frames
+const MAIN_DURATION = secondsToFrames(5, 60) // 300 frames
+const OUTRO_DURATION = secondsToFrames(2, 60) // 120 frames
 const TOTAL_DURATION = INTRO_DURATION + MAIN_DURATION + OUTRO_DURATION // 540 frames = 9s
 ```
 
@@ -254,6 +266,7 @@ const TOTAL_DURATION = INTRO_DURATION + MAIN_DURATION + OUTRO_DURATION // 540 fr
 ## 5. MÉDIAS : VIDÉO, IMAGE, AUDIO
 
 ### `<OffthreadVideo>` (préféré à `<Video>`)
+
 Pour intégrer des fichiers vidéo. `OffthreadVideo` est plus performant au rendu.
 
 ```typescript
@@ -275,6 +288,7 @@ const MyComp = () => (
 ```
 
 ### `<Img>` (préféré à `<img>`)
+
 Remotion attend que l'image soit chargée avant de rendre la frame.
 
 ```typescript
@@ -289,6 +303,7 @@ const MyComp = () => (
 ```
 
 ### `<Audio>`
+
 Pour les musiques de fond et effets sonores.
 
 ```typescript
@@ -318,6 +333,7 @@ const MyComp = () => (
 ```
 
 ### `staticFile()`
+
 Résout le chemin vers le dossier `public/` du projet.
 
 ```typescript
@@ -333,6 +349,7 @@ import { staticFile } from 'remotion'
 ## 6. FONTS
 
 ### Google Fonts (recommandé)
+
 ```typescript
 import { loadFont } from '@remotion/google-fonts/Inter'
 
@@ -350,6 +367,7 @@ const MyComp = () => (
 ```
 
 ### Fonts locales (dans public/fonts/)
+
 ```typescript
 // Dans un fichier de setup, ex: packages/brand/src/fonts.ts
 import { continueRender, delayRender, staticFile } from 'remotion'
@@ -359,7 +377,7 @@ export const loadLocalFont = () => {
 
   const font = new FontFace(
     'ClashDisplay',
-    `url(${staticFile('fonts/ClashDisplay-Variable.woff2')}) format('woff2')`
+    `url(${staticFile('fonts/ClashDisplay-Variable.woff2')}) format('woff2')`,
   )
 
   font.load().then(() => {
@@ -464,6 +482,7 @@ const MyComp = () => {
 ## 10. EVENTSOURCE & INPUT PROPS
 
 ### Passer des données dynamiques à une composition
+
 ```typescript
 // Définir le schema des props avec Zod (obligatoire pour Lambda)
 import { z } from 'zod'
@@ -549,6 +568,7 @@ packages/core/
 ```
 
 ### Barrel exports (pattern obligatoire)
+
 ```typescript
 // packages/core/src/components/index.ts
 export { HeroTitle } from './HeroTitle'
@@ -570,11 +590,11 @@ export * from './hooks'
 // remotion.config.ts (à la racine de chaque projet Remotion)
 import { Config } from '@remotion/cli/config'
 
-Config.setVideoImageFormat('jpeg')          // jpeg plus rapide que png en preview
-Config.setOverwriteOutput(true)             // Écraser les renders existants
-Config.setPixelFormat('yuv420p')            // Compatible avec la plupart des players
-Config.setConcurrency(4)                    // Threads parallèles pour le rendu
-Config.setChromiumOpenGlRenderer('angle')  // Meilleur rendu WebGL
+Config.setVideoImageFormat('jpeg') // jpeg plus rapide que png en preview
+Config.setOverwriteOutput(true) // Écraser les renders existants
+Config.setPixelFormat('yuv420p') // Compatible avec la plupart des players
+Config.setConcurrency(4) // Threads parallèles pour le rendu
+Config.setChromiumOpenGlRenderer('angle') // Meilleur rendu WebGL
 
 // Pour les compositions avec médias externes
 Config.setDelayRenderTimeoutInMilliseconds(30000) // 30s timeout
@@ -585,6 +605,7 @@ Config.setDelayRenderTimeoutInMilliseconds(30000) // 30s timeout
 ## 14. DEBUGGING TIPS
 
 ### Afficher la frame courante (dev only)
+
 ```typescript
 const FrameDebug: React.FC = () => {
   const frame = useCurrentFrame()
@@ -611,6 +632,7 @@ const FrameDebug: React.FC = () => {
 ```
 
 ### Inspecter les valeurs d'animation
+
 ```typescript
 // Wrapper pour débugger les valeurs calculées
 const debugValue = (label: string, value: number) => {
@@ -621,12 +643,16 @@ const debugValue = (label: string, value: number) => {
 }
 
 // Usage
-const opacity = debugValue('opacity', interpolate(frame, [0, 30], [0, 1], {
-  extrapolateRight: 'clamp'
-}))
+const opacity = debugValue(
+  'opacity',
+  interpolate(frame, [0, 30], [0, 1], {
+    extrapolateRight: 'clamp',
+  }),
+)
 ```
 
 ### Studio Remotion — raccourcis clavier
+
 ```
 Space          → Play/Pause
 ← / →          → Frame précédente/suivante
@@ -639,16 +665,16 @@ J / K / L      → Vitesse de lecture (comme Premiere Pro)
 
 ## 15. ERREURS FRÉQUENTES ET SOLUTIONS
 
-| Erreur | Cause | Solution |
-|--------|-------|----------|
-| `useCurrentFrame called outside composition` | Hook appelé hors d'une composition | Vérifier que le composant est bien rendu dans une `<Composition>` |
-| `Component did not render in time` | `delayRender` jamais résolu | Vérifier que `continueRender` est appelé, même en cas d'erreur |
-| Video flickers on render | Asset non préchargé | Utiliser `prefetch()` ou `<Preload>` |
-| `NaN` dans les animations | Division par zéro dans `interpolate` | Vérifier que `durationInFrames > 0` |
-| Audio out of sync | FPS mismatch | Vérifier que le FPS de la composition = FPS du rendu |
-| White flash between sequences | Pas de background color | Ajouter `backgroundColor` sur l'`AbsoluteFill` racine |
+| Erreur                                       | Cause                                | Solution                                                          |
+| -------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------- |
+| `useCurrentFrame called outside composition` | Hook appelé hors d'une composition   | Vérifier que le composant est bien rendu dans une `<Composition>` |
+| `Component did not render in time`           | `delayRender` jamais résolu          | Vérifier que `continueRender` est appelé, même en cas d'erreur    |
+| Video flickers on render                     | Asset non préchargé                  | Utiliser `prefetch()` ou `<Preload>`                              |
+| `NaN` dans les animations                    | Division par zéro dans `interpolate` | Vérifier que `durationInFrames > 0`                               |
+| Audio out of sync                            | FPS mismatch                         | Vérifier que le FPS de la composition = FPS du rendu              |
+| White flash between sequences                | Pas de background color              | Ajouter `backgroundColor` sur l'`AbsoluteFill` racine             |
 
 ---
 
-*Skill : remotion-basics.md — Altidigitech Video Templates*
-*Lire ensuite : `.claude/remotion-animations.md` pour les animations avancées*
+_Skill : remotion-basics.md — Altidigitech Video Templates_
+_Lire ensuite : `.claude/remotion-animations.md` pour les animations avancées_

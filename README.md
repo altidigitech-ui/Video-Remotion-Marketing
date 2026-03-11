@@ -35,6 +35,7 @@ bun new:saas golddesk
 ```
 
 Then:
+
 1. Fill the brand config in `packages/brand/src/golddesk/config.ts`
 2. Add assets to `projects/golddesk/public/`
 3. Create compositions in `projects/golddesk/src/root.tsx`

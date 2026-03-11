@@ -20,7 +20,10 @@ export const Typewriter: React.FC<TypewriterProps> = ({
   const frame = useCurrentFrame()
   const resolvedFontSize = fontSize ?? brand.typography.sizeLg
 
-  const charsToShow = Math.min(text.length, Math.max(0, Math.floor((frame - startAt) * charsPerFrame)))
+  const charsToShow = Math.min(
+    text.length,
+    Math.max(0, Math.floor((frame - startAt) * charsPerFrame)),
+  )
   const displayText = text.slice(0, charsToShow)
 
   const cursorVisible = charsToShow < text.length ? Math.floor(frame / 8) % 2 === 0 : false

@@ -1,14 +1,20 @@
 {
   "name": "altidigitech-video-templates",
   "private": true,
-  "workspaces": ["packages/*", "projects/*"],
+  "packageManager": "bun@1.2.9",
+  "workspaces": [
+    "packages/*",
+    "projects/*"
+  ],
   "scripts": {
     "dev": "remotion studio",
+    "dev:leak-detector": "remotion studio --props='{\"saas\":\"leak-detector\"}' projects/leak-detector/src/index.ts",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write .",
     "render": "bun scripts/render-formats.ts",
+    "render:leak-detector": "bun scripts/render-formats.ts --saas=leak-detector",
     "render:all": "bun scripts/render-all.ts",
     "new:saas": "bun scripts/new-saas.ts"
   },

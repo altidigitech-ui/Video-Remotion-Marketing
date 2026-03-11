@@ -10,12 +10,7 @@ export type {
   BrandConfig,
 } from './types'
 
-export {
-  baseColors,
-  baseTypography,
-  baseSpacing,
-  baseMotion,
-  baseBrand,
-} from './base'
+export { baseColors, baseTypography, baseSpacing, baseMotion, baseBrand } from './base'
 
 export { templateBrand } from './_template/config'
+export { leakDetectorBrand } from './leak-detector/config'

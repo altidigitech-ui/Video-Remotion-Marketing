@@ -1,4 +1,5 @@
 # .claude/new-template.md
+
 # Skill : Créer un Nouveau Template Vidéo
 
 > **Quand lire ce fichier** : À chaque fois que tu dois créer un nouveau
@@ -27,18 +28,18 @@ COMPOSITION = Assemblage final d'un ou plusieurs templates
 
 Avant de créer un nouveau template, vérifier si l'un de ceux-ci couvre le besoin :
 
-| Template ID | Description | Formats |
-|-------------|-------------|---------|
-| `product-demo` | Démo produit avec features animées | 16:9, 9:16 |
-| `feature-highlight` | Mise en avant d'une feature unique | 16:9, 1:1 |
-| `launch-announcement` | Annonce de lancement de produit | 16:9, 9:16 |
-| `social-short` | Contenu court pour réseaux sociaux | 9:16, 1:1 |
-| `logo-reveal` | Animation de logo avec tagline | 16:9 |
-| `stats-showcase` | Chiffres et métriques animés | 16:9, 1:1 |
-| `testimonial` | Citation client / témoignage | 16:9, 1:1, 9:16 |
-| `how-it-works` | Explication en 3 étapes | 16:9 |
-| `pricing-reveal` | Présentation des plans tarifaires | 16:9 |
-| `team-intro` | Présentation de l'équipe | 16:9 |
+| Template ID           | Description                        | Formats         |
+| --------------------- | ---------------------------------- | --------------- |
+| `product-demo`        | Démo produit avec features animées | 16:9, 9:16      |
+| `feature-highlight`   | Mise en avant d'une feature unique | 16:9, 1:1       |
+| `launch-announcement` | Annonce de lancement de produit    | 16:9, 9:16      |
+| `social-short`        | Contenu court pour réseaux sociaux | 9:16, 1:1       |
+| `logo-reveal`         | Animation de logo avec tagline     | 16:9            |
+| `stats-showcase`      | Chiffres et métriques animés       | 16:9, 1:1       |
+| `testimonial`         | Citation client / témoignage       | 16:9, 1:1, 9:16 |
+| `how-it-works`        | Explication en 3 étapes            | 16:9            |
+| `pricing-reveal`      | Présentation des plans tarifaires  | 16:9            |
+| `team-intro`          | Présentation de l'équipe           | 16:9            |
 
 > Si le template existe → aller directement à la **Section 6** (créer une composition).
 > Si le template n'existe pas → suivre la **Section 3** (créer un nouveau template).
@@ -48,6 +49,7 @@ Avant de créer un nouveau template, vérifier si l'un de ceux-ci couvre le beso
 ## 3. CRÉER UN NOUVEAU TEMPLATE — ÉTAPE PAR ÉTAPE
 
 ### Étape 1 — Définir le template
+
 Avant d'écrire du code, répondre à ces questions :
 
 ```
@@ -86,13 +88,18 @@ export const pricingRevealSchema = z.object({
   // Contenu
   headline: z.string().default('Simple, transparent pricing'),
   subline: z.string().optional(),
-  plans: z.array(z.object({
-    name: z.string(),
-    price: z.string(),
-    period: z.string().default('/month'),
-    features: z.array(z.string()),
-    highlighted: z.boolean().default(false),
-  })).min(1).max(4),
+  plans: z
+    .array(
+      z.object({
+        name: z.string(),
+        price: z.string(),
+        period: z.string().default('/month'),
+        features: z.array(z.string()),
+        highlighted: z.boolean().default(false),
+      }),
+    )
+    .min(1)
+    .max(4),
   ctaText: z.string().default('Get started'),
 
   // Timing (en frames)
@@ -526,6 +533,7 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 # CLAUDE.md — projects/[saas-name]
 
 ## Ce SaaS
+
 - **Nom** : [Nom du SaaS]
 - **Tagline** : [Tagline]
 - **Description** : [Description courte]
@@ -533,11 +541,13 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 - **Cible** : [B2B / B2C / Développeurs / etc.]
 
 ## Brand
+
 - **Couleur principale** : [ex: #F59E0B]
 - **Style** : [ex: Premium, sombre, professionnel]
 - **Tone of voice** : [ex: Confiant, expert, accessible]
 
 ## Assets disponibles
+
 - [ ] logo.svg
 - [ ] logo.png
 - [ ] logo-white.svg
@@ -545,6 +555,7 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 - [ ] sounds/background.mp3
 
 ## Compositions à créer
+
 - [ ] [saas-name]-product-demo (16:9, 10s)
 - [ ] [saas-name]-launch (16:9, 15s)
 - [ ] [saas-name]-social-vertical (9:16, 15s)
@@ -552,7 +563,9 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 - [ ] [saas-name]-logo-reveal (16:9, 3s)
 
 ## Notes spécifiques
+
 <!-- Claude Code : lire cette section avant de créer les compositions -->
+
 - [Ajouter toute instruction spécifique à ce SaaS]
 - [Particularités visuelles ou de brand]
 - [Restrictions ou éléments obligatoires]
@@ -563,6 +576,7 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 ## 7. CHECKLIST CRÉATION TEMPLATE
 
 ### Nouveau template (`packages/templates/`)
+
 - [ ] Schema Zod défini avec toutes les props typées
 - [ ] Props `brand: BrandConfig` toujours en premier
 - [ ] Durées de sections calculées depuis les props (pas hardcodées)
@@ -573,6 +587,7 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 - [ ] Testé avec au moins 2 BrandKits différents
 
 ### Nouvelle composition (`projects/[saas]/`)
+
 - [ ] ID de composition au format `[saas-name]-[template-name]`
 - [ ] `durationInFrames` calculé via `sec()` (lisible en secondes)
 - [ ] `defaultProps` remplis avec des vraies valeurs (pas de "Lorem ipsum")
@@ -582,6 +597,7 @@ Chaque projet SaaS a son propre `CLAUDE.md` avec son contexte.
 - [ ] Testé dans le studio Remotion (`bun dev:[saas-name]`)
 
 ### Nouveau projet SaaS (`projects/[saas-name]/`)
+
 - [ ] Dossier créé depuis `_template` via `bun new:saas [nom]`
 - [ ] `BrandConfig` rempli dans `packages/brand/src/[saas-name]/config.ts`
 - [ ] Exports ajoutés dans `packages/brand/src/index.ts`
@@ -629,6 +645,6 @@ const MyTemplate: React.FC<{ brand: BrandConfig }> = ({ brand }) => {}
 
 ---
 
-*Skill : new-template.md — Altidigitech Video Templates*
-*Tu as maintenant tous les skills nécessaires pour travailler sur ce repo.*
-*En cas de doute → relire `CLAUDE.md` racine.*
+_Skill : new-template.md — Altidigitech Video Templates_
+_Tu as maintenant tous les skills nécessaires pour travailler sur ce repo._
+_En cas de doute → relire `CLAUDE.md` racine._

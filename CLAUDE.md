@@ -1,4 +1,5 @@
 # CLAUDE.md
+
 # Altidigitech Video Templates — Instructions pour Claude Code
 
 > **Ce fichier est lu automatiquement par Claude Code à chaque session.**
@@ -45,12 +46,14 @@ Framework  : Remotion v4 + React 18 + TypeScript 5
 ## 2. COMMANDES ESSENTIELLES
 
 ### Setup initial
+
 ```bash
 bun install                          # Installer toutes les dépendances
 bun run build                        # Build tous les packages
 ```
 
 ### Développement
+
 ```bash
 bun dev                              # Studio Remotion (preview live)
 bun dev:[saas]                       # Studio filtré sur un SaaS
@@ -58,6 +61,7 @@ bun dev:[saas]                       # Studio filtré sur un SaaS
 ```
 
 ### Linting & typage
+
 ```bash
 bun lint                             # ESLint sur tout le repo
 bun typecheck                        # TypeScript check sans emit
@@ -65,6 +69,7 @@ bun format                           # Prettier sur tout le repo
 ```
 
 ### Rendu vidéo
+
 ```bash
 bun render [composition-id]          # Rendre une composition
 bun render:[saas-name]               # Toutes les compositions [SaaS Name]
@@ -73,6 +78,7 @@ bun render:lambda [composition-id]   # Rendu AWS Lambda
 ```
 
 ### Gestion des packages (Turborepo)
+
 ```bash
 bun turbo build                      # Build en parallèle
 bun turbo test                       # Tests en parallèle
@@ -80,6 +86,7 @@ bun turbo lint                       # Lint en parallèle
 ```
 
 ### Ajouter un nouveau SaaS
+
 ```bash
 bun new:saas [nom]                   # Scaffold un nouveau projet SaaS
 # ex: bun new:saas golddesk
@@ -133,6 +140,7 @@ altidigitech-video-templates/
 ## 4. RÈGLES ABSOLUES (ne jamais enfreindre)
 
 ### TypeScript
+
 ```typescript
 // ❌ INTERDIT
 const data: any = props
@@ -145,6 +153,7 @@ const value = obj?.field ?? defaultValue
 ```
 
 ### Couleurs et design tokens
+
 ```typescript
 // ❌ INTERDIT — jamais de valeurs hardcodées
 style={{ color: '#6366F1', fontFamily: 'Inter' }}
@@ -155,11 +164,12 @@ style={{ color: brand.colors.accent, fontFamily: brand.fonts.display }}
 ```
 
 ### Animations et timing
+
 ```typescript
 // ❌ INTERDIT — jamais de temps réel dans les compositions
 const now = Date.now()
 setTimeout(() => {}, 1000)
-useEffect(() => {}, [])  // Jamais dans une composition Remotion
+useEffect(() => {}, []) // Jamais dans une composition Remotion
 
 // ✅ OBLIGATOIRE — toujours basé sur les frames
 const frame = useCurrentFrame()
@@ -168,6 +178,7 @@ const progress = frame / durationInFrames
 ```
 
 ### Imports
+
 ```typescript
 // ❌ INTERDIT — imports relatifs profonds
 import { something } from '../../../packages/core/components/Text'
@@ -177,6 +188,7 @@ import { something } from '@altidigitech/core'
 ```
 
 ### Exports
+
 ```typescript
 // ❌ INTERDIT — export default sur les composants
 export default function MyComponent() {}
@@ -192,18 +204,18 @@ export type { MyComponentProps }
 
 ## 5. CONVENTIONS DE NOMMAGE
 
-| Contexte | Convention | Exemple |
-|----------|-----------|---------|
-| Composants React | PascalCase | `ProductDemo`, `HeroTitle` |
-| Fichiers composants | PascalCase | `ProductDemo.tsx` |
-| Types / Interfaces | PascalCase + suffixe | `BrandConfig`, `TemplateProps` |
-| Variables / fonctions | camelCase | `useSpringValue`, `renderConfig` |
-| Constantes globales | UPPER_SNAKE_CASE | `DEFAULT_FPS`, `MAX_DURATION` |
-| Fichiers de config | kebab-case | `brand-config.ts`, `render-config.ts` |
-| Dossiers | kebab-case | `product-demo/`, `brand-kit/` |
-| Compositions Remotion | PascalCase + "Composition" | `MySaasDemoComposition` |
-| Templates | PascalCase + "Template" | `ProductDemoTemplate` |
-| IDs de composition | kebab-case | `[saas-name]-product-demo` |
+| Contexte              | Convention                 | Exemple                               |
+| --------------------- | -------------------------- | ------------------------------------- |
+| Composants React      | PascalCase                 | `ProductDemo`, `HeroTitle`            |
+| Fichiers composants   | PascalCase                 | `ProductDemo.tsx`                     |
+| Types / Interfaces    | PascalCase + suffixe       | `BrandConfig`, `TemplateProps`        |
+| Variables / fonctions | camelCase                  | `useSpringValue`, `renderConfig`      |
+| Constantes globales   | UPPER_SNAKE_CASE           | `DEFAULT_FPS`, `MAX_DURATION`         |
+| Fichiers de config    | kebab-case                 | `brand-config.ts`, `render-config.ts` |
+| Dossiers              | kebab-case                 | `product-demo/`, `brand-kit/`         |
+| Compositions Remotion | PascalCase + "Composition" | `MySaasDemoComposition`               |
+| Templates             | PascalCase + "Template"    | `ProductDemoTemplate`                 |
+| IDs de composition    | kebab-case                 | `[saas-name]-product-demo`            |
 
 ---
 
@@ -365,13 +377,13 @@ export const RemotionRoot: React.FC = () => {
 
 ## 9. FORMATS VIDÉO STANDARDS
 
-| ID Format | Width | Height | FPS | Usage |
-|-----------|-------|--------|-----|-------|
-| `widescreen` | 1920 | 1080 | 60 | YouTube, démos, présentations |
-| `square` | 1080 | 1080 | 30 | Instagram feed, LinkedIn |
-| `vertical` | 1080 | 1920 | 30 | TikTok, Reels, Shorts |
-| `ultrawide` | 2560 | 1080 | 60 | Bannières web, hero sections |
-| `thumbnail` | 1280 | 720 | 30 | Miniatures YouTube |
+| ID Format    | Width | Height | FPS | Usage                         |
+| ------------ | ----- | ------ | --- | ----------------------------- |
+| `widescreen` | 1920  | 1080   | 60  | YouTube, démos, présentations |
+| `square`     | 1080  | 1080   | 30  | Instagram feed, LinkedIn      |
+| `vertical`   | 1080  | 1920   | 30  | TikTok, Reels, Shorts         |
+| `ultrawide`  | 2560  | 1080   | 60  | Bannières web, hero sections  |
+| `thumbnail`  | 1280  | 720    | 30  | Miniatures YouTube            |
 
 > Chaque template doit supporter au minimum `widescreen` et `vertical`.
 > Utiliser les constantes depuis `packages/utils/src/formats.ts`.
@@ -381,6 +393,7 @@ export const RemotionRoot: React.FC = () => {
 ## 10. GESTION DES ASSETS
 
 ### Où placer les assets
+
 ```
 public/
 ├── fonts/           ← Fonts custom non-Google (woff2 uniquement)
@@ -397,6 +410,7 @@ projects/[saas]/public/
 ```
 
 ### Règles assets
+
 - **Logos** : toujours fournir SVG + PNG
 - **Screenshots** : résolution min 1920×1080, format PNG
 - **Sons** : MP3 128kbps minimum, normalisation -14 LUFS
@@ -411,6 +425,7 @@ projects/[saas]/public/
 ## 11. DÉPENDANCES AUTORISÉES
 
 ### Remotion ecosystem (toujours préférer)
+
 ```json
 {
   "remotion": "latest",
@@ -429,6 +444,7 @@ projects/[saas]/public/
 ```
 
 ### Utilitaires approuvés
+
 ```json
 {
   "react": "^18.0.0",
@@ -440,6 +456,7 @@ projects/[saas]/public/
 ```
 
 ### ❌ Ne jamais installer sans validation
+
 - Librairies d'animation alternatives à Remotion (Framer Motion, GSAP, etc.)
 - Librairies de state management (Redux, Zustand) — inutile dans des compositions
 - Toute librairie qui fait des requêtes réseau dans les composants
@@ -449,6 +466,7 @@ projects/[saas]/public/
 ## 12. ERREURS COURANTES À ÉVITER
 
 ### Remotion-specific
+
 ```typescript
 // ❌ Les hooks Remotion ne fonctionnent que dans les compositions
 // Ne JAMAIS appeler hors d'une composition Remotion
@@ -472,6 +490,7 @@ const [count, setCount] = useState(0) // Comportement imprévisible au rendu
 ```
 
 ### TypeScript
+
 ```typescript
 // ❌ Props optionnelles sans valeur par défaut
 type Props = { color?: string }
@@ -519,6 +538,7 @@ Avant tout commit, vérifier :
 ## 15. CONTEXTE SESSION
 
 À chaque nouvelle session Claude Code, rappelle-toi :
+
 - Tu travailles sur le repo de **templates vidéo marketing** d'Altidigitech
 - L'objectif est de produire des **vidéos marketing professionnelles** pour des SaaS
 - **Remotion** est le framework de rendu — chaque frame est un composant React
@@ -528,6 +548,6 @@ Avant tout commit, vérifier :
 
 ---
 
-*Ce fichier est la source de vérité pour Claude Code.*
-*En cas de conflit avec un autre fichier, ce CLAUDE.md racine a priorité.*
-*Dernière mise à jour : Mars 2026 — Altidigitech*
+_Ce fichier est la source de vérité pour Claude Code._
+_En cas de conflit avec un autre fichier, ce CLAUDE.md racine a priorité._
+_Dernière mise à jour : Mars 2026 — Altidigitech_
