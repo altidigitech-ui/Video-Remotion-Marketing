@@ -18,3 +18,5 @@ export type { AnimatedCounterProps } from './AnimatedCounter'
 
 export { Typewriter } from './Typewriter'
 export type { TypewriterProps } from './Typewriter'
+
+export { LDBackground, GlowText, GlowButton, GlassCard, AIBadge, LogoOverlay } from './LDBackground'

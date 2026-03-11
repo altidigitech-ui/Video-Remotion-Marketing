@@ -10,6 +10,7 @@
     "lint": "eslint src/ --ext .ts,.tsx"
   },
   "dependencies": {
-    "@altidigitech/brand": "workspace:*"
+    "@altidigitech/brand": "workspace:*",
+    "@altidigitech/core": "workspace:*"
   }
 }

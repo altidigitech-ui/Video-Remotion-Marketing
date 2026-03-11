@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   AbsoluteFill,
-  Sequence,
   interpolate,
   spring,
   useCurrentFrame,
@@ -9,6 +8,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LDBackground, GlowText, GlowButton, GlassCard, AIBadge, LogoOverlay } from '@altidigitech/core'
 
 export const launchAnnouncementSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -32,6 +32,8 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
   const frame = useCurrentFrame()
   const { fps, durationInFrames } = useVideoConfig()
 
+  // ── Animations ──────────────────────────────────────────────────────────────
+
   const announcingOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -42,183 +44,168 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
     fps,
     from: 0.85,
     to: 1,
-    config: brand.motion.springCinematic,
+    config: brand.motion.springBouncy,
   })
 
-  const headlineOpacity = interpolate(frame, [20, 50], [0, 1], {
+  const headlineOpacity = interpolate(frame, [20, 45], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
-      {/* "Announcing" label */}
-      <Sequence from={0} durationInFrames={durationInFrames} name="Announcing">
-        <AbsoluteFill
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            gap: brand.spacing.md,
-            padding: brand.spacing.paddingScreen,
-          }}
-        >
-          <div
-            style={{
-              opacity: announcingOpacity,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.sizeMd,
-              fontWeight: brand.typography.weightSemibold,
-              color: brand.colors.accent,
-              letterSpacing: `${brand.typography.trackingWidest}em`,
-              textTransform: 'uppercase',
-            }}
-          >
-            Announcing
-          </div>
-
-          <div
-            style={{
-              opacity: headlineOpacity,
-              transform: `scale(${headlineScale})`,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.size5xl,
-              fontWeight: brand.typography.weightBold,
-              color: brand.colors.textPrimary,
-              letterSpacing: `${brand.typography.trackingTight}em`,
-              lineHeight: brand.typography.lineHeightTight,
-              textAlign: 'center',
-            }}
-          >
-            {headline}
-          </div>
-
-          {subline && (
-            <div
-              style={{
-                opacity: interpolate(frame, [40, 70], [0, 1], {
-                  extrapolateLeft: 'clamp',
-                  extrapolateRight: 'clamp',
-                }),
-                fontFamily: brand.typography.fontBody,
-                fontSize: brand.typography.sizeLg,
-                color: brand.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              {subline}
-            </div>
-          )}
-
-          {launchDate && (
-            <div
-              style={{
-                opacity: interpolate(frame, [60, 90], [0, 1], {
-                  extrapolateLeft: 'clamp',
-                  extrapolateRight: 'clamp',
-                }),
-                fontFamily: brand.typography.fontMono,
-                fontSize: brand.typography.sizeLg,
-                color: brand.colors.accent,
-                marginTop: brand.spacing.sm,
-              }}
-            >
-              {launchDate}
-            </div>
-          )}
-        </AbsoluteFill>
-      </Sequence>
-
-      {/* Features */}
-      {features && features.length > 0 && (
-        <Sequence from={90} durationInFrames={durationInFrames - 180} name="Features">
-          <AbsoluteFill
-            style={{
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              paddingBottom: 200,
-              padding: brand.spacing.paddingScreen,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                gap: brand.spacing.lg,
-              }}
-            >
-              {features.map((feature, i) => (
-                <FeatureItem key={i} brand={brand} feature={feature} index={i} />
-              ))}
-            </div>
-          </AbsoluteFill>
-        </Sequence>
-      )}
-
-      {/* CTA */}
-      <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
-        <CTAButton brand={brand} text={ctaText} />
-      </Sequence>
-    </AbsoluteFill>
-  )
-}
-
-const FeatureItem: React.FC<{ brand: BrandConfig; feature: string; index: number }> = ({
-  brand,
-  feature,
-  index,
-}) => {
-  const frame = useCurrentFrame()
-
-  const featureOpacity = interpolate(frame, [index * 15, index * 15 + 20], [0, 1], {
+  const sublineOpacity = interpolate(frame, [40, 65], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  return (
-    <div
-      style={{
-        opacity: featureOpacity,
-        color: brand.colors.textSecondary,
-        fontFamily: brand.typography.fontBody,
-        fontSize: brand.typography.sizeMd,
-        padding: `${brand.spacing.sm}px ${brand.spacing.md}px`,
-        border: `1px solid ${brand.colors.border}`,
-        borderRadius: brand.spacing.borderRadius,
-      }}
-    >
-      {feature}
-    </div>
-  )
-}
+  const dateOpacity = interpolate(frame, [60, 85], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
-const CTAButton: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
-  const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
-
-  const scale = spring({
-    frame,
+  const ctaStart = durationInFrames - 90
+  const ctaScale = spring({
+    frame: frame - ctaStart,
     fps,
     from: 0.8,
     to: 1,
     config: brand.motion.springBouncy,
   })
+  const ctaOpacity = interpolate(frame, [ctaStart, ctaStart + 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
   return (
-    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
-      <div
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
+      <AbsoluteFill
         style={{
-          transform: `scale(${scale})`,
-          backgroundColor: brand.colors.accent,
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadius,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: 20,
+          padding: 80,
         }}
       >
-        {text}
-      </div>
+        {/* "ANNOUNCING" label */}
+        <div style={{ opacity: announcingOpacity }}>
+          <AIBadge frame={frame} />
+        </div>
+
+        {/* Headline */}
+        <div
+          style={{
+            opacity: headlineOpacity,
+            transform: `scale(${headlineScale})`,
+          }}
+        >
+          <GlowText brand={brand} size={72}>
+            {headline}
+          </GlowText>
+        </div>
+
+        {/* Subline */}
+        {subline && (
+          <div
+            style={{
+              opacity: sublineOpacity,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 24,
+              color: '#94A3B8',
+              textAlign: 'center',
+              maxWidth: 700,
+            }}
+          >
+            {subline}
+          </div>
+        )}
+
+        {/* Launch date */}
+        {launchDate && (
+          <div
+            style={{
+              opacity: dateOpacity,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 22,
+              color: '#F59E0B',
+            }}
+          >
+            {launchDate}
+          </div>
+        )}
+
+        {/* Feature pills */}
+        {features && features.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              gap: 16,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              marginTop: 16,
+            }}
+          >
+            {features.map((feature, i) => {
+              const featureDelay = 90 + i * 12
+              const featureOpacity = interpolate(
+                frame,
+                [featureDelay, featureDelay + 18],
+                [0, 1],
+                { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+              )
+              const featureScale = spring({
+                frame: frame - featureDelay,
+                fps,
+                from: 0.85,
+                to: 1,
+                config: brand.motion.springBouncy,
+              })
+
+              return (
+                <div
+                  key={i}
+                  style={{
+                    opacity: featureOpacity,
+                    transform: `scale(${featureScale})`,
+                  }}
+                >
+                  <GlassCard brand={brand}>
+                    <div
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 18,
+                        color: '#CBD5E1',
+                      }}
+                    >
+                      {feature}
+                    </div>
+                  </GlassCard>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </AbsoluteFill>
+
+      {/* CTA */}
+      {frame >= ctaStart && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 80,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            opacity: ctaOpacity,
+          }}
+        >
+          <GlowButton text={ctaText} brand={brand} scale={ctaScale} />
+        </div>
+      )}
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

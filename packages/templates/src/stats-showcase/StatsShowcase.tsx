@@ -2,7 +2,6 @@ import React from 'react'
 import {
   AbsoluteFill,
   Easing,
-  Sequence,
   interpolate,
   spring,
   useCurrentFrame,
@@ -10,6 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LDBackground, GlowText, GlassCard, LogoOverlay } from '@altidigitech/core'
 
 const statSchema = z.object({
   value: z.number(),
@@ -26,155 +26,151 @@ export const statsShowcaseSchema = z.object({
 
 export type StatsShowcaseProps = z.infer<typeof statsShowcaseSchema>
 
-export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({ brand, headline, stats }) => {
-  const { durationInFrames } = useVideoConfig()
-
-  return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
-      {/* Headline */}
-      {headline && (
-        <Sequence from={0} durationInFrames={durationInFrames} name="Headline">
-          <HeadlineSection brand={brand} text={headline} />
-        </Sequence>
-      )}
-
-      {/* Stats */}
-      <Sequence from={headline ? 45 : 0} durationInFrames={durationInFrames} name="Stats">
-        <StatsGrid brand={brand} stats={stats} hasHeadline={!!headline} />
-      </Sequence>
-    </AbsoluteFill>
-  )
-}
-
-const HeadlineSection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
+export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
+  brand,
+  headline,
+  stats,
+}) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
-  const opacity = interpolate(frame, [0, 30], [0, 1], {
+  const headlineOpacity = interpolate(frame, [0, 30], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  const translateY = spring({
+  const headlineY = spring({
     frame,
     fps,
     from: 30,
     to: 0,
-    config: brand.motion.springSmooth,
+    config: brand.motion.springBouncy,
   })
 
   return (
-    <AbsoluteFill
-      style={{
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: brand.spacing.paddingSection,
-      }}
-    >
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
+      {/* Headline */}
+      {headline && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 100,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            opacity: headlineOpacity,
+            transform: `translateY(${headlineY}px)`,
+          }}
+        >
+          <GlowText brand={brand} size={48}>
+            {headline}
+          </GlowText>
+        </div>
+      )}
+
+      {/* Stats grid */}
       <div
         style={{
-          opacity,
-          transform: `translateY(${translateY}px)`,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.size3xl,
-          fontWeight: brand.typography.weightBold,
-          color: brand.colors.textPrimary,
-          letterSpacing: `${brand.typography.trackingTight}em`,
+          position: 'absolute',
+          top: headline ? 240 : 0,
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 32,
+          padding: '0 80px',
         }}
       >
-        {text}
+        {stats.map((stat, i) => {
+          const staggerDelay = (headline ? 45 : 0) + i * 20
+
+          const cardScale = spring({
+            frame: frame - staggerDelay,
+            fps,
+            from: 0.8,
+            to: 1,
+            config: brand.motion.springBouncy,
+          })
+
+          const cardOpacity = interpolate(
+            frame,
+            [staggerDelay, staggerDelay + 20],
+            [0, 1],
+            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+          )
+
+          const counterProgress = interpolate(
+            frame,
+            [staggerDelay + 10, staggerDelay + 100],
+            [0, 1],
+            {
+              easing: Easing.out(Easing.ease),
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+            },
+          )
+
+          const displayValue =
+            stat.value % 1 !== 0
+              ? (stat.value * counterProgress).toFixed(1)
+              : Math.round(stat.value * counterProgress).toLocaleString()
+
+          return (
+            <div
+              key={i}
+              style={{
+                opacity: cardOpacity,
+                transform: `scale(${cardScale})`,
+                flex: 1,
+                maxWidth: 280,
+              }}
+            >
+              <GlassCard brand={brand} glow>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: 80,
+                      fontWeight: 800,
+                      color: '#F59E0B',
+                      fontVariantNumeric: 'tabular-nums',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {stat.prefix}
+                    {displayValue}
+                    {stat.suffix}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: 18,
+                      color: '#94A3B8',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {stat.label}
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+          )
+        })}
       </div>
-    </AbsoluteFill>
-  )
-}
 
-type StatItem = z.infer<typeof statSchema>
-
-const StatsGrid: React.FC<{
-  brand: BrandConfig
-  stats: StatItem[]
-  hasHeadline: boolean
-}> = ({ brand, stats, hasHeadline }) => {
-  const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
-
-  return (
-    <AbsoluteFill
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingTop: hasHeadline ? 100 : 0,
-        flexDirection: 'row',
-        gap: brand.spacing.xl,
-        padding: brand.spacing.paddingScreen,
-      }}
-    >
-      {stats.map((stat, i) => {
-        const staggerDelay = i * 20
-
-        const scale = spring({
-          frame: frame - staggerDelay,
-          fps,
-          from: 0.8,
-          to: 1,
-          config: brand.motion.springBouncy,
-        })
-
-        const opacity = interpolate(frame, [staggerDelay, staggerDelay + 20], [0, 1], {
-          extrapolateLeft: 'clamp',
-          extrapolateRight: 'clamp',
-        })
-
-        const counterProgress = interpolate(
-          frame,
-          [staggerDelay + 10, staggerDelay + 100],
-          [0, 1],
-          {
-            easing: Easing.out(Easing.ease),
-            extrapolateLeft: 'clamp',
-            extrapolateRight: 'clamp',
-          },
-        )
-
-        const currentValue = Math.round(stat.value * counterProgress)
-
-        return (
-          <div
-            key={i}
-            style={{
-              opacity,
-              transform: `scale(${scale})`,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: brand.spacing.xs,
-            }}
-          >
-            <div
-              style={{
-                fontFamily: brand.typography.fontDisplay,
-                fontSize: brand.typography.size5xl,
-                fontWeight: brand.typography.weightBold,
-                color: brand.colors.accent,
-                fontVariantNumeric: 'tabular-nums',
-              }}
-            >
-              {stat.prefix}
-              {currentValue.toLocaleString()}
-              {stat.suffix}
-            </div>
-            <div
-              style={{
-                fontFamily: brand.typography.fontBody,
-                fontSize: brand.typography.sizeMd,
-                color: brand.colors.textSecondary,
-              }}
-            >
-              {stat.label}
-            </div>
-          </div>
-        )
-      })}
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

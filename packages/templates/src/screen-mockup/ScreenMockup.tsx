@@ -11,6 +11,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LogoOverlay } from '@altidigitech/core'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,7 @@ export const ScreenMockupTemplate: React.FC<ScreenMockupProps> = ({
   ctaText,
   transitionDuration = 20,
 }) => {
+  const frame = useCurrentFrame()
   const { durationInFrames } = useVideoConfig()
 
   // Calcul du timing automatique des slides
@@ -115,6 +117,8 @@ export const ScreenMockupTemplate: React.FC<ScreenMockupProps> = ({
           <CTASection brand={brand} text={ctaText} />
         </Sequence>
       )}
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

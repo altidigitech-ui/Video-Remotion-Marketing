@@ -8,6 +8,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LDBackground, GlowText, GlowButton, GlassCard, AIBadge, LogoOverlay } from '@altidigitech/core'
 
 export const productDemoSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -33,44 +34,50 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
   const introDuration = 90
   const ctaStart = durationInFrames - 90
 
-  // ── Headline animations ───────────────────────────────────────────────────
-
-  const headlineY = spring({
-    frame,
-    fps,
-    from: 40,
-    to: 0,
-    config: brand.motion.springSmooth,
-  })
+  // ── Headline ────────────────────────────────────────────────────────────────
 
   const headlineOpacity = interpolate(frame, [0, 30], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  // After intro, headline shrinks and moves up
-  const headlineFontSize = interpolate(
+  const headlineY = spring({
+    frame,
+    fps,
+    from: 40,
+    to: 0,
+    config: brand.motion.springBouncy,
+  })
+
+  // Headline transitions: centered → top
+  const headlineSize = interpolate(
     frame,
     [introDuration - 20, introDuration + 10],
-    [brand.typography.size4xl, brand.typography.size2xl],
+    [68, 48],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  const headlineTopY = interpolate(
+  const headlineTop = interpolate(
     frame,
     [introDuration - 20, introDuration + 10],
-    [340, 180],
+    [360, 140],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // ── Subline ───────────────────────────────────────────────────────────────
+  const headlinePostIntroOpacity = interpolate(
+    frame,
+    [introDuration - 20, introDuration + 10],
+    [1, 0.7],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  )
+
+  // ── Subline ─────────────────────────────────────────────────────────────────
 
   const sublineOpacity = interpolate(frame, [20, 50], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  // Subline fades out as features come in
   const sublineFadeOut = interpolate(
     frame,
     [introDuration - 20, introDuration],
@@ -78,13 +85,14 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // ── Features ──────────────────────────────────────────────────────────────
+  // ── Badge ───────────────────────────────────────────────────────────────────
 
-  const featuresVisible = frame >= introDuration
+  const badgeOpacity = interpolate(frame, [0, 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
-  // ── CTA ───────────────────────────────────────────────────────────────────
-
-  const ctaVisible = frame >= ctaStart
+  // ── CTA ─────────────────────────────────────────────────────────────────────
 
   const ctaScale = spring({
     frame: frame - ctaStart,
@@ -100,77 +108,98 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
   })
 
   return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
-      {/* Headline — centered during intro, moves to top after */}
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
+      {/* Badge — top center */}
       <div
         style={{
           position: 'absolute',
-          top: headlineTopY,
+          top: 40,
           left: 0,
           right: 0,
-          opacity: headlineOpacity,
-          transform: `translateY(${frame < introDuration ? headlineY : 0}px)`,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: headlineFontSize,
-          fontWeight: brand.typography.weightBold,
-          color: brand.colors.textPrimary,
-          letterSpacing: `${brand.typography.trackingTight}em`,
-          lineHeight: brand.typography.lineHeightTight,
-          textAlign: 'center',
-          padding: `0 ${brand.spacing.paddingScreen}px`,
+          display: 'flex',
+          justifyContent: 'center',
+          opacity: badgeOpacity,
         }}
       >
-        {headline}
+        <AIBadge frame={frame} />
       </div>
 
-      {/* Subline — visible during intro only */}
+      {/* Headline */}
       <div
         style={{
           position: 'absolute',
-          top: 420,
+          top: headlineTop,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          opacity: headlineOpacity * headlinePostIntroOpacity,
+          transform: `translateY(${frame < introDuration ? headlineY : 0}px)`,
+          padding: '0 80px',
+        }}
+      >
+        <GlowText brand={brand} size={headlineSize}>
+          {headline}
+        </GlowText>
+      </div>
+
+      {/* Subline — intro only */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 460,
           left: 0,
           right: 0,
           opacity: sublineOpacity * sublineFadeOut,
-          fontFamily: brand.typography.fontBody,
-          fontSize: brand.typography.sizeLg,
-          color: brand.colors.textSecondary,
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 24,
+          color: '#94A3B8',
           textAlign: 'center',
-          padding: `0 ${brand.spacing.paddingScreen}px`,
+          padding: '0 120px',
         }}
       >
         {subline}
       </div>
 
-      {/* Features list — appears after intro */}
-      {featuresVisible && (
+      {/* Features — 2-column grid of GlassCards */}
+      {frame >= introDuration && (
         <div
           style={{
             position: 'absolute',
-            top: 320,
+            top: 260,
             left: 0,
             right: 0,
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: `0 ${brand.spacing.paddingScreen}px`,
+            justifyContent: 'center',
+            padding: '0 100px',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: brand.spacing.md }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 16,
+              width: '100%',
+              maxWidth: 900,
+            }}
+          >
             {features.map((feature, i) => {
-              const itemDelay = i * 15
               const featureFrame = frame - introDuration
+              const itemDelay = i * 12
 
-              const translateX = spring({
+              const itemScale = spring({
                 frame: featureFrame - itemDelay,
                 fps,
-                from: -60,
-                to: 0,
-                config: brand.motion.springSmooth,
+                from: 0.85,
+                to: 1,
+                config: brand.motion.springBouncy,
               })
 
-              const opacity = interpolate(
+              const itemOpacity = interpolate(
                 featureFrame,
-                [itemDelay, itemDelay + 20],
+                [itemDelay, itemDelay + 18],
                 [0, 1],
                 { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
               )
@@ -179,26 +208,34 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
                 <div
                   key={i}
                   style={{
-                    opacity,
-                    transform: `translateX(${translateX}px)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: brand.spacing.sm,
-                    color: brand.colors.textPrimary,
-                    fontFamily: brand.typography.fontBody,
-                    fontSize: brand.typography.sizeXl,
+                    opacity: itemOpacity,
+                    transform: `scale(${itemScale})`,
                   }}
                 >
-                  <div
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      backgroundColor: brand.colors.accent,
-                      flexShrink: 0,
-                    }}
-                  />
-                  {feature}
+                  <GlassCard brand={brand}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 20,
+                        color: '#E2E8F0',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          background: 'linear-gradient(135deg, #F59E0B, #D97706)',
+                          boxShadow: '0 0 8px rgba(245,158,11,0.5)',
+                          flexShrink: 0,
+                        }}
+                      />
+                      {feature}
+                    </div>
+                  </GlassCard>
                 </div>
               )
             })}
@@ -206,35 +243,24 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
         </div>
       )}
 
-      {/* CTA button — appears at ctaStart */}
-      {ctaVisible && (
+      {/* CTA */}
+      {frame >= ctaStart && (
         <div
           style={{
             position: 'absolute',
-            bottom: 100,
+            bottom: 80,
             left: 0,
             right: 0,
             display: 'flex',
             justifyContent: 'center',
+            opacity: ctaOpacity,
           }}
         >
-          <div
-            style={{
-              opacity: ctaOpacity,
-              transform: `scale(${ctaScale})`,
-              backgroundColor: brand.colors.accent,
-              color: brand.colors.white,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.sizeLg,
-              fontWeight: brand.typography.weightBold,
-              padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-              borderRadius: brand.spacing.borderRadius,
-            }}
-          >
-            {ctaText}
-          </div>
+          <GlowButton text={ctaText} brand={brand} scale={ctaScale} />
         </div>
       )}
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

@@ -9,6 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LogoOverlay } from '@altidigitech/core'
 
 export const featureHighlightSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -114,6 +115,8 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
           <CTAButton brand={brand} text={ctaText} />
         </Sequence>
       )}
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

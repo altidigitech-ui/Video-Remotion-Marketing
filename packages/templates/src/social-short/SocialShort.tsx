@@ -9,6 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
+import { LogoOverlay } from '@altidigitech/core'
 
 export const socialShortSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -25,6 +26,7 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
   bodyText,
   ctaText,
 }) => {
+  const frame = useCurrentFrame()
   const { durationInFrames } = useVideoConfig()
 
   return (
@@ -45,6 +47,8 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
       <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
         <CTASection brand={brand} text={ctaText} />
       </Sequence>
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }
