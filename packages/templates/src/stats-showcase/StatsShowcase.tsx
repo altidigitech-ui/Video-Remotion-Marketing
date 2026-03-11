@@ -65,7 +65,7 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
             transform: `translateY(${headlineY}px)`,
           }}
         >
-          <GlowText brand={brand} size={48}>
+          <GlowText brand={brand} size={96}>
             {headline}
           </GlowText>
         </div>
@@ -75,99 +75,109 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: headline ? 240 : 0,
-          bottom: 0,
+          top: headline ? 280 : 0,
+          bottom: 80,
           left: 0,
           right: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 32,
-          padding: '0 80px',
+          padding: '0 120px',
         }}
       >
-        {stats.map((stat, i) => {
-          const staggerDelay = (headline ? 45 : 0) + i * 20
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: stats.length >= 4 ? '1fr 1fr' : `repeat(${stats.length}, 1fr)`,
+            gap: 40,
+            width: '100%',
+            maxWidth: 1000,
+          }}
+        >
+          {stats.map((stat, i) => {
+            const staggerDelay = (headline ? 45 : 0) + i * 20
 
-          const cardScale = spring({
-            frame: frame - staggerDelay,
-            fps,
-            from: 0.8,
-            to: 1,
-            config: brand.motion.springBouncy,
-          })
+            const cardScale = spring({
+              frame: frame - staggerDelay,
+              fps,
+              from: 0.8,
+              to: 1,
+              config: brand.motion.springBouncy,
+            })
 
-          const cardOpacity = interpolate(
-            frame,
-            [staggerDelay, staggerDelay + 20],
-            [0, 1],
-            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-          )
+            const cardOpacity = interpolate(
+              frame,
+              [staggerDelay, staggerDelay + 20],
+              [0, 1],
+              { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+            )
 
-          const counterProgress = interpolate(
-            frame,
-            [staggerDelay + 10, staggerDelay + 100],
-            [0, 1],
-            {
-              easing: Easing.out(Easing.ease),
-              extrapolateLeft: 'clamp',
-              extrapolateRight: 'clamp',
-            },
-          )
+            const counterProgress = interpolate(
+              frame,
+              [staggerDelay + 10, staggerDelay + 100],
+              [0, 1],
+              {
+                easing: Easing.out(Easing.ease),
+                extrapolateLeft: 'clamp',
+                extrapolateRight: 'clamp',
+              },
+            )
 
-          const displayValue =
-            stat.value % 1 !== 0
-              ? (stat.value * counterProgress).toFixed(1)
-              : Math.round(stat.value * counterProgress).toLocaleString()
+            const displayValue =
+              stat.value % 1 !== 0
+                ? (stat.value * counterProgress).toFixed(1)
+                : Math.round(stat.value * counterProgress).toLocaleString()
 
-          return (
-            <div
-              key={i}
-              style={{
-                opacity: cardOpacity,
-                transform: `scale(${cardScale})`,
-                flex: 1,
-                maxWidth: 280,
-              }}
-            >
-              <GlassCard brand={brand} glow>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}
-                >
+            return (
+              <div
+                key={i}
+                style={{
+                  opacity: cardOpacity,
+                  transform: `scale(${cardScale})`,
+                  minWidth: 380,
+                }}
+              >
+                <GlassCard brand={brand} glow>
                   <div
                     style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 80,
-                      fontWeight: 800,
-                      color: '#F59E0B',
-                      fontVariantNumeric: 'tabular-nums',
-                      lineHeight: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '24px 16px',
                     }}
                   >
-                    {stat.prefix}
-                    {displayValue}
-                    {stat.suffix}
+                    <div
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 120,
+                        fontWeight: 800,
+                        color: '#F59E0B',
+                        fontVariantNumeric: 'tabular-nums',
+                        lineHeight: 1,
+                        filter: 'drop-shadow(0 0 24px rgba(245,158,11,0.4))',
+                      }}
+                    >
+                      {stat.prefix}
+                      {displayValue}
+                      {stat.suffix}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: 24,
+                        color: '#94A3B8',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {stat.label}
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 18,
-                      color: '#94A3B8',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {stat.label}
-                  </div>
-                </div>
-              </GlassCard>
-            </div>
-          )
-        })}
+                </GlassCard>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       <LogoOverlay brand={brand} frame={frame} />

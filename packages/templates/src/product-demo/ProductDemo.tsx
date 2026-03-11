@@ -53,7 +53,7 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
   const headlineSize = interpolate(
     frame,
     [introDuration - 20, introDuration + 10],
-    [68, 48],
+    [96, 64],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
@@ -154,7 +154,7 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
           right: 0,
           opacity: sublineOpacity * sublineFadeOut,
           fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 24,
+          fontSize: 36,
           color: '#94A3B8',
           textAlign: 'center',
           padding: '0 120px',
@@ -219,7 +219,7 @@ export const ProductDemoTemplate: React.FC<ProductDemoProps> = ({
                         alignItems: 'center',
                         gap: 12,
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 20,
+                        fontSize: 28,
                         color: '#E2E8F0',
                       }}
                     >

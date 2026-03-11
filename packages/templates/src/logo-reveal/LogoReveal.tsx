@@ -37,7 +37,7 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
   })
 
   // Scan line sweeps top→bottom over logo (frame 0-60)
-  const scanLineY = interpolate(frame, [0, 60], [0, 200], {
+  const scanLineY = interpolate(frame, [0, 60], [0, 320], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -87,7 +87,7 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
         >
           <Img
             src={staticFile(brand.assets.logoPng)}
-            style={{ width: 200, height: 200, borderRadius: 36 }}
+            style={{ width: 320, height: 320, borderRadius: 48 }}
           />
           {/* Scan line */}
           <div
@@ -111,7 +111,7 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
         {/* Tagline */}
         {showTagline && (
           <div style={{ opacity: taglineOpacity, transform: `translateY(${taglineY}px)` }}>
-            <GlowText brand={brand} size={32} glow={false}>
+            <GlowText brand={brand} size={48} glow={false}>
               {brand.tagline}
             </GlowText>
           </div>

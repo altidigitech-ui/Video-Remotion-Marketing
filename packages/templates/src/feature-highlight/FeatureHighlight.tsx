@@ -97,11 +97,10 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: 200,
             padding: brand.spacing.paddingScreen,
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: brand.spacing.md }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center' }}>
             {bulletPoints.map((point, i) => (
               <BulletItem key={i} brand={brand} point={point} index={i} />
             ))}
@@ -151,30 +150,22 @@ const BulletItem: React.FC<{ brand: BrandConfig; point: string; index: number }>
         transform: `translateX(${itemX}px)`,
         display: 'flex',
         alignItems: 'center',
-        gap: brand.spacing.sm,
+        gap: 16,
         color: brand.colors.textPrimary,
         fontFamily: brand.typography.fontBody,
-        fontSize: brand.typography.sizeXl,
+        fontSize: 30,
       }}
     >
       <div
         style={{
-          width: 24,
-          height: 24,
+          width: 12,
+          height: 12,
           borderRadius: '50%',
           backgroundColor: brand.colors.accent,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeSm,
-          fontWeight: brand.typography.weightBold,
-          color: brand.colors.white,
+          boxShadow: `0 0 8px ${brand.colors.accent}60`,
           flexShrink: 0,
         }}
-      >
-        {index + 1}
-      </div>
+      />
       {point}
     </div>
   )

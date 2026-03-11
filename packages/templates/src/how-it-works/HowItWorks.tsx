@@ -89,7 +89,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
           transform: `translateY(${headlineY}px)`,
         }}
       >
-        <GlowText brand={brand} size={48}>
+        <GlowText brand={brand} size={96}>
           {headline}
         </GlowText>
       </div>
@@ -156,8 +156,8 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
               style={{
                 opacity: cardOpacity,
                 transform: `scale(${cardScale})`,
-                flex: 1,
-                maxWidth: 320,
+                width: 480,
+                flexShrink: 0,
               }}
             >
               <GlassCard brand={brand}>
@@ -166,19 +166,20 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 16,
+                    gap: 20,
                     textAlign: 'center',
+                    padding: '24px 8px',
                   }}
                 >
                   {/* Step number */}
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 48,
+                      fontSize: 80,
                       fontWeight: 800,
                       color: '#F59E0B',
                       lineHeight: 1,
-                      filter: 'drop-shadow(0 0 16px rgba(245,158,11,0.4))',
+                      filter: 'drop-shadow(0 0 24px rgba(245,158,11,0.4))',
                     }}
                   >
                     {i + 1}
@@ -188,7 +189,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 22,
+                      fontSize: 32,
                       fontWeight: 700,
                       color: '#F8FAFC',
                     }}
@@ -200,7 +201,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 16,
+                      fontSize: 22,
                       color: '#94A3B8',
                       lineHeight: 1.5,
                     }}

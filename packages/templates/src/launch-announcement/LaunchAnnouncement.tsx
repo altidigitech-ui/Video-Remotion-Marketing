@@ -100,7 +100,7 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
             transform: `scale(${headlineScale})`,
           }}
         >
-          <GlowText brand={brand} size={72}>
+          <GlowText brand={brand} size={96}>
             {headline}
           </GlowText>
         </div>
@@ -111,7 +111,7 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
             style={{
               opacity: sublineOpacity,
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 24,
+              fontSize: 36,
               color: '#94A3B8',
               textAlign: 'center',
               maxWidth: 700,
@@ -127,7 +127,7 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
             style={{
               opacity: dateOpacity,
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 22,
+              fontSize: 28,
               color: '#F59E0B',
             }}
           >
@@ -174,7 +174,7 @@ export const LaunchAnnouncementTemplate: React.FC<LaunchAnnouncementProps> = ({
                     <div
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 18,
+                        fontSize: 28,
                         color: '#CBD5E1',
                       }}
                     >

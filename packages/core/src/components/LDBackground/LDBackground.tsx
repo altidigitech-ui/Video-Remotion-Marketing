@@ -13,16 +13,17 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
     <AbsoluteFill>
       <AbsoluteFill style={{ background: '#0A0F1E' }} />
 
-      {/* Animated grid */}
-      <AbsoluteFill
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(248,163,32,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(248,163,32,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-        }}
-      />
+      {/* SVG grid */}
+      <AbsoluteFill>
+        <svg width="100%" height="100%" style={{ position: 'absolute' }}>
+          <defs>
+            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(245,158,11,0.08)" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+      </AbsoluteFill>
 
       {/* Amber orb top-right */}
       <AbsoluteFill
@@ -55,7 +56,7 @@ export const GlowText: React.FC<{
   brand: BrandConfig
   size?: number
   glow?: boolean
-}> = ({ children, brand, size = 72, glow = true }) => (
+}> = ({ children, brand, size = 96, glow = true }) => (
   <div
     style={{
       fontFamily: "'Space Grotesk', sans-serif",
@@ -88,9 +89,9 @@ export const GlowButton: React.FC<{
       background: `linear-gradient(135deg, ${brand.colors.accent} 0%, ${brand.colors.accentAlt} 100%)`,
       color: '#0A0F1E',
       fontFamily: "'Space Grotesk', sans-serif",
-      fontSize: 24,
+      fontSize: 32,
       fontWeight: 700,
-      padding: '20px 48px',
+      padding: '24px 56px',
       borderRadius: 12,
       boxShadow:
         'rgba(245,158,11,0.4) 0px 0px 40px, rgba(245,158,11,0.15) 0px 0px 80px, inset 0 1px 0 rgba(255,255,255,0.2)',
@@ -139,7 +140,7 @@ export const AIBadge: React.FC<{ frame: number }> = ({ frame }) => {
         borderRadius: 100,
         padding: '8px 20px',
         fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: 600,
         color: '#F59E0B',
         letterSpacing: '0.05em',
@@ -176,7 +177,7 @@ export const LogoOverlay: React.FC<{ brand: BrandConfig; frame: number }> = ({
       <div style={{ position: 'absolute', top: 40, left: 60, opacity }}>
         <Img
           src={staticFile(brand.assets.logoPng)}
-          style={{ height: 56, width: 'auto' }}
+          style={{ height: 80, width: 'auto' }}
         />
       </div>
     </AbsoluteFill>
