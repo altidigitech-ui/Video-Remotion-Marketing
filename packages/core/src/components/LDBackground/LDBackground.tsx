@@ -4,68 +4,101 @@ import type { BrandConfig } from '@altidigitech/brand'
 
 // ── LDBackground ──────────────────────────────────────────────────────────────
 
-const GRID_COLS = 32
-const GRID_ROWS = 18
+const COLS = 22
+const ROWS = 13
 
 export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
   const frame = useCurrentFrame()
-  const orb1X = 75 + Math.sin(frame * 0.008) * 3
-  const orb1Y = 15 + Math.cos(frame * 0.006) * 2
+  const scanY = ((frame * 1.5) % 110) - 5
+  const orbPulse = 0.10 + Math.sin(frame * 0.04) * 0.04
+
+  const particles = Array.from({ length: 35 }, (_, i) => ({
+    x: (i * 137.5) % 100,
+    y: (i * 97.3) % 100,
+    size: 3 + (i % 3) * 2,
+    speedX: 0.3 + (i % 5) * 0.12,
+    speedY: 0.2 + (i % 4) * 0.08,
+    opacity: 0.3 + (i % 4) * 0.15,
+    color: i % 3 === 0 ? '#F59E0B' : i % 3 === 1 ? '#00FFFF' : '#FFFFFF',
+  }))
 
   return (
-    <AbsoluteFill>
-      <AbsoluteFill style={{ background: '#0A0F1E' }} />
+    <AbsoluteFill style={{ background: '#050A14' }}>
 
-      {/* Grid lines (div-based — works in Remotion's Chromium renderer) */}
-      <AbsoluteFill style={{ overflow: 'hidden' }}>
-        {Array.from({ length: GRID_COLS + 1 }, (_, i) => (
-          <div
-            key={`v${i}`}
-            style={{
-              position: 'absolute',
-              left: `${(i / GRID_COLS) * 100}%`,
-              top: 0,
-              bottom: 0,
-              width: 1,
-              background: 'rgba(245,158,11,0.08)',
-            }}
-          />
-        ))}
-        {Array.from({ length: GRID_ROWS + 1 }, (_, i) => (
-          <div
-            key={`h${i}`}
-            style={{
-              position: 'absolute',
-              top: `${(i / GRID_ROWS) * 100}%`,
-              left: 0,
-              right: 0,
-              height: 1,
-              background: 'rgba(245,158,11,0.08)',
-            }}
-          />
-        ))}
-      </AbsoluteFill>
+      {/* Vertical grid lines */}
+      {Array.from({ length: COLS }, (_, i) => (
+        <div key={`v${i}`} style={{
+          position: 'absolute',
+          left: `${(i / COLS) * 100}%`,
+          top: 0, bottom: 0, width: 1,
+          background: 'rgba(245,158,11,0.08)',
+        }} />
+      ))}
+
+      {/* Horizontal grid lines */}
+      {Array.from({ length: ROWS }, (_, i) => (
+        <div key={`h${i}`} style={{
+          position: 'absolute',
+          top: `${(i / ROWS) * 100}%`,
+          left: 0, right: 0, height: 1,
+          background: 'rgba(245,158,11,0.08)',
+        }} />
+      ))}
 
       {/* Amber orb top-right */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse 600px 400px at ${orb1X}% ${orb1Y}%, rgba(245,158,11,0.25) 0%, transparent 70%)`,
-        }}
-      />
+      <AbsoluteFill style={{
+        background: `radial-gradient(ellipse 700px 500px at 82% 8%, rgba(245,158,11,${orbPulse + 0.05}) 0%, transparent 70%)`,
+      }} />
 
-      {/* Blue orb bottom-left */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse 500px 350px at 15% 85%, rgba(59,130,246,0.10) 0%, transparent 70%)`,
-        }}
-      />
+      {/* Cyan orb bottom-left */}
+      <AbsoluteFill style={{
+        background: 'radial-gradient(ellipse 600px 400px at 8% 92%, rgba(0,200,255,0.08) 0%, transparent 70%)',
+      }} />
+
+      {/* Scanline */}
+      <div style={{
+        position: 'absolute',
+        top: `${scanY}%`,
+        left: 0, right: 0, height: 3,
+        background: 'linear-gradient(90deg, transparent 0%, rgba(245,158,11,0) 5%, rgba(245,158,11,0.9) 50%, rgba(245,158,11,0) 95%, transparent 100%)',
+        boxShadow: '0 0 20px rgba(245,158,11,0.8), 0 0 40px rgba(245,158,11,0.3)',
+      }} />
+
+      {/* Particles */}
+      {particles.map((p, i) => (
+        <div key={`p${i}`} style={{
+          position: 'absolute',
+          left: `${(p.x + frame * p.speedX * 0.05) % 100}%`,
+          top: `${(p.y + frame * p.speedY * 0.04) % 100}%`,
+          width: p.size, height: p.size,
+          borderRadius: '50%',
+          backgroundColor: p.color,
+          opacity: p.opacity * (0.5 + Math.sin(frame * 0.05 + i) * 0.5),
+        }} />
+      ))}
+
+      {/* Corner HUD brackets */}
+      {([
+        { top: 20, left: 20 },
+        { top: 20, right: 20 },
+        { bottom: 20, left: 20 },
+        { bottom: 20, right: 20 },
+      ] as Array<React.CSSProperties>).map((pos, i) => (
+        <div key={`c${i}`} style={{
+          position: 'absolute', width: 50, height: 50,
+          borderTop: i < 2 ? '3px solid rgba(245,158,11,0.5)' : undefined,
+          borderBottom: i >= 2 ? '3px solid rgba(245,158,11,0.5)' : undefined,
+          borderLeft: i % 2 === 0 ? '3px solid rgba(245,158,11,0.5)' : undefined,
+          borderRight: i % 2 === 1 ? '3px solid rgba(245,158,11,0.5)' : undefined,
+          ...pos,
+        }} />
+      ))}
 
       {/* Vignette */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(0,0,0,0.4) 100%)`,
-        }}
-      />
+      <AbsoluteFill style={{
+        background: 'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 45%, rgba(0,0,0,0.7) 100%)',
+      }} />
+
     </AbsoluteFill>
   )
 }
@@ -110,9 +143,9 @@ export const GlowButton: React.FC<{
       background: `linear-gradient(135deg, ${brand.colors.accent} 0%, ${brand.colors.accentAlt} 100%)`,
       color: '#0A0F1E',
       fontFamily: "'Space Grotesk', sans-serif",
-      fontSize: 32,
+      fontSize: 30,
       fontWeight: 700,
-      padding: '24px 56px',
+      padding: '22px 56px',
       borderRadius: 12,
       boxShadow:
         'rgba(245,158,11,0.4) 0px 0px 40px, rgba(245,158,11,0.15) 0px 0px 80px, inset 0 1px 0 rgba(255,255,255,0.2)',
@@ -155,11 +188,11 @@ export const AIBadge: React.FC<{ frame: number }> = ({ frame }) => {
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
         background: 'rgba(245,158,11,0.1)',
         border: '1px solid rgba(245,158,11,0.3)',
         borderRadius: 100,
-        padding: '8px 20px',
+        padding: '10px 24px',
         fontFamily: "'Space Grotesk', sans-serif",
         fontSize: 20,
         fontWeight: 600,
@@ -170,11 +203,11 @@ export const AIBadge: React.FC<{ frame: number }> = ({ frame }) => {
     >
       <div
         style={{
-          width: 8,
-          height: 8,
+          width: 10,
+          height: 10,
           borderRadius: '50%',
           backgroundColor: '#22C55E',
-          boxShadow: `0 0 ${8 * pulse}px rgba(34,197,94,0.8)`,
+          boxShadow: `0 0 ${10 * pulse}px rgba(34,197,94,0.8)`,
         }}
       />
       AI-Powered CRO Analysis

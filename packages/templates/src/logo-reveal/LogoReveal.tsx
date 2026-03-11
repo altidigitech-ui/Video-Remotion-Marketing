@@ -19,6 +19,12 @@ export const logoRevealSchema = z.object({
 
 export type LogoRevealProps = z.infer<typeof logoRevealSchema>
 
+const DATA_CHARS = ['0', '1', '<', '>', '/', '%', '#', '@', ',', '&']
+const rainCols = Array.from({ length: 10 }, (_, i) => ({
+  x: 4 + i * 10,
+  chars: Array.from({ length: 10 }, (_, j) => DATA_CHARS[(i * 3 + j * 7) % DATA_CHARS.length]),
+}))
+
 export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagline = true }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -36,30 +42,20 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
     extrapolateRight: 'clamp',
   })
 
-  // Scan line sweeps top→bottom over logo (frame 0-60)
-  const scanLineY = interpolate(frame, [0, 60], [0, 320], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-  const scanLineOpacity = interpolate(frame, [0, 5, 50, 60], [0, 0.6, 0.6, 0], {
+  const badgeOpacity = interpolate(frame, [50, 70], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  const badgeOpacity = interpolate(frame, [30, 50], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const taglineOpacity = interpolate(frame, [40, 70], [0, 1], {
+  const taglineOpacity = interpolate(frame, [30, 55], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
   const taglineY = spring({
-    frame: frame - 40,
+    frame: frame - 30,
     fps,
-    from: 20,
+    from: 30,
     to: 0,
     config: brand.motion.springCinematic,
   })
@@ -68,44 +64,54 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
     <AbsoluteFill>
       <LDBackground brand={brand} />
 
+      {/* Data rain columns */}
+      {rainCols.map((col, ci) => (
+        <div key={`rain${ci}`} style={{
+          position: 'absolute',
+          left: `${col.x}%`,
+          top: 0, bottom: 0,
+          display: 'flex', flexDirection: 'column', gap: 70,
+          transform: `translateY(${((frame * 2.5 + ci * 40) % 1400) - 300}px)`,
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 18,
+          color: '#F59E0B',
+          opacity: 0.12,
+          userSelect: 'none',
+          pointerEvents: 'none',
+        }}>
+          {col.chars.map((c, ji) => (
+            <span key={ji} style={{
+              opacity: frame % 20 === (ji + ci) % 20 ? 0.7 : 0.15,
+            }}>{c}</span>
+          ))}
+        </div>
+      ))}
+
       <AbsoluteFill
         style={{
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: 24,
+          gap: 32,
         }}
       >
-        {/* Logo with glow + scan line */}
+        {/* Logo with amber glow */}
         <div
           style={{
             opacity: logoOpacity,
             transform: `scale(${logoScale})`,
-            filter: 'drop-shadow(0 0 60px rgba(245,158,11,0.4))',
             position: 'relative',
           }}
         >
           <Img
             src={staticFile(brand.assets.logoPng)}
-            style={{ width: 320, height: 320, borderRadius: 48 }}
-          />
-          {/* Scan line */}
-          <div
             style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: scanLineY,
-              height: 2,
-              backgroundColor: `rgba(245,158,11,${scanLineOpacity})`,
-              boxShadow: `0 0 20px rgba(245,158,11,${scanLineOpacity * 0.8})`,
+              width: 300,
+              height: 300,
+              borderRadius: 48,
+              boxShadow: '0 0 60px rgba(245,158,11,0.5), 0 0 120px rgba(245,158,11,0.2)',
             }}
           />
-        </div>
-
-        {/* AIBadge */}
-        <div style={{ opacity: badgeOpacity }}>
-          <AIBadge frame={frame} />
         </div>
 
         {/* Tagline */}
@@ -116,6 +122,11 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
             </GlowText>
           </div>
         )}
+
+        {/* AIBadge */}
+        <div style={{ opacity: badgeOpacity }}>
+          <AIBadge frame={frame} />
+        </div>
       </AbsoluteFill>
 
       <LogoOverlay brand={brand} frame={frame} />

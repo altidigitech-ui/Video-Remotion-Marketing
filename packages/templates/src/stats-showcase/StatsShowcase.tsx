@@ -9,7 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, GlassCard, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, LogoOverlay } from '@altidigitech/core'
 
 const statSchema = z.object({
   value: z.number(),
@@ -56,7 +56,7 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
         <div
           style={{
             position: 'absolute',
-            top: 100,
+            top: 80,
             left: 0,
             right: 0,
             display: 'flex',
@@ -65,7 +65,7 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
             transform: `translateY(${headlineY}px)`,
           }}
         >
-          <GlowText brand={brand} size={96}>
+          <GlowText brand={brand} size={56}>
             {headline}
           </GlowText>
         </div>
@@ -75,23 +75,23 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: headline ? 280 : 0,
-          bottom: 80,
+          top: headline ? 260 : 0,
+          bottom: 60,
           left: 0,
           right: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '0 120px',
+          padding: '0 100px',
         }}
       >
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: stats.length >= 4 ? '1fr 1fr' : `repeat(${stats.length}, 1fr)`,
-            gap: 40,
+            gap: 48,
             width: '100%',
-            maxWidth: 1000,
+            maxWidth: 1100,
           }}
         >
           {stats.map((stat, i) => {
@@ -123,6 +123,13 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
               },
             )
 
+            const barProgress = interpolate(
+              frame,
+              [staggerDelay, staggerDelay + 80],
+              [0, 100],
+              { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+            )
+
             const displayValue =
               stat.value % 1 !== 0
                 ? (stat.value * counterProgress).toFixed(1)
@@ -137,43 +144,66 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
                   minWidth: 380,
                 }}
               >
-                <GlassCard brand={brand} glow>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 12,
-                      padding: '24px 16px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 120,
-                        fontWeight: 800,
-                        color: '#F59E0B',
-                        fontVariantNumeric: 'tabular-nums',
-                        lineHeight: 1,
-                        filter: 'drop-shadow(0 0 24px rgba(245,158,11,0.4))',
-                      }}
-                    >
-                      {stat.prefix}
-                      {displayValue}
-                      {stat.suffix}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: 24,
-                        color: '#94A3B8',
-                        textAlign: 'center',
-                      }}
-                    >
-                      {stat.label}
-                    </div>
+                <div style={{
+                  background: 'rgba(245,158,11,0.04)',
+                  border: '1px solid rgba(245,158,11,0.2)',
+                  borderLeft: '5px solid #F59E0B',
+                  borderRadius: 16,
+                  padding: '40px 48px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16,
+                  boxShadow: '0 0 60px rgba(245,158,11,0.06)',
+                }}>
+                  {/* Terminal label */}
+                  <div style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 16,
+                    color: '#F59E0B',
+                    letterSpacing: '0.12em',
+                    opacity: 0.7,
+                  }}>
+                    {'>>> METRIC_' + String(i).padStart(2, '0')}
                   </div>
-                </GlassCard>
+
+                  {/* Big animated counter */}
+                  <div style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 96,
+                    fontWeight: 800,
+                    color: '#F59E0B',
+                    lineHeight: 1,
+                    letterSpacing: '-0.04em',
+                    fontVariantNumeric: 'tabular-nums',
+                    textShadow: '0 0 30px rgba(245,158,11,0.8), 0 0 60px rgba(245,158,11,0.3)',
+                  }}>
+                    {stat.prefix}{displayValue}{stat.suffix}
+                  </div>
+
+                  {/* Progress bar */}
+                  <div style={{
+                    height: 3,
+                    background: 'rgba(245,158,11,0.15)',
+                    borderRadius: 2,
+                  }}>
+                    <div style={{
+                      height: '100%',
+                      borderRadius: 2,
+                      width: `${barProgress}%`,
+                      background: 'linear-gradient(90deg, #F59E0B, #FCD34D)',
+                      boxShadow: '0 0 10px rgba(245,158,11,0.9)',
+                    }} />
+                  </div>
+
+                  {/* Label */}
+                  <div style={{
+                    fontSize: 22,
+                    color: '#94A3B8',
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}>
+                    {stat.label}
+                  </div>
+                </div>
               </div>
             )
           })}

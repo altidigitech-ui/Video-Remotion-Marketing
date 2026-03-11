@@ -50,9 +50,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
 
   // ── Connection line ─────────────────────────────────────────────────────────
 
-  const lineStart = 60
-  const lineEnd = lineStart + steps.length * 25 + 40
-  const lineProgress = interpolate(frame, [lineStart, lineEnd], [0, 100], {
+  const lineProgress = interpolate(frame, [80, 200], [0, 100], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -80,7 +78,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: 80,
+          top: 60,
           left: 0,
           right: 0,
           display: 'flex',
@@ -98,42 +96,42 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: 240,
-          bottom: ctaText ? 180 : 80,
+          top: 220,
+          bottom: ctaText ? 160 : 60,
           left: 0,
           right: 0,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 40,
-          padding: '0 80px',
+          gap: 48,
+          padding: '0 60px',
         }}
       >
         {/* Connection line behind cards */}
         <div
           style={{
             position: 'absolute',
-            top: '50%',
-            left: '15%',
-            right: '15%',
+            top: '35%',
+            left: '18%',
+            right: '18%',
             height: 2,
-            backgroundColor: 'rgba(245,158,11,0.15)',
-            transform: 'translateY(-50%)',
+            background: 'rgba(245,158,11,0.15)',
+            zIndex: 0,
           }}
         >
           <div
             style={{
               height: '100%',
               width: `${lineProgress}%`,
-              background: 'linear-gradient(90deg, #F59E0B, #D97706)',
-              boxShadow: '0 0 12px rgba(245,158,11,0.5)',
+              background: 'linear-gradient(90deg, #F59E0B, #FCD34D)',
+              boxShadow: '0 0 10px rgba(245,158,11,0.8)',
             }}
           />
         </div>
 
         {/* Step cards */}
         {steps.map((step, i) => {
-          const cardDelay = 60 + i * 25
+          const cardDelay = 60 + i * 30
 
           const cardScale = spring({
             frame: frame - cardDelay,
@@ -158,9 +156,10 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                 transform: `scale(${cardScale})`,
                 width: 480,
                 flexShrink: 0,
+                zIndex: 1,
               }}
             >
-              <GlassCard brand={brand}>
+              <GlassCard brand={brand} glow>
                 <div
                   style={{
                     display: 'flex',
@@ -168,18 +167,18 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                     alignItems: 'center',
                     gap: 20,
                     textAlign: 'center',
-                    padding: '24px 8px',
+                    padding: '32px 16px',
                   }}
                 >
                   {/* Step number */}
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 80,
+                      fontSize: 100,
                       fontWeight: 800,
                       color: '#F59E0B',
                       lineHeight: 1,
-                      filter: 'drop-shadow(0 0 24px rgba(245,158,11,0.4))',
+                      filter: 'drop-shadow(0 0 30px rgba(245,158,11,0.5))',
                     }}
                   >
                     {i + 1}
@@ -189,7 +188,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 32,
+                      fontSize: 34,
                       fontWeight: 700,
                       color: '#F8FAFC',
                     }}
@@ -197,11 +196,18 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
                     {step.title}
                   </div>
 
+                  {/* Divider line */}
+                  <div style={{
+                    width: 60,
+                    height: 2,
+                    background: 'linear-gradient(90deg, transparent, #F59E0B, transparent)',
+                  }} />
+
                   {/* Description */}
                   <div
                     style={{
                       fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: 22,
+                      fontSize: 24,
                       color: '#94A3B8',
                       lineHeight: 1.5,
                     }}
@@ -220,7 +226,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
         <div
           style={{
             position: 'absolute',
-            bottom: 60,
+            bottom: 50,
             left: 0,
             right: 0,
             display: 'flex',
