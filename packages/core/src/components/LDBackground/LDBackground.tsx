@@ -4,6 +4,9 @@ import type { BrandConfig } from '@altidigitech/brand'
 
 // ── LDBackground ──────────────────────────────────────────────────────────────
 
+const GRID_COLS = 32
+const GRID_ROWS = 18
+
 export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
   const frame = useCurrentFrame()
   const orb1X = 75 + Math.sin(frame * 0.008) * 3
@@ -13,22 +16,40 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
     <AbsoluteFill>
       <AbsoluteFill style={{ background: '#0A0F1E' }} />
 
-      {/* SVG grid */}
-      <AbsoluteFill>
-        <svg width="100%" height="100%" style={{ position: 'absolute' }}>
-          <defs>
-            <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(245,158,11,0.08)" strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
+      {/* Grid lines (div-based — works in Remotion's Chromium renderer) */}
+      <AbsoluteFill style={{ overflow: 'hidden' }}>
+        {Array.from({ length: GRID_COLS + 1 }, (_, i) => (
+          <div
+            key={`v${i}`}
+            style={{
+              position: 'absolute',
+              left: `${(i / GRID_COLS) * 100}%`,
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: 'rgba(245,158,11,0.08)',
+            }}
+          />
+        ))}
+        {Array.from({ length: GRID_ROWS + 1 }, (_, i) => (
+          <div
+            key={`h${i}`}
+            style={{
+              position: 'absolute',
+              top: `${(i / GRID_ROWS) * 100}%`,
+              left: 0,
+              right: 0,
+              height: 1,
+              background: 'rgba(245,158,11,0.08)',
+            }}
+          />
+        ))}
       </AbsoluteFill>
 
       {/* Amber orb top-right */}
       <AbsoluteFill
         style={{
-          background: `radial-gradient(ellipse 600px 400px at ${orb1X}% ${orb1Y}%, rgba(245,158,11,0.12) 0%, transparent 70%)`,
+          background: `radial-gradient(ellipse 600px 400px at ${orb1X}% ${orb1Y}%, rgba(245,158,11,0.25) 0%, transparent 70%)`,
         }}
       />
 
