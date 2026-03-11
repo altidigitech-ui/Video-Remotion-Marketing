@@ -29,11 +29,11 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   const { fps, durationInFrames } = useVideoConfig()
 
   const introFrom = 0
-  const introDuration = Math.round(fps * 2) // 2s
-  const featuresFrom = Math.round(fps * 1) // start at 1s (slight overlap for flow)
-  const featuresDuration = Math.round(fps * 5) // 5s
-  const ctaFrom = durationInFrames - Math.round(fps * 3) // last 3s
-  const ctaDuration = durationInFrames - ctaFrom
+  const introDuration = 90 // 1.5s at 60fps
+  const featuresFrom = 90 // starts exactly when intro ends — zero overlap
+  const featuresDuration = durationInFrames - featuresFrom - 90 // fill until CTA
+  const ctaFrom = durationInFrames - 90 // last 1.5s
+  const ctaDuration = 90
 
   return (
     <LeakDetectorScene brand={brand}>
