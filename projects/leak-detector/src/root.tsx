@@ -8,12 +8,15 @@ import {
   HowItWorksTemplate,
   SocialShortTemplate,
   FeatureHighlightTemplate,
+  ScreenMockupTemplate,
 } from '@altidigitech/templates'
 import { leakDetectorBrand } from '@altidigitech/brand'
 
 const FPS_60 = 60
 const FPS_30 = 30
 const sec = (s: number, fps: number) => Math.round(s * fps)
+const sec60 = (s: number) => sec(s, FPS_60)
+const sec30 = (s: number) => sec(s, FPS_30)
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -212,6 +215,84 @@ export const RemotionRoot: React.FC = () => {
             'Visual hierarchy & layout',
           ],
           ctaText: 'Run your free audit',
+        }}
+      />
+      {/* ===== SCREEN MOCKUP — démos interface réelle ===== */}
+      {/* Ces compositions nécessitent les screenshots dans public/screenshots/ */}
+
+      <Composition
+        id="leak-detector-screen-dashboard"
+        component={ScreenMockupTemplate}
+        durationInFrames={sec60(12)}
+        fps={FPS_60}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          brand: leakDetectorBrand,
+          headline: 'See your full CRO report in 60 seconds',
+          slides: [
+            {
+              src: 'projects/leak-detector/public/screenshots/dashboard.png',
+              caption: 'Your analysis dashboard',
+            },
+            {
+              src: 'projects/leak-detector/public/screenshots/report.png',
+              caption: 'Detailed report with actionable fixes',
+            },
+            {
+              src: 'projects/leak-detector/public/screenshots/report-detail.png',
+              caption: 'Category breakdown with severity levels',
+            },
+          ],
+          mockupStyle: 'browser',
+          slideAnimation: 'slideUp',
+          ctaText: 'Get Your Free Audit',
+          transitionDuration: 20,
+        }}
+      />
+
+      <Composition
+        id="leak-detector-screen-hero-vertical"
+        component={ScreenMockupTemplate}
+        durationInFrames={sec30(15)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          brand: leakDetectorBrand,
+          headline: 'AI audits your landing page in 60s',
+          slides: [
+            {
+              src: 'projects/leak-detector/public/screenshots/report.png',
+              caption: '73/100 — real Stripe.com analysis',
+            },
+          ],
+          mockupStyle: 'floating',
+          slideAnimation: 'zoomIn',
+          ctaText: 'Try free →',
+          transitionDuration: 20,
+        }}
+      />
+
+      <Composition
+        id="leak-detector-screen-square"
+        component={ScreenMockupTemplate}
+        durationInFrames={sec30(10)}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{
+          brand: leakDetectorBrand,
+          slides: [
+            {
+              src: 'projects/leak-detector/public/screenshots/report.png',
+              caption: 'Real CRO audit — Stripe.com scored 78/100',
+            },
+          ],
+          mockupStyle: 'floating',
+          slideAnimation: 'zoomIn',
+          ctaText: 'Analyze your page free',
+          transitionDuration: 20,
         }}
       />
     </>

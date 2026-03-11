@@ -40,7 +40,7 @@
 - [ ] screenshots/audit-results.png
 - [ ] sounds/background.mp3
 
-## Compositions (10 total)
+## Compositions (13 total)
 
 ### Widescreen (1920x1080 @ 60fps)
 
@@ -60,6 +60,19 @@
 
 - [x] leak-detector-social-square (10s)
 - [x] leak-detector-stats-square (8s)
+
+### ScreenMockup (nécessitent les screenshots)
+
+- [x] leak-detector-screen-dashboard (16:9 @ 60fps, 12s) — 3 slides browser style
+- [x] leak-detector-screen-hero-vertical (9:16 @ 30fps, 15s) — 1 slide floating
+- [x] leak-detector-screen-square (1:1 @ 30fps, 10s) — 1 slide floating
+
+## Workflow screenshots
+
+1. Prendre les screenshots : `bun screenshots:leak-detector`
+2. Vérifier dans `projects/leak-detector/public/screenshots/`
+3. Rendre les compositions : `bun render:leak-detector`
+4. Les screenshots ne sont PAS dans git (gitignored)
 
 ## Notes specifiques
 

@@ -18,3 +18,6 @@ export type { StatsShowcaseProps } from './stats-showcase'
 
 export { HowItWorksTemplate, howItWorksSchema } from './how-it-works'
 export type { HowItWorksProps } from './how-it-works'
+
+export { ScreenMockupTemplate, screenMockupSchema } from './screen-mockup'
+export type { ScreenMockupProps, ScreenSlide } from './screen-mockup'

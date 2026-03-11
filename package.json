@@ -16,7 +16,10 @@
     "render": "bun scripts/render-formats.ts",
     "render:leak-detector": "bun scripts/render-formats.ts --saas=leak-detector",
     "render:all": "bun scripts/render-all.ts",
-    "new:saas": "bun scripts/new-saas.ts"
+    "new:saas": "bun scripts/new-saas.ts",
+    "screenshots:leak-detector": "bun scripts/capture-screenshots.ts --url=https://leakdetector.tech",
+    "screenshots:leak-detector:local": "bun scripts/capture-screenshots.ts --url=http://localhost:3000",
+    "playwright:install": "bunx playwright install chromium"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -27,6 +30,7 @@
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.2.0",
+    "playwright": "^1.43.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0"
   },

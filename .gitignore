@@ -1,3 +1,9 @@
+# Screenshots (générés localement, trop lourds pour git)
+projects/*/public/screenshots/*.png
+projects/*/public/screenshots/*.jpg
+projects/*/public/screenshots/*.webp
+
+# Renders vidéo
 renders/
 node_modules/
 .turbo/
