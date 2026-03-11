@@ -41,6 +41,9 @@
     "packages/templates": {
       "name": "@altidigitech/templates",
       "version": "0.1.0",
+      "dependencies": {
+        "@altidigitech/brand": "workspace:*",
+      },
     },
     "packages/utils": {
       "name": "@altidigitech/utils",
@@ -53,6 +56,10 @@
     "projects/leak-detector": {
       "name": "@altidigitech/project-leak-detector",
       "version": "0.1.0",
+      "dependencies": {
+        "@altidigitech/brand": "workspace:*",
+        "@altidigitech/templates": "workspace:*",
+      },
     },
   },
   "packages": {

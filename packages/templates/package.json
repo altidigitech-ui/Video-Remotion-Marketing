@@ -8,5 +8,8 @@
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@altidigitech/brand": "workspace:*"
   }
 }
