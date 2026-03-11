@@ -48,7 +48,7 @@ export const LogoRevealTemplate: React.FC<LogoRevealProps> = ({ brand, showTagli
     config: brand.motion.springSmooth,
   })
 
-  const logoSrc = brand.assets.logoWhite ?? brand.assets.logoSvg
+  const logoSrc = brand.assets.logoPng
 
   return (
     <AbsoluteFill
