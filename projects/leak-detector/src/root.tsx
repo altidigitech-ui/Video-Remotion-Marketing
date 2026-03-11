@@ -34,47 +34,38 @@ const ldBrand: BrandConfig = {
   },
 }
 
-// Brand with transparent background for wrapped generic templates
-const ldBrandTransparent: BrandConfig = {
-  ...ldBrand,
-  colors: {
-    ...ldBrand.colors,
-    background: 'transparent',
-  },
-}
-
 // ── Wrapped generic templates ─────────────────────────────────────────────────
-// These get the premium background + logo + badge from LeakDetectorScene,
-// while the inner template renders with a transparent background.
+// Templates now include LDBackground + LogoOverlay internally.
+// Wrappers simply pass the brand through.
 
 const LDStatsShowcase: React.FC<StatsShowcaseProps> = (props) => (
   <LeakDetectorScene brand={ldBrand}>
-    <StatsShowcaseTemplate {...props} brand={ldBrandTransparent} />
+    <StatsShowcaseTemplate {...props} brand={{
+      ...ldBrand,
+      colors: { ...ldBrand.colors, background: 'transparent' },
+    }} />
   </LeakDetectorScene>
 )
 
 const LDHowItWorks: React.FC<HowItWorksProps> = (props) => (
   <LeakDetectorScene brand={ldBrand}>
-    <HowItWorksTemplate {...props} brand={ldBrandTransparent} />
+    <HowItWorksTemplate {...props} brand={{
+      ...ldBrand,
+      colors: { ...ldBrand.colors, background: 'transparent' },
+    }} />
   </LeakDetectorScene>
 )
 
 const LDSocialShort: React.FC<SocialShortProps> = (props) => (
-  <LeakDetectorScene brand={ldBrand} logoSize={60}>
-    <SocialShortTemplate {...props} brand={ldBrandTransparent} />
-  </LeakDetectorScene>
+  <SocialShortTemplate {...props} brand={ldBrand} />
 )
 
 const LDFeatureHighlight: React.FC<FeatureHighlightProps> = (props) => (
-  <LeakDetectorScene brand={ldBrand}>
-    <FeatureHighlightTemplate {...props} brand={ldBrandTransparent} />
-  </LeakDetectorScene>
+  <FeatureHighlightTemplate {...props} brand={ldBrand} />
 )
 
 const LDScreenMockup: React.FC<ScreenMockupProps> = (props) => (
-  <LeakDetectorScene brand={ldBrand}>
-    <ScreenMockupTemplate {...props} brand={ldBrandTransparent} />
-  </LeakDetectorScene>
+  <ScreenMockupTemplate {...props} brand={ldBrand} />
 )
 
 // ── Timing helpers ────────────────────────────────────────────────────────────

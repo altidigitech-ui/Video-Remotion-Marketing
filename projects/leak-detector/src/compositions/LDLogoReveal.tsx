@@ -9,12 +9,16 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LeakDetectorBackground } from '../components/LeakDetectorBackground'
+import { LDBackground, GlowText, LogoOverlay } from '@altidigitech/core'
 
 export type LDLogoRevealProps = {
   brand: BrandConfig
   showTagline?: boolean
 }
+
+// Data rain characters
+const DATA_CHARS = '01アイウエオカキクケコ{}[]<>=/\\$#@!%^&*'
+const DATA_COLUMNS = 10
 
 export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
   brand,
@@ -52,16 +56,64 @@ export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
     config: brand.motion.springBouncy,
   })
 
+  // Data rain columns
+  const columns = Array.from({ length: DATA_COLUMNS }, (_, i) => {
+    const xPos = 5 + (i * 90) / DATA_COLUMNS + ((i * 7.3) % 5)
+    const speed = 1.5 + (i % 4) * 0.5
+    const charCount = 12 + (i % 5) * 3
+    const columnOpacity = 0.15 + (i % 3) * 0.08
+
+    return {
+      x: xPos,
+      speed,
+      charCount,
+      opacity: columnOpacity,
+      chars: Array.from({ length: charCount }, (_, j) => {
+        const charIndex = (i * 13 + j * 7 + Math.floor(frame * speed * 0.08)) % DATA_CHARS.length
+        const yOffset = ((j * (100 / charCount)) + frame * speed * 0.3) % 120 - 10
+        const charOpacity = j === 0 ? 1 : Math.max(0, 1 - j * 0.08)
+        return {
+          char: DATA_CHARS[charIndex],
+          y: yOffset,
+          opacity: charOpacity * columnOpacity,
+        }
+      }),
+    }
+  })
+
   return (
     <AbsoluteFill>
-      <LeakDetectorBackground />
+      <LDBackground brand={brand} />
+
+      {/* Data rain effect */}
+      {columns.map((col, i) => (
+        <div key={`col${i}`} style={{ position: 'absolute', left: `${col.x}%`, top: 0, bottom: 0 }}>
+          {col.chars.map((c, j) => (
+            <div
+              key={`c${j}`}
+              style={{
+                position: 'absolute',
+                top: `${c.y}%`,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 18,
+                color: '#F59E0B',
+                opacity: c.opacity,
+                textShadow: j === 0 ? '0 0 10px rgba(245,158,11,0.8)' : 'none',
+                fontWeight: j === 0 ? 700 : 400,
+              }}
+            >
+              {c.char}
+            </div>
+          ))}
+        </div>
+      ))}
 
       <AbsoluteFill
         style={{
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          gap: brand.spacing.lg,
+          gap: 32,
         }}
       >
         {/* Logo with amber glow */}
@@ -76,20 +128,20 @@ export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
           <div
             style={{
               position: 'absolute',
-              inset: -40,
+              inset: -60,
               borderRadius: '50%',
-              background: `radial-gradient(circle, rgba(245, 158, 11, ${0.25 * glowPulse}) 0%, transparent 70%)`,
-              filter: 'blur(20px)',
+              background: `radial-gradient(circle, rgba(245, 158, 11, ${0.35 * glowPulse}) 0%, transparent 70%)`,
+              filter: 'blur(30px)',
             }}
           />
           <Img
             src={staticFile(brand.assets.logoPng)}
             style={{
-              width: 200,
-              height: 200,
-              borderRadius: 36,
+              width: 300,
+              height: 300,
+              borderRadius: 48,
               position: 'relative',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 0 60px rgba(245,158,11,0.4), 0 20px 60px rgba(0, 0, 0, 0.5)',
             }}
           />
         </div>
@@ -100,17 +152,11 @@ export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
             style={{
               opacity: taglineOpacity,
               transform: `translateY(${taglineY}px)`,
-              background: 'linear-gradient(135deg, #FBBF24, #60A5FA)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.sizeXl,
-              fontWeight: brand.typography.weightSemibold,
-              letterSpacing: `${brand.typography.trackingWide}em`,
             }}
           >
-            {brand.tagline}
+            <GlowText brand={brand} size={48}>
+              {brand.tagline}
+            </GlowText>
           </div>
         )}
 
@@ -121,16 +167,19 @@ export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
               extrapolateLeft: 'clamp',
               extrapolateRight: 'clamp',
             }),
-            fontFamily: brand.typography.fontDisplay,
-            fontSize: brand.typography.size3xl,
-            fontWeight: brand.typography.weightBold,
-            color: brand.colors.textPrimary,
-            letterSpacing: `${brand.typography.trackingTight}em`,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 86,
+            fontWeight: 800,
+            color: '#F8FAFC',
+            letterSpacing: '-0.03em',
+            textShadow: '0 0 40px rgba(245,158,11,0.2)',
           }}
         >
           {brand.name}
         </div>
       </AbsoluteFill>
+
+      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

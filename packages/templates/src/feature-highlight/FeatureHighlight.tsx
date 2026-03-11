@@ -9,7 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, LogoOverlay } from '@altidigitech/core'
 
 export const featureHighlightSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -50,14 +50,16 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
   })
 
   return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
       {/* Title */}
       <Sequence from={0} durationInFrames={durationInFrames} name="Title">
         <AbsoluteFill
           style={{
             alignItems: 'center',
             justifyContent: 'flex-start',
-            paddingTop: brand.spacing.paddingSection,
+            paddingTop: 100,
             padding: brand.spacing.paddingScreen,
           }}
         >
@@ -65,25 +67,22 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
             style={{
               opacity: titleOpacity,
               transform: `translateY(${titleY}px)`,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.size4xl,
-              fontWeight: brand.typography.weightBold,
-              color: brand.colors.textPrimary,
-              letterSpacing: `${brand.typography.trackingTight}em`,
-              textAlign: 'center',
             }}
           >
-            {featureTitle}
+            <GlowText brand={brand} size={86}>
+              {featureTitle}
+            </GlowText>
           </div>
           <div
             style={{
               opacity: descOpacity,
-              fontFamily: brand.typography.fontBody,
-              fontSize: brand.typography.sizeLg,
-              color: brand.colors.textSecondary,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 36,
+              color: '#94A3B8',
               textAlign: 'center',
               marginTop: brand.spacing.sm,
-              maxWidth: 800,
+              maxWidth: 900,
+              lineHeight: 1.4,
             }}
           >
             {featureDescription}
@@ -98,9 +97,10 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             padding: brand.spacing.paddingScreen,
+            paddingTop: 80,
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28, alignItems: 'flex-start' }}>
             {bulletPoints.map((point, i) => (
               <BulletItem key={i} brand={brand} point={point} index={i} />
             ))}
@@ -150,19 +150,20 @@ const BulletItem: React.FC<{ brand: BrandConfig; point: string; index: number }>
         transform: `translateX(${itemX}px)`,
         display: 'flex',
         alignItems: 'center',
-        gap: 16,
-        color: brand.colors.textPrimary,
-        fontFamily: brand.typography.fontBody,
-        fontSize: 30,
+        gap: 20,
+        color: '#F8FAFC',
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: 40,
+        fontWeight: 600,
       }}
     >
       <div
         style={{
-          width: 12,
-          height: 12,
+          width: 14,
+          height: 14,
           borderRadius: '50%',
           backgroundColor: brand.colors.accent,
-          boxShadow: `0 0 8px ${brand.colors.accent}60`,
+          boxShadow: `0 0 12px ${brand.colors.accent}80`,
           flexShrink: 0,
         }}
       />
@@ -183,21 +184,15 @@ const CTAButton: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text
     config: brand.motion.springBouncy,
   })
 
+  const opacity = interpolate(frame, [0, 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
   return (
-    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 120 }}>
-      <div
-        style={{
-          transform: `scale(${scale})`,
-          backgroundColor: brand.colors.accent,
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadius,
-        }}
-      >
-        {text}
+    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
+      <div style={{ opacity }}>
+        <GlowButton text={text} brand={brand} scale={scale} />
       </div>
     </AbsoluteFill>
   )

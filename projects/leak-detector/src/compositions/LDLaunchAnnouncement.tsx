@@ -8,7 +8,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LeakDetectorScene } from '../components/LeakDetectorScene'
+import { LDBackground, GlowText, GlowButton, GlassCard, LogoOverlay } from '@altidigitech/core'
 
 export type LDLaunchAnnouncementProps = {
   brand: BrandConfig
@@ -49,7 +49,9 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
   })
 
   return (
-    <LeakDetectorScene brand={brand}>
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
       {/* Main content area */}
       <Sequence from={0} durationInFrames={durationInFrames} name="Content">
         <AbsoluteFill
@@ -57,20 +59,21 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
-            gap: brand.spacing.md,
-            padding: brand.spacing.paddingScreen,
+            gap: 24,
+            padding: 80,
           }}
         >
           {/* "ANNOUNCING" label */}
           <div
             style={{
               opacity: announcingOpacity,
-              fontFamily: brand.typography.fontDisplay,
-              fontSize: brand.typography.sizeMd,
-              fontWeight: brand.typography.weightSemibold,
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 28,
+              fontWeight: 700,
               color: brand.colors.accent,
-              letterSpacing: `${brand.typography.trackingWidest}em`,
+              letterSpacing: '0.2em',
               textTransform: 'uppercase',
+              textShadow: '0 0 20px rgba(245,158,11,0.5)',
             }}
           >
             Announcing
@@ -83,22 +86,9 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
               transform: `scale(${headlineScale})`,
             }}
           >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #FBBF24, #60A5FA)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                fontFamily: brand.typography.fontDisplay,
-                fontSize: brand.typography.size5xl,
-                fontWeight: brand.typography.weightBold,
-                letterSpacing: `${brand.typography.trackingTight}em`,
-                lineHeight: brand.typography.lineHeightTight,
-                textAlign: 'center',
-              }}
-            >
+            <GlowText brand={brand} size={115}>
               {headline}
-            </div>
+            </GlowText>
           </div>
 
           {/* Subline */}
@@ -109,11 +99,12 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
                   extrapolateLeft: 'clamp',
                   extrapolateRight: 'clamp',
                 }),
-                fontFamily: brand.typography.fontBody,
-                fontSize: brand.typography.sizeLg,
-                color: brand.colors.textSecondary,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 36,
+                color: '#94A3B8',
                 textAlign: 'center',
-                maxWidth: 700,
+                maxWidth: 900,
+                lineHeight: 1.4,
               }}
             >
               {subline}
@@ -128,10 +119,11 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
                   extrapolateLeft: 'clamp',
                   extrapolateRight: 'clamp',
                 }),
-                fontFamily: brand.typography.fontMono,
-                fontSize: brand.typography.sizeLg,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 32,
                 color: brand.colors.accent,
-                marginTop: brand.spacing.xs,
+                marginTop: 8,
+                textShadow: '0 0 20px rgba(245,158,11,0.4)',
               }}
             >
               {launchDate}
@@ -148,10 +140,10 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
               alignItems: 'center',
               justifyContent: 'flex-end',
               paddingBottom: 200,
-              padding: brand.spacing.paddingScreen,
+              padding: 80,
             }}
           >
-            <div style={{ display: 'flex', gap: brand.spacing.lg, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
               {features.map((feature, i) => (
                 <FeaturePill key={i} brand={brand} feature={feature} index={i} />
               ))}
@@ -162,9 +154,11 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
 
       {/* CTA */}
       <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
-        <GradientCTA brand={brand} text={ctaText} />
+        <CTASection brand={brand} text={ctaText} />
       </Sequence>
-    </LeakDetectorScene>
+
+      <LogoOverlay brand={brand} frame={frame} />
+    </AbsoluteFill>
   )
 }
 
@@ -196,21 +190,25 @@ const FeaturePill: React.FC<{ brand: BrandConfig; feature: string; index: number
       style={{
         opacity,
         transform: `scale(${scale})`,
-        color: brand.colors.textSecondary,
-        fontFamily: brand.typography.fontBody,
-        fontSize: brand.typography.sizeMd,
-        padding: `${brand.spacing.sm}px ${brand.spacing.md}px`,
-        border: `1px solid ${brand.colors.border}`,
-        borderRadius: brand.spacing.borderRadiusLg,
-        backgroundColor: 'rgba(30, 41, 59, 0.5)',
       }}
     >
-      {feature}
+      <GlassCard brand={brand} glow>
+        <div
+          style={{
+            color: '#F8FAFC',
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 28,
+            fontWeight: 600,
+          }}
+        >
+          {feature}
+        </div>
+      </GlassCard>
     </div>
   )
 }
 
-const GradientCTA: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
+const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
@@ -229,21 +227,8 @@ const GradientCTA: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, te
 
   return (
     <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
-      <div
-        style={{
-          opacity,
-          transform: `scale(${scale})`,
-          background: 'linear-gradient(135deg, #F59E0B, #D97706)',
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadiusLg,
-          boxShadow: '0 0 40px rgba(245, 158, 11, 0.35), 0 8px 24px rgba(245, 158, 11, 0.25)',
-        }}
-      >
-        {text}
+      <div style={{ opacity }}>
+        <GlowButton text={text} brand={brand} scale={scale} />
       </div>
     </AbsoluteFill>
   )

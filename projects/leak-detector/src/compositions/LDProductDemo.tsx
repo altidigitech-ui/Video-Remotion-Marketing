@@ -8,7 +8,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LeakDetectorScene } from '../components/LeakDetectorScene'
+import { LDBackground, GlowText, GlowButton, GlassCard, LogoOverlay } from '@altidigitech/core'
 
 export type LDProductDemoProps = {
   brand: BrandConfig
@@ -26,6 +26,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   features,
   ctaText,
 }) => {
+  const frame = useCurrentFrame()
   const { fps, durationInFrames } = useVideoConfig()
 
   const introFrom = 0
@@ -36,7 +37,9 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   const ctaDuration = 90
 
   return (
-    <LeakDetectorScene brand={brand}>
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
       <Sequence from={introFrom} durationInFrames={introDuration} name="Intro">
         <IntroSection brand={brand} headline={headline} subline={subline} />
       </Sequence>
@@ -46,34 +49,13 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
       </Sequence>
 
       <Sequence from={ctaFrom} durationInFrames={ctaDuration} name="CTA">
-        <GradientCTA brand={brand} text={ctaText} />
+        <CTASection brand={brand} text={ctaText} />
       </Sequence>
-    </LeakDetectorScene>
+
+      <LogoOverlay brand={brand} frame={frame} />
+    </AbsoluteFill>
   )
 }
-
-const GradientHeadline: React.FC<{
-  brand: BrandConfig
-  text: string
-  fontSize: number
-}> = ({ brand, text, fontSize }) => (
-  <div
-    style={{
-      background: 'linear-gradient(135deg, #FBBF24, #60A5FA)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      backgroundClip: 'text',
-      fontFamily: brand.typography.fontDisplay,
-      fontSize,
-      fontWeight: brand.typography.weightBold,
-      letterSpacing: `${brand.typography.trackingTight}em`,
-      lineHeight: brand.typography.lineHeightTight,
-      textAlign: 'center' as const,
-    }}
-  >
-    {text}
-  </div>
-)
 
 const IntroSection: React.FC<{
   brand: BrandConfig
@@ -115,8 +97,8 @@ const IntroSection: React.FC<{
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        gap: brand.spacing.md,
-        padding: brand.spacing.paddingScreen,
+        gap: 24,
+        padding: 80,
       }}
     >
       <div
@@ -125,17 +107,20 @@ const IntroSection: React.FC<{
           transform: `translateY(${headlineY}px)`,
         }}
       >
-        <GradientHeadline brand={brand} text={headline} fontSize={brand.typography.size4xl} />
+        <GlowText brand={brand} size={86}>
+          {headline}
+        </GlowText>
       </div>
       <div
         style={{
           opacity: sublineOpacity,
           transform: `translateY(${sublineY}px)`,
-          fontFamily: brand.typography.fontBody,
-          fontSize: brand.typography.sizeLg,
-          color: brand.colors.textSecondary,
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 36,
+          color: '#94A3B8',
           textAlign: 'center',
-          maxWidth: 800,
+          maxWidth: 900,
+          lineHeight: 1.4,
         }}
       >
         {subline}
@@ -156,11 +141,11 @@ const FeaturesSection: React.FC<{
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        padding: brand.spacing.paddingScreen,
-        paddingTop: 240,
+        padding: 80,
+        paddingTop: 200,
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: brand.spacing.md }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {features.map((feature, i) => {
           const itemDelay = i * 12
 
@@ -185,19 +170,20 @@ const FeaturesSection: React.FC<{
                 transform: `translateX(${translateX}px)`,
                 display: 'flex',
                 alignItems: 'center',
-                gap: brand.spacing.sm,
-                color: brand.colors.textPrimary,
-                fontFamily: brand.typography.fontBody,
-                fontSize: brand.typography.sizeXl,
+                gap: 20,
+                color: '#F8FAFC',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 40,
+                fontWeight: 600,
               }}
             >
               <div
                 style={{
-                  width: 10,
-                  height: 10,
+                  width: 14,
+                  height: 14,
                   borderRadius: '50%',
                   background: `linear-gradient(135deg, ${brand.colors.accent}, ${brand.colors.accentAlt})`,
-                  boxShadow: `0 0 8px ${brand.colors.accent}60`,
+                  boxShadow: `0 0 12px ${brand.colors.accent}80`,
                   flexShrink: 0,
                 }}
               />
@@ -210,7 +196,7 @@ const FeaturesSection: React.FC<{
   )
 }
 
-const GradientCTA: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
+const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
@@ -229,21 +215,8 @@ const GradientCTA: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, te
 
   return (
     <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <div
-        style={{
-          opacity,
-          transform: `scale(${scale})`,
-          background: 'linear-gradient(135deg, #F59E0B, #D97706)',
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadiusLg,
-          boxShadow: '0 0 40px rgba(245, 158, 11, 0.35), 0 8px 24px rgba(245, 158, 11, 0.25)',
-        }}
-      >
-        {text}
+      <div style={{ opacity }}>
+        <GlowButton text={text} brand={brand} scale={scale} />
       </div>
     </AbsoluteFill>
   )

@@ -9,7 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, LogoOverlay } from '@altidigitech/core'
 
 export const socialShortSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -30,7 +30,9 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
   const { durationInFrames } = useVideoConfig()
 
   return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
+
       {/* Hook text -- big, centered, bouncy */}
       <Sequence from={0} durationInFrames={durationInFrames - 60} name="Hook">
         <HookSection brand={brand} text={hookText} />
@@ -75,23 +77,18 @@ const HookSection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, te
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        padding: brand.spacing.paddingScreen,
+        padding: 60,
       }}
     >
       <div
         style={{
           opacity,
           transform: `scale(${scale})`,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.size4xl,
-          fontWeight: brand.typography.weightBlack,
-          color: brand.colors.textPrimary,
-          letterSpacing: `${brand.typography.trackingTight}em`,
-          lineHeight: brand.typography.lineHeightTight,
-          textAlign: 'center',
         }}
       >
-        {text}
+        <GlowText brand={brand} size={86}>
+          {text}
+        </GlowText>
       </div>
     </AbsoluteFill>
   )
@@ -110,18 +107,19 @@ const BodySection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, te
       style={{
         alignItems: 'center',
         justifyContent: 'flex-end',
-        paddingBottom: 300,
-        padding: brand.spacing.paddingScreen,
+        paddingBottom: 350,
+        padding: 60,
       }}
     >
       <div
         style={{
           opacity,
-          fontFamily: brand.typography.fontBody,
-          fontSize: brand.typography.sizeLg,
-          color: brand.colors.textSecondary,
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 36,
+          color: '#94A3B8',
           textAlign: 'center',
-          maxWidth: 600,
+          maxWidth: 800,
+          lineHeight: 1.4,
         }}
       >
         {text}
@@ -155,20 +153,8 @@ const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, tex
         paddingBottom: 120,
       }}
     >
-      <div
-        style={{
-          opacity,
-          transform: `scale(${scale})`,
-          background: `linear-gradient(135deg, ${brand.colors.accent}, ${brand.colors.accentAlt})`,
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadiusLg,
-        }}
-      >
-        {text}
+      <div style={{ opacity }}>
+        <GlowButton text={text} brand={brand} scale={scale} />
       </div>
     </AbsoluteFill>
   )

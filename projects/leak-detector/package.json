@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@altidigitech/brand": "workspace:*",
+    "@altidigitech/core": "workspace:*",
     "@altidigitech/templates": "workspace:*"
   }
 }

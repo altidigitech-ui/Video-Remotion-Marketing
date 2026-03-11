@@ -11,7 +11,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, LogoOverlay } from '@altidigitech/core'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -72,13 +72,8 @@ export const ScreenMockupTemplate: React.FC<ScreenMockupProps> = ({
   const slideDuration = Math.floor(slidesAvailableDuration / slides.length)
 
   return (
-    <AbsoluteFill style={{ backgroundColor: brand.colors.background }}>
-      {/* Fond gradient subtil */}
-      <AbsoluteFill
-        style={{
-          background: `radial-gradient(ellipse at 50% 0%, ${brand.colors.backgroundAlt} 0%, ${brand.colors.background} 60%)`,
-        }}
-      />
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
 
       {/* Headline optionnel */}
       {headline && (
@@ -154,16 +149,11 @@ const HeadlineSection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand
         style={{
           opacity,
           transform: `translateY(${translateY}px)`,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.size4xl,
-          fontWeight: brand.typography.weightBold,
-          color: brand.colors.textPrimary,
-          textAlign: 'center',
-          letterSpacing: `${brand.typography.trackingTight}em`,
-          lineHeight: brand.typography.lineHeightTight,
         }}
       >
-        {text}
+        <GlowText brand={brand} size={86}>
+          {text}
+        </GlowText>
       </div>
     </AbsoluteFill>
   )
@@ -226,8 +216,8 @@ const SlideSection: React.FC<SlideSectionProps> = ({
           transform: getTransform(),
           borderRadius: brand.spacing.borderRadiusLg,
           overflow: 'hidden',
-          boxShadow: '0 40px 100px rgba(0,0,0,0.6)',
-          border: `1px solid ${brand.colors.border}`,
+          boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.15)',
+          border: `1px solid rgba(245,158,11,0.2)`,
           maxWidth: '85%',
           maxHeight: '75%',
         }
@@ -237,7 +227,7 @@ const SlideSection: React.FC<SlideSectionProps> = ({
           transform: getTransform(),
           borderRadius: brand.spacing.borderRadius,
           overflow: 'hidden',
-          boxShadow: `0 60px 120px rgba(0,0,0,0.7), 0 0 0 1px ${brand.colors.border}`,
+          boxShadow: `0 60px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(245,158,11,0.2), 0 0 40px rgba(245,158,11,0.1)`,
           maxWidth: '80%',
           maxHeight: '70%',
         }
@@ -291,10 +281,11 @@ const SlideSection: React.FC<SlideSectionProps> = ({
             <div
               key={i}
               style={{
-                width: i === currentIndex ? 24 : 8,
-                height: 8,
-                borderRadius: 4,
-                backgroundColor: i === currentIndex ? brand.colors.accent : brand.colors.border,
+                width: i === currentIndex ? 32 : 12,
+                height: 12,
+                borderRadius: 6,
+                backgroundColor: i === currentIndex ? brand.colors.accent : 'rgba(245,158,11,0.2)',
+                boxShadow: i === currentIndex ? '0 0 10px rgba(245,158,11,0.6)' : 'none',
               }}
             />
           ))}
@@ -316,12 +307,12 @@ const BrowserBar: React.FC<{
         transform,
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
         width: '85%',
-        backgroundColor: brand.colors.surface,
-        padding: '12px 16px',
+        backgroundColor: 'rgba(15,23,42,0.9)',
+        padding: '16px 20px',
         borderRadius: `${brand.spacing.borderRadiusLg}px ${brand.spacing.borderRadiusLg}px 0 0`,
-        border: `1px solid ${brand.colors.border}`,
+        border: `1px solid rgba(245,158,11,0.2)`,
         borderBottom: 'none',
         flexShrink: 0,
       }}
@@ -334,16 +325,17 @@ const BrowserBar: React.FC<{
       <div
         style={{
           flex: 1,
-          height: 28,
-          backgroundColor: brand.colors.background,
-          borderRadius: 6,
-          marginLeft: 8,
+          height: 36,
+          backgroundColor: 'rgba(5,10,20,0.8)',
+          borderRadius: 8,
+          marginLeft: 10,
           display: 'flex',
           alignItems: 'center',
-          paddingLeft: 12,
-          color: brand.colors.textMuted,
-          fontFamily: brand.typography.fontMono,
-          fontSize: brand.typography.sizeXs,
+          paddingLeft: 16,
+          color: '#64748B',
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 22,
+          border: '1px solid rgba(245,158,11,0.1)',
         }}
       >
         {brand.id}.tech
@@ -355,8 +347,8 @@ const BrowserBar: React.FC<{
 const BrowserDot: React.FC<{ color: string }> = ({ color }) => (
   <div
     style={{
-      width: 12,
-      height: 12,
+      width: 14,
+      height: 14,
       borderRadius: '50%',
       backgroundColor: color,
       flexShrink: 0,
@@ -380,10 +372,11 @@ const CaptionText: React.FC<{
     <div
       style={{
         opacity: captionOpacity,
-        color: brand.colors.textMuted,
-        fontFamily: brand.typography.fontBody,
-        fontSize: brand.typography.sizeSm,
+        color: '#94A3B8',
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: 28,
         textAlign: 'center',
+        letterSpacing: '-0.01em',
       }}
     >
       {text}
@@ -410,21 +403,8 @@ const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, tex
 
   return (
     <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <div
-        style={{
-          opacity,
-          transform: `scale(${scale})`,
-          background: `linear-gradient(135deg, ${brand.colors.accent}, ${brand.colors.accentAlt})`,
-          color: brand.colors.white,
-          fontFamily: brand.typography.fontDisplay,
-          fontSize: brand.typography.sizeLg,
-          fontWeight: brand.typography.weightBold,
-          padding: `${brand.spacing.md}px ${brand.spacing.xl}px`,
-          borderRadius: brand.spacing.borderRadius,
-          boxShadow: `0 8px 32px ${brand.colors.accent}40`,
-        }}
-      >
-        {text}
+      <div style={{ opacity }}>
+        <GlowButton text={text} brand={brand} scale={scale} />
       </div>
     </AbsoluteFill>
   )
