@@ -6,14 +6,12 @@ import {
   HowItWorksTemplate,
   SocialShortTemplate,
   FeatureHighlightTemplate,
-  ScreenMockupTemplate,
 } from '@altidigitech/templates'
 import type {
   StatsShowcaseProps,
   HowItWorksProps,
   SocialShortProps,
   FeatureHighlightProps,
-  ScreenMockupProps,
 } from '@altidigitech/templates'
 import { leakDetectorBrand } from '@altidigitech/brand'
 import type { BrandConfig } from '@altidigitech/brand'
@@ -21,6 +19,9 @@ import { LeakDetectorScene } from './components/LeakDetectorScene'
 import { LDProductDemo } from './compositions/LDProductDemo'
 import { LDLaunchAnnouncement } from './compositions/LDLaunchAnnouncement'
 import { LDLogoReveal } from './compositions/LDLogoReveal'
+import { LDScreenDashboard } from './compositions/LDScreenDashboard'
+import { LDScreenHeroVertical } from './compositions/LDScreenHeroVertical'
+import { LDScreenSquare } from './compositions/LDScreenSquare'
 
 // Load Space Grotesk for display text
 const { fontFamily } = loadFont()
@@ -64,9 +65,6 @@ const LDFeatureHighlight: React.FC<FeatureHighlightProps> = (props) => (
   <FeatureHighlightTemplate {...props} brand={ldBrand} />
 )
 
-const LDScreenMockup: React.FC<ScreenMockupProps> = (props) => (
-  <ScreenMockupTemplate {...props} brand={ldBrand} />
-)
 
 // ── Timing helpers ────────────────────────────────────────────────────────────
 
@@ -278,81 +276,41 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
 
-      {/* ===== SCREEN MOCKUP ===== */}
+      {/* ===== SCREEN COMPOSITIONS (recreated UI) ===== */}
 
       <Composition
         id="leak-detector-screen-dashboard"
-        component={LDScreenMockup}
-        durationInFrames={sec60(12)}
+        component={LDScreenDashboard}
+        durationInFrames={sec60(10)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
           brand: ldBrand,
-          headline: 'See your full CRO report in 60 seconds',
-          slides: [
-            {
-              src: 'screenshots/dashboard.png',
-              caption: 'Your analysis dashboard',
-            },
-            {
-              src: 'screenshots/report.png',
-              caption: 'Detailed report with actionable fixes',
-            },
-            {
-              src: 'screenshots/report-detail.png',
-              caption: 'Category breakdown with severity levels',
-            },
-          ],
-          mockupStyle: 'browser',
-          slideAnimation: 'slideUp',
-          ctaText: 'Get Your Free Audit',
-          transitionDuration: 20,
         }}
       />
 
       <Composition
         id="leak-detector-screen-hero-vertical"
-        component={LDScreenMockup}
-        durationInFrames={sec30(15)}
-        fps={FPS_30}
+        component={LDScreenHeroVertical}
+        durationInFrames={sec(8, FPS_60)}
+        fps={FPS_60}
         width={1080}
         height={1920}
         defaultProps={{
           brand: ldBrand,
-          headline: 'AI audits your landing page in 60s',
-          slides: [
-            {
-              src: 'screenshots/report.png',
-              caption: '73/100 — real Stripe.com analysis',
-            },
-          ],
-          mockupStyle: 'floating',
-          slideAnimation: 'zoomIn',
-          ctaText: 'Try free →',
-          transitionDuration: 20,
         }}
       />
 
       <Composition
         id="leak-detector-screen-square"
-        component={LDScreenMockup}
-        durationInFrames={sec30(10)}
-        fps={FPS_30}
+        component={LDScreenSquare}
+        durationInFrames={sec(6, FPS_60)}
+        fps={FPS_60}
         width={1080}
         height={1080}
         defaultProps={{
           brand: ldBrand,
-          slides: [
-            {
-              src: 'screenshots/report.png',
-              caption: 'Real CRO audit — Stripe.com scored 78/100',
-            },
-          ],
-          mockupStyle: 'floating',
-          slideAnimation: 'zoomIn',
-          ctaText: 'Analyze your page free',
-          transitionDuration: 20,
         }}
       />
     </>
