@@ -469,71 +469,152 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
   )
 }
 
-// ── Screenshot Panel ─────────────────────────────────────────────────────────
+// ── Summary Cards Panel ──────────────────────────────────────────────────────
+
+const MINI_CATEGORIES: CategoryData[] = [
+  { label: 'Headline', score: 85 },
+  { label: 'CTA', score: 60 },
+  { label: 'Social Proof', score: 40 },
+  { label: 'Form', score: 30 },
+  { label: 'Visual', score: 90 },
+  { label: 'Trust', score: 95 },
+]
 
 const ScreenshotPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const SCREENSHOTS = [
-    { src: 'screenshots/dashboard-categories.png', delay: 220 },
-    { src: 'screenshots/dashboard-report.png', delay: 260 },
-  ]
+  // Card 1 — mini category bars
+  const card1Y = spring({
+    frame: frame - 220,
+    fps,
+    from: 40,
+    to: 0,
+    config: { damping: 14, stiffness: 120 },
+  })
+  const card1Opacity = interpolate(frame, [220, 250], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // Card 2 — report summary
+  const card2Y = spring({
+    frame: frame - 240,
+    fps,
+    from: 40,
+    to: 0,
+    config: { damping: 14, stiffness: 120 },
+  })
+  const card2Opacity = interpolate(frame, [240, 270], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
   return (
     <div style={{ display: 'flex', gap: 16, flex: 1, minHeight: 0 }}>
-      {SCREENSHOTS.map((shot, i) => {
-        const slideX = interpolate(
-          frame,
-          [shot.delay, shot.delay + 40],
-          [120, 0],
-          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-        )
-
-        const opacity = interpolate(
-          frame,
-          [shot.delay, shot.delay + 30],
-          [0, 1],
-          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-        )
-
-        const zoom = interpolate(
-          frame,
-          [shot.delay, shot.delay + 50],
-          [1.05, 1],
-          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-        )
-
-        // Subtle parallax scroll up after entrance
-        const parallaxY = interpolate(
-          frame,
-          [shot.delay + 50, 600],
-          [0, -30],
-          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-        )
-
-        return (
-          <div
+      {/* Card 1: Mini category bars */}
+      <div
+        style={{
+          flex: 1,
+          opacity: card1Opacity,
+          transform: `translateY(${card1Y}px)`,
+          backgroundColor: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 12,
+          padding: '16px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: 11,
+            color: '#F59E0B',
+            letterSpacing: '0.1em',
+            marginBottom: 4,
+          }}
+        >
+          CATEGORY SCORES
+        </div>
+        {MINI_CATEGORIES.map((cat, i) => (
+          <CategoryScoreBar
             key={i}
-            style={{
-              flex: 1,
-              opacity,
-              transform: `translateX(${slideX}px)`,
-              borderRadius: 10,
-              overflow: 'hidden',
-              border: '1px solid rgba(245,158,11,0.15)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-            }}
-          >
-            <Img
-              src={staticFile(shot.src)}
+            category={cat}
+            frame={frame}
+            startFrame={240 + i * 10}
+            animDuration={35}
+            labelWidth={80}
+            fontSize={13}
+          />
+        ))}
+      </div>
+
+      {/* Card 2: Report summary */}
+      <div
+        style={{
+          flex: 1,
+          opacity: card2Opacity,
+          transform: `translateY(${card2Y}px)`,
+          backgroundColor: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(245,158,11,0.15)',
+          borderRadius: 12,
+          padding: '16px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                transform: `scale(${zoom}) translateY(${parallaxY}px)`,
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 18,
+                fontWeight: 700,
+                color: '#F8FAFC',
               }}
-            />
+            >
+              Analysis Report
+            </div>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 14,
+                color: '#F59E0B',
+                fontWeight: 600,
+                marginTop: 4,
+              }}
+            >
+              vercel.com
+            </div>
           </div>
-        )
-      })}
+          <ScoreCircle
+            score={72}
+            size={80}
+            strokeWidth={5}
+            frame={frame}
+            startFrame={260}
+            animDuration={60}
+          />
+        </div>
+        <div
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 14,
+            color: '#64748B',
+            lineHeight: 1.5,
+            flex: 1,
+          }}
+        >
+          Strong technical performance but weak conversion elements. Missing social proof and
+          generic CTAs reduce conversion potential.
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Badge text="1 critical" color="#ef4444" />
+          <Badge text="2 warnings" color="#f59e0b" />
+        </div>
+      </div>
     </div>
   )
 }

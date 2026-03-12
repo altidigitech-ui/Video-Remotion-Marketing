@@ -1,10 +1,8 @@
 import React from 'react'
 import {
   AbsoluteFill,
-  Img,
   interpolate,
   spring,
-  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
@@ -26,7 +24,7 @@ type CategoryPill = {
 const PILLS: CategoryPill[] = [
   { label: 'Headline', score: 85 },
   { label: 'CTA', score: 60 },
-  { label: 'Social Proof', score: 40 },
+  { label: 'Soc. Proof', score: 40 },
   { label: 'Trust', score: 95 },
 ]
 
@@ -34,16 +32,23 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
-  // URL
-  const urlOpacity = interpolate(frame, [0, 30], [0, 1], {
+  // URL + subtitle
+  const urlOpacity = interpolate(frame, [0, 40], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
   // CTA bottom
-  const ctaOpacity = interpolate(frame, [240, 270], [0, 1], {
+  const ctaOpacity = interpolate(frame, [300, 330], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
+  })
+  const ctaY = spring({
+    frame: frame - 300,
+    fps,
+    from: 20,
+    to: 0,
+    config: SPRING_ENTER,
   })
 
   return (
@@ -56,36 +61,50 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 32,
-          padding: 60,
+          gap: 24,
+          padding: 50,
         }}
       >
-        {/* URL */}
+        {/* URL + subtitle */}
         <div
           style={{
             opacity: urlOpacity,
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 28,
-            color: '#F59E0B',
-            fontWeight: 700,
-            textShadow: '0 0 20px rgba(245,158,11,0.4)',
-            marginBottom: -8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 6,
           }}
         >
-          vercel.com
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 32,
+              color: '#F59E0B',
+              fontWeight: 700,
+              textShadow: '0 0 20px rgba(245,158,11,0.4)',
+            }}
+          >
+            vercel.com
+          </div>
+          <div
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 24,
+              color: 'rgba(248,250,252,0.6)',
+            }}
+          >
+            Analysis Report
+          </div>
         </div>
-
-        {/* Screenshot with amber glow */}
-        <ScreenshotWithGlow frame={frame} fps={fps} />
 
         {/* Large ScoreCircle */}
         <ScoreCircle
           score={72}
-          size={340}
-          strokeWidth={14}
+          size={500}
+          strokeWidth={20}
           frame={frame}
-          startFrame={30}
-          animDuration={150}
+          startFrame={20}
+          animDuration={130}
         />
 
         {/* Category pills 2×2 grid */}
@@ -93,9 +112,9 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: 16,
+            gap: 24,
             width: '100%',
-            maxWidth: 500,
+            maxWidth: 920,
           }}
         >
           {PILLS.map((pill, i) => (
@@ -104,14 +123,19 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
               pill={pill}
               frame={frame}
               fps={fps}
-              startFrame={180 + i * 20}
+              startFrame={180 + i * 25}
             />
           ))}
         </div>
 
         {/* CTA */}
-        <div style={{ opacity: ctaOpacity }}>
-          <GlowText brand={brand} size={32} glow={false}>
+        <div
+          style={{
+            opacity: ctaOpacity,
+            transform: `translateY(${ctaY}px)`,
+          }}
+        >
+          <GlowText brand={brand} size={36}>
             Find your conversion leaks →
           </GlowText>
         </div>
@@ -119,53 +143,6 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
 
       <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
-  )
-}
-
-const ScreenshotWithGlow: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const scale = spring({
-    frame: frame - 10,
-    fps,
-    from: 0.95,
-    to: 1,
-    config: SPRING_ENTER,
-  })
-
-  const opacity = interpolate(frame, [10, 40], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  // Pulsing glow
-  const glowIntensity = 0.3 + Math.sin(frame * 0.06) * 0.15
-
-  return (
-    <div
-      style={{
-        opacity,
-        transform: `scale(${scale})`,
-        position: 'absolute',
-        top: 80,
-        left: 60,
-        right: 60,
-        bottom: 80,
-        borderRadius: 16,
-        overflow: 'hidden',
-        border: `2px solid rgba(245,158,11,${glowIntensity + 0.1})`,
-        boxShadow: `0 0 ${40 * glowIntensity}px rgba(245,158,11,${glowIntensity}), 0 0 ${80 * glowIntensity}px rgba(245,158,11,${glowIntensity * 0.4}), 0 20px 60px rgba(0,0,0,0.5)`,
-        zIndex: 0,
-      }}
-    >
-      <Img
-        src={staticFile('screenshots/landing-stats.png')}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          opacity: 0.25,
-        }}
-      />
-    </div>
   )
 }
 
@@ -190,6 +167,14 @@ const PillCard: React.FC<{
 
   const color = getScoreColor(pill.score)
 
+  // Mini bar animation
+  const barWidth = interpolate(
+    frame,
+    [startFrame + 10, startFrame + 50],
+    [0, pill.score],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  )
+
   return (
     <div
       style={{
@@ -197,31 +182,61 @@ const PillCard: React.FC<{
         transform: `scale(${scale})`,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'rgba(255,255,255,0.04)',
+        gap: 16,
+        width: 440,
+        height: 110,
+        background: 'rgba(255,255,255,0.04)',
         border: `1px solid ${color}30`,
-        borderRadius: 14,
-        padding: '16px 20px',
-        boxShadow: `0 0 20px ${color}10`,
+        borderLeft: `6px solid ${color}`,
+        borderRadius: 20,
+        padding: '0 24px',
+        backdropFilter: 'blur(8px)',
+        boxShadow: `0 8px 24px rgba(0,0,0,0.3)`,
       }}
     >
-      <span
-        style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 22,
-          fontWeight: 600,
-          color: '#CBD5E1',
-        }}
-      >
-        {pill.label}
-      </span>
+      {/* Label + mini bar */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <span
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 24,
+            fontWeight: 600,
+            color: '#F8FAFC',
+          }}
+        >
+          {pill.label}
+        </span>
+        {/* Mini progress bar */}
+        <div
+          style={{
+            width: 200,
+            height: 6,
+            backgroundColor: 'rgba(255,255,255,0.08)',
+            borderRadius: 3,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${barWidth}%`,
+              height: '100%',
+              backgroundColor: color,
+              borderRadius: 3,
+              boxShadow: `0 0 6px ${color}60`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Score */}
       <span
         style={{
           fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 26,
+          fontSize: 48,
           fontWeight: 800,
           color,
           textShadow: `0 0 12px ${color}60`,
+          lineHeight: 1,
         }}
       >
         {pill.score}

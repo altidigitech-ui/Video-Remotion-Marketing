@@ -9,7 +9,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, AIBadge, GlowButton, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, AIBadge, LogoOverlay } from '@altidigitech/core'
 import { ScoreCircle } from '../components/ScoreCircle'
 import { CategoryScoreBar } from '../components/CategoryScoreBar'
 import type { CategoryData } from '../components/CategoryScoreBar'
@@ -26,7 +26,7 @@ const LOADING_TEXTS = [
   'Scraping page...',
   'Analyzing headline...',
   'Checking CTAs...',
-  'Scoring categories...',
+  'Scoring 8 categories...',
 ]
 
 const RESULT_CATEGORIES: CategoryData[] = [
@@ -40,432 +40,346 @@ export const LDScreenHeroVertical: React.FC<LDScreenHeroVerticalProps> = ({ bran
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
 
-  return (
-    <AbsoluteFill>
-      <LDBackground brand={brand} />
-
-      {/* Phone frame */}
-      <AbsoluteFill
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 40,
-        }}
-      >
-        <PhoneFrame brand={brand} frame={frame} fps={fps} />
-      </AbsoluteFill>
-
-      <LogoOverlay brand={brand} frame={frame} />
-    </AbsoluteFill>
-  )
-}
-
-const PhoneFrame: React.FC<{ brand: BrandConfig; frame: number; fps: number }> = ({
-  brand,
-  frame,
-  fps,
-}) => {
-  const phoneScale = spring({
+  // Logo
+  const logoScale = spring({
     frame,
     fps,
-    from: 0.9,
+    from: 0,
     to: 1,
     config: SPRING_ENTER,
   })
-
-  const phoneOpacity = interpolate(frame, [0, 30], [0, 1], {
+  const logoOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  return (
-    <div
-      style={{
-        opacity: phoneOpacity,
-        transform: `scale(${phoneScale})`,
-        width: 480,
-        height: 1000,
-        backgroundColor: '#0F172A',
-        borderRadius: 40,
-        border: '3px solid rgba(245,158,11,0.2)',
-        boxShadow: '0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.1)',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
-    >
-      {/* Notch */}
-      <div
-        style={{
-          width: 160,
-          height: 28,
-          backgroundColor: '#050A14',
-          borderRadius: '0 0 20px 20px',
-          alignSelf: 'center',
-        }}
-      />
-
-      {/* Landing hero screenshot — always behind, fades in and zooms */}
-      <LandingHeroScreenshot frame={frame} />
-
-      {/* Phone content overlay */}
-      <div
-        style={{
-          flex: 1,
-          padding: '24px 28px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 20,
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
-        {/* Phase 1: Input */}
-        {frame < 300 && (
-          <InputPhase brand={brand} frame={frame} fps={fps} />
-        )}
-
-        {/* Phase 2: Results */}
-        {frame >= 300 && (
-          <ResultsPhase brand={brand} frame={frame} fps={fps} />
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ── Landing Hero Screenshot ──────────────────────────────────────────────────
-
-const LandingHeroScreenshot: React.FC<{ frame: number }> = ({ frame }) => {
-  const opacity = interpolate(frame, [30, 60], [0, 0.2], {
+  // AIBadge
+  const badgeOpacity = interpolate(frame, [40, 70], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  // Slow zoom 1→1.08 over full duration
-  const zoom = interpolate(frame, [0, 480], [1, 1.08], {
+  // Headline
+  const headlineOpacity = interpolate(frame, [80, 110], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+  const headlineY = spring({
+    frame: frame - 80,
+    fps,
+    from: 40,
+    to: 0,
+    config: SPRING_ENTER,
+  })
+
+  // Subline
+  const sublineOpacity = interpolate(frame, [120, 150], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 28,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        opacity,
-        overflow: 'hidden',
-        borderRadius: '0 0 37px 37px',
-      }}
-    >
-      <Img
-        src={staticFile('screenshots/landing-hero.png')}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          transform: `scale(${zoom})`,
-        }}
-      />
-    </div>
-  )
-}
+  // URL input
+  const inputOpacity = interpolate(frame, [160, 185], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+  const inputY = spring({
+    frame: frame - 160,
+    fps,
+    from: 30,
+    to: 0,
+    config: SPRING_ENTER,
+  })
 
-// ── Input Phase ──────────────────────────────────────────────────────────────
-
-const InputPhase: React.FC<{ brand: BrandConfig; frame: number; fps: number }> = ({
-  brand,
-  frame,
-  fps,
-}) => {
-  // Typing animation: each char every 6 frames, starts at frame 60
+  // Typing
   const typedChars = Math.min(
     URL_TEXT.length,
-    Math.max(0, Math.floor((frame - 60) / 6)),
+    Math.max(0, Math.floor((frame - 180) / 8)),
   )
-  const displayUrl = frame < 60 ? '' : URL_TEXT.slice(0, typedChars)
-  const showCursor = frame >= 60 && frame < 120 && Math.floor(frame / 10) % 2 === 0
+  const displayUrl = frame < 180 ? '' : URL_TEXT.slice(0, typedChars)
+  const showCursor = frame >= 180 && frame < 260 && Math.floor(frame / 12) % 2 === 0
 
-  // Button pulse at frame 120-150
+  // Button pulse
+  const buttonOpacity = interpolate(frame, [250, 265], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
   const buttonScale =
-    frame >= 120 && frame < 150
-      ? interpolate(frame, [120, 135, 150], [1, 1.05, 1], {
+    frame >= 260 && frame < 280
+      ? interpolate(frame, [260, 270, 280], [1, 1.06, 1], {
           extrapolateLeft: 'clamp',
           extrapolateRight: 'clamp',
         })
       : 1
 
-  // Loading state 150-300
-  const isLoading = frame >= 150 && frame < 300
+  // Loading
+  const isLoading = frame >= 280 && frame < 380
   const loadingTextIndex = isLoading
-    ? Math.min(LOADING_TEXTS.length - 1, Math.floor((frame - 150) / 40))
+    ? Math.min(LOADING_TEXTS.length - 1, Math.floor((frame - 280) / 30))
     : 0
-
   const loadingProgress = isLoading
-    ? interpolate(frame, [150, 300], [0, 85], {
+    ? interpolate(frame, [280, 380], [0, 90], {
         extrapolateLeft: 'clamp',
         extrapolateRight: 'clamp',
       })
     : 0
+  const spinnerRotation = frame * 9 // 360° per 40 frames
 
-  // Spinner rotation
-  const spinnerRotation = frame * 6
+  // Results
+  const showResults = frame >= 380
+  const resultsOpacity = interpolate(frame, [380, 410], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // Final CTA
+  const ctaY = spring({
+    frame: frame - 460,
+    fps,
+    from: 40,
+    to: 0,
+    config: SPRING_ENTER,
+  })
+  const ctaOpacity = interpolate(frame, [460, 475], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
   return (
-    <>
-      {/* AIBadge */}
-      <div style={{ alignSelf: 'center', marginTop: 40 }}>
-        <AIBadge frame={frame} />
-      </div>
+    <AbsoluteFill>
+      <LDBackground brand={brand} />
 
-      {/* Title */}
-      <div
+      <AbsoluteFill
         style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 28,
-          fontWeight: 700,
-          color: '#F8FAFC',
-          textAlign: 'center',
-          marginTop: 20,
-          lineHeight: 1.3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '80px 60px',
+          gap: 24,
         }}
       >
-        Analyze your
-        <br />
-        landing page
-      </div>
-
-      {/* URL Input */}
-      <div
-        style={{
-          backgroundColor: 'rgba(5,10,20,0.8)',
-          border: '1px solid rgba(245,158,11,0.2)',
-          borderRadius: 12,
-          padding: '14px 18px',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 16,
-          color: displayUrl ? '#F8FAFC' : '#475569',
-          marginTop: 16,
-        }}
-      >
-        {displayUrl || 'https://yoursite.com'}
-        {showCursor && (
-          <span style={{ color: '#F59E0B' }}>|</span>
-        )}
-      </div>
-
-      {/* Analyze button */}
-      {!isLoading && (
+        {/* Logo */}
         <div
           style={{
-            transform: `scale(${buttonScale})`,
-            background: 'linear-gradient(135deg, #F59E0B, #D97706)',
-            color: '#0A0F1E',
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 18,
-            fontWeight: 700,
-            padding: '14px 24px',
-            borderRadius: 12,
-            textAlign: 'center',
-            marginTop: 12,
-            boxShadow: '0 0 30px rgba(245,158,11,0.3)',
+            opacity: logoOpacity,
+            transform: `scale(${logoScale})`,
+            marginTop: 40,
           }}
         >
-          Analyze Your Page Free
+          <Img
+            src={staticFile(brand.assets.logoPng)}
+            style={{ height: 80, width: 80, borderRadius: 16 }}
+          />
         </div>
-      )}
 
-      {/* Loading state */}
-      {isLoading && (
+        {/* AIBadge */}
+        <div style={{ opacity: badgeOpacity }}>
+          <AIBadge frame={frame} />
+        </div>
+
+        {/* Headline */}
+        <div
+          style={{
+            opacity: headlineOpacity,
+            transform: `translateY(${headlineY}px)`,
+            marginTop: 16,
+          }}
+        >
+          <GlowText brand={brand} size={72}>
+            Your landing page is leaking conversions
+          </GlowText>
+        </div>
+
+        {/* Subline */}
+        <div
+          style={{
+            opacity: sublineOpacity * 0.7,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 36,
+            color: '#F8FAFC',
+            textAlign: 'center',
+            maxWidth: 900,
+            lineHeight: 1.4,
+          }}
+        >
+          AI scans 8 categories in 60 seconds
+        </div>
+
+        {/* URL Input + Button + Loading + Results */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: 20,
-            marginTop: 40,
+            marginTop: 24,
+            width: '100%',
           }}
         >
-          {/* Spinner */}
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: '50%',
-              border: '4px solid rgba(245,158,11,0.15)',
-              borderTopColor: '#F59E0B',
-              transform: `rotate(${spinnerRotation}deg)`,
-            }}
-          />
-
-          {/* Loading text */}
-          <div
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 15,
-              color: '#F59E0B',
-              textAlign: 'center',
-            }}
-          >
-            {LOADING_TEXTS[loadingTextIndex]}
-          </div>
-
-          {/* Progress bar */}
-          <div
-            style={{
-              width: '80%',
-              height: 6,
-              backgroundColor: 'rgba(245,158,11,0.1)',
-              borderRadius: 3,
-              overflow: 'hidden',
-            }}
-          >
+          {/* URL input bar */}
+          {!isLoading && !showResults && (
             <div
               style={{
-                width: `${loadingProgress}%`,
-                height: '100%',
-                backgroundColor: '#F59E0B',
-                borderRadius: 3,
-                boxShadow: '0 0 10px rgba(245,158,11,0.6)',
+                opacity: inputOpacity,
+                transform: `translateY(${inputY}px)`,
+                width: 860,
+                height: 90,
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                border: '2px solid #F59E0B',
+                borderRadius: 16,
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 32px',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 28,
+                color: displayUrl ? '#F8FAFC' : '#475569',
               }}
-            />
-          </div>
+            >
+              {displayUrl || 'https://yoursite.com'}
+              {showCursor && (
+                <span style={{ color: '#F59E0B', marginLeft: 2 }}>|</span>
+              )}
+            </div>
+          )}
+
+          {/* Analyze button */}
+          {!isLoading && !showResults && (
+            <div
+              style={{
+                opacity: buttonOpacity,
+                transform: `scale(${buttonScale})`,
+                background: '#F59E0B',
+                color: '#0A0F1E',
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 32,
+                fontWeight: 700,
+                padding: '24px 64px',
+                borderRadius: 14,
+                boxShadow: '0 0 40px rgba(245,158,11,0.35)',
+              }}
+            >
+              ⟶  Analyze Your Page Free
+            </div>
+          )}
+
+          {/* Loading state */}
+          {isLoading && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 28,
+                marginTop: 40,
+              }}
+            >
+              {/* Spinner */}
+              <div
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  border: '3px solid rgba(245,158,11,0.2)',
+                  borderRightColor: 'transparent',
+                  borderTopColor: '#F59E0B',
+                  transform: `rotate(${spinnerRotation}deg)`,
+                }}
+              />
+
+              {/* Loading text */}
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 28,
+                  color: '#F59E0B',
+                  textAlign: 'center',
+                }}
+              >
+                {LOADING_TEXTS[loadingTextIndex]}
+              </div>
+
+              {/* Progress bar */}
+              <div
+                style={{
+                  width: 800,
+                  height: 8,
+                  backgroundColor: 'rgba(245,158,11,0.1)',
+                  borderRadius: 4,
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    width: `${loadingProgress}%`,
+                    height: '100%',
+                    backgroundColor: '#F59E0B',
+                    borderRadius: 4,
+                    boxShadow: '0 0 12px rgba(245,158,11,0.6)',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {showResults && (
+            <div
+              style={{
+                opacity: resultsOpacity,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 32,
+                width: '100%',
+              }}
+            >
+              {/* Score circle */}
+              <ScoreCircle
+                score={72}
+                size={280}
+                strokeWidth={14}
+                frame={frame}
+                startFrame={385}
+                animDuration={60}
+              />
+
+              {/* Category bars */}
+              <div
+                style={{
+                  width: 700,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 16,
+                }}
+              >
+                {RESULT_CATEGORIES.map((cat, i) => (
+                  <CategoryScoreBar
+                    key={i}
+                    category={cat}
+                    frame={frame}
+                    startFrame={410 + i * 12}
+                    animDuration={30}
+                    labelWidth={200}
+                    fontSize={24}
+                  />
+                ))}
+              </div>
+
+              {/* Final CTA */}
+              <div
+                style={{
+                  opacity: ctaOpacity,
+                  transform: `translateY(${ctaY}px)`,
+                }}
+              >
+                <GlowButton text="See Full Report →" brand={brand} />
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </>
-  )
-}
+      </AbsoluteFill>
 
-// ── Results Phase ────────────────────────────────────────────────────────────
-
-const ResultsPhase: React.FC<{ brand: BrandConfig; frame: number; fps: number }> = ({
-  brand,
-  frame,
-  fps,
-}) => {
-  const resultsFade = interpolate(frame, [300, 330], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const badgeOpacity = interpolate(frame, [400, 420], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const ctaOpacity = interpolate(frame, [430, 460], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const ctaScale = spring({
-    frame: frame - 430,
-    fps,
-    from: 0.8,
-    to: 1,
-    config: SPRING_ENTER,
-  })
-
-  return (
-    <div
-      style={{
-        opacity: resultsFade,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 24,
-        paddingTop: 20,
-        flex: 1,
-      }}
-    >
-      {/* URL */}
-      <div
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 16,
-          color: '#F59E0B',
-          fontWeight: 600,
-        }}
-      >
-        vercel.com
-      </div>
-
-      {/* Score circle */}
-      <ScoreCircle
-        score={72}
-        size={160}
-        strokeWidth={10}
-        frame={frame}
-        startFrame={310}
-        animDuration={90}
-      />
-
-      {/* Category bars */}
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
-          marginTop: 8,
-        }}
-      >
-        {RESULT_CATEGORIES.map((cat, i) => (
-          <CategoryScoreBar
-            key={i}
-            category={cat}
-            frame={frame}
-            startFrame={350 + i * 15}
-            animDuration={40}
-            labelWidth={110}
-            fontSize={15}
-          />
-        ))}
-      </div>
-
-      {/* Issues badge */}
-      <div
-        style={{
-          opacity: badgeOpacity,
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 8,
-          padding: '8px 18px',
-          borderRadius: 100,
-          backgroundColor: 'rgba(239,68,68,0.1)',
-          border: '1px solid rgba(239,68,68,0.3)',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 14,
-          fontWeight: 600,
-          color: '#ef4444',
-        }}
-      >
-        <div
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            backgroundColor: '#ef4444',
-          }}
-        />
-        2 issues found
-      </div>
-
-      {/* CTA */}
-      <div
-        style={{
-          opacity: ctaOpacity,
-          transform: `scale(${ctaScale})`,
-          marginTop: 'auto',
-          marginBottom: 20,
-        }}
-      >
-        <GlowButton text="See Full Report →" brand={brand} />
-      </div>
-    </div>
+      <LogoOverlay brand={brand} frame={frame} />
+    </AbsoluteFill>
   )
 }
