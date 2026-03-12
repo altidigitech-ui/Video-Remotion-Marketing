@@ -469,19 +469,9 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
   )
 }
 
-// ── Summary Cards Panel ──────────────────────────────────────────────────────
-
-const MINI_CATEGORIES: CategoryData[] = [
-  { label: 'Headline', score: 85 },
-  { label: 'CTA', score: 60 },
-  { label: 'Social Proof', score: 40 },
-  { label: 'Form', score: 30 },
-  { label: 'Visual', score: 90 },
-  { label: 'Trust', score: 95 },
-]
+// ── Issue Cards Panel ────────────────────────────────────────────────────────
 
 const ScreenshotPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  // Card 1 — mini category bars
   const card1Y = spring({
     frame: frame - 220,
     fps,
@@ -494,7 +484,6 @@ const ScreenshotPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps 
     extrapolateRight: 'clamp',
   })
 
-  // Card 2 — report summary
   const card2Y = spring({
     frame: frame - 240,
     fps,
@@ -509,110 +498,123 @@ const ScreenshotPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps 
 
   return (
     <div style={{ display: 'flex', gap: 16, flex: 1, minHeight: 0 }}>
-      {/* Card 1: Mini category bars */}
+      {/* Card 1: Critical issue */}
       <div
         style={{
           flex: 1,
           opacity: card1Opacity,
           transform: `translateY(${card1Y}px)`,
-          backgroundColor: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(245,158,11,0.15)',
+          backgroundColor: 'rgba(239,68,68,0.08)',
+          borderLeft: '5px solid #ef4444',
           borderRadius: 12,
-          padding: '16px 20px',
+          padding: '18px 20px',
           display: 'flex',
           flexDirection: 'column',
-          gap: 8,
-          overflow: 'hidden',
+          gap: 10,
         }}
       >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: '#ef4444',
+              boxShadow: '0 0 6px rgba(239,68,68,0.6)',
+            }}
+          />
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#ef4444',
+              letterSpacing: '0.08em',
+            }}
+          >
+            CRITICAL ISSUE
+          </div>
+        </div>
         <div
           style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 11,
-            color: '#F59E0B',
-            letterSpacing: '0.1em',
-            marginBottom: 4,
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 20,
+            fontWeight: 700,
+            color: '#F8FAFC',
+            lineHeight: 1.3,
           }}
         >
-          CATEGORY SCORES
+          No visible customer testimonials
         </div>
-        {MINI_CATEGORIES.map((cat, i) => (
-          <CategoryScoreBar
-            key={i}
-            category={cat}
-            frame={frame}
-            startFrame={240 + i * 10}
-            animDuration={35}
-            labelWidth={80}
-            fontSize={13}
-          />
-        ))}
+        <div
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 15,
+            color: '#64748B',
+            lineHeight: 1.5,
+          }}
+        >
+          The page lacks testimonials, case studies, or company logos.
+        </div>
       </div>
 
-      {/* Card 2: Report summary */}
+      {/* Card 2: Warning */}
       <div
         style={{
           flex: 1,
           opacity: card2Opacity,
           transform: `translateY(${card2Y}px)`,
-          backgroundColor: 'rgba(255,255,255,0.03)',
-          border: '1px solid rgba(245,158,11,0.15)',
+          backgroundColor: 'rgba(245,158,11,0.08)',
+          borderLeft: '5px solid #f59e0b',
           borderRadius: 12,
-          padding: '16px 20px',
+          padding: '18px 20px',
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
-          overflow: 'hidden',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <div
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 18,
-                fontWeight: 700,
-                color: '#F8FAFC',
-              }}
-            >
-              Analysis Report
-            </div>
-            <div
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 14,
-                color: '#F59E0B',
-                fontWeight: 600,
-                marginTop: 4,
-              }}
-            >
-              vercel.com
-            </div>
-          </div>
-          <ScoreCircle
-            score={72}
-            size={80}
-            strokeWidth={5}
-            frame={frame}
-            startFrame={260}
-            animDuration={60}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: '#f59e0b',
+              boxShadow: '0 0 6px rgba(245,158,11,0.6)',
+            }}
           />
+          <div
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#f59e0b',
+              letterSpacing: '0.08em',
+            }}
+          >
+            WARNING
+          </div>
         </div>
         <div
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14,
-            color: '#64748B',
-            lineHeight: 1.5,
-            flex: 1,
+            fontSize: 20,
+            fontWeight: 700,
+            color: '#F8FAFC',
+            lineHeight: 1.3,
           }}
         >
-          Strong technical performance but weak conversion elements. Missing social proof and
-          generic CTAs reduce conversion potential.
+          Generic CTA lacks compelling action
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Badge text="1 critical" color="#ef4444" />
-          <Badge text="2 warnings" color="#f59e0b" />
+        <div
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 15,
+            color: '#64748B',
+            lineHeight: 1.5,
+          }}
+        >
+          {"The 'Get started' CTA doesn't communicate specific value."}
         </div>
       </div>
     </div>
