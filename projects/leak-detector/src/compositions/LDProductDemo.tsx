@@ -116,7 +116,6 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   const ctaStart = durationInFrames - 90
   const ctaOp = interpolate(frame, [ctaStart, ctaStart + 25], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const ctaScale = spring({ frame: frame - ctaStart, fps, from: 0.85, to: 1, config: SPRING })
-  const pulse = 1 + Math.sin(frame * 0.1) * 0.02
 
   return (
     <AbsoluteFill>
@@ -281,17 +280,9 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
               </div>
             )
           })}
-        </div>
-      </AbsoluteFill>
-
-      {/* ── CTA ── */}
-      <AbsoluteFill style={{
-        opacity: ctaOp, display: 'flex',
-        alignItems: 'flex-end', justifyContent: 'center',
-        paddingBottom: 52,
-      }}>
-        <div style={{ transform: `scale(${ctaScale * pulse})` }}>
-          <GlowButton text={`⟶ ${ctaText}`} brand={brand} />
+          <div style={{ opacity: ctaOp, transform: `scale(${ctaScale})`, marginTop: 'auto', paddingTop: 24, display: 'flex', justifyContent: 'center' }}>
+            <GlowButton text={`⟶ ${ctaText}`} brand={brand} />
+          </div>
         </div>
       </AbsoluteFill>
 

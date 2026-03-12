@@ -237,7 +237,7 @@ export const LogoOverlay: React.FC<{ brand: BrandConfig; frame: number }> = ({
         style={{
           position: 'absolute',
           bottom: 40,
-          left: 52,
+          right: 52,
           opacity,
           display: 'flex',
           alignItems: 'center',
