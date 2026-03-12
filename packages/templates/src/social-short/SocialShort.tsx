@@ -29,24 +29,30 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
   const frame = useCurrentFrame()
   const { durationInFrames } = useVideoConfig()
 
+  // Divide timeline into 3 strict non-overlapping sections
+  const hookDuration = Math.round(durationInFrames * 0.4)
+  const bodyDuration = Math.round(durationInFrames * 0.3)
+  const ctaFrom = hookDuration + bodyDuration
+  const ctaDuration = durationInFrames - ctaFrom
+
   return (
     <AbsoluteFill>
       <LDBackground brand={brand} />
 
       {/* Hook text -- big, centered, bouncy */}
-      <Sequence from={0} durationInFrames={durationInFrames} name="Hook">
+      <Sequence from={0} durationInFrames={hookDuration + bodyDuration + ctaDuration} name="Hook">
         <HookSection brand={brand} text={hookText} />
       </Sequence>
 
       {/* Body text */}
       {bodyText && (
-        <Sequence from={Math.round(durationInFrames * 0.25)} durationInFrames={Math.round(durationInFrames * 0.55)} name="Body">
+        <Sequence from={hookDuration} durationInFrames={bodyDuration} name="Body">
           <BodySection brand={brand} text={bodyText} />
         </Sequence>
       )}
 
       {/* CTA */}
-      <Sequence from={Math.round(durationInFrames * 0.55)} durationInFrames={durationInFrames - Math.round(durationInFrames * 0.55)} name="CTA">
+      <Sequence from={ctaFrom} durationInFrames={ctaDuration} name="CTA">
         <CTASection brand={brand} text={ctaText} />
       </Sequence>
 

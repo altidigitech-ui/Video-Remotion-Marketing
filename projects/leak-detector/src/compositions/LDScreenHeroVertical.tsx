@@ -1,10 +1,8 @@
 import React from 'react'
 import {
   AbsoluteFill,
-  Img,
   interpolate,
   spring,
-  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
@@ -39,19 +37,6 @@ const RESULT_CATEGORIES: CategoryData[] = [
 export const LDScreenHeroVertical: React.FC<LDScreenHeroVerticalProps> = ({ brand }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
-
-  // Logo
-  const logoScale = spring({
-    frame,
-    fps,
-    from: 0,
-    to: 1,
-    config: SPRING_ENTER,
-  })
-  const logoOpacity = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
 
   // AIBadge
   const badgeOpacity = interpolate(frame, [40, 70], [0, 1], {
@@ -158,20 +143,6 @@ export const LDScreenHeroVertical: React.FC<LDScreenHeroVerticalProps> = ({ bran
           gap: 24,
         }}
       >
-        {/* Logo */}
-        <div
-          style={{
-            opacity: logoOpacity,
-            transform: `scale(${logoScale})`,
-            marginTop: 40,
-          }}
-        >
-          <Img
-            src={staticFile(brand.assets.logoPng)}
-            style={{ height: 80, width: 80, borderRadius: 16 }}
-          />
-        </div>
-
         {/* AIBadge */}
         <div style={{ opacity: badgeOpacity }}>
           <AIBadge frame={frame} />

@@ -8,7 +8,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, GlowButton, GlassCard, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, GlassCard } from '@altidigitech/core'
 
 const stepSchema = z.object({
   title: z.string(),
@@ -154,8 +154,8 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
               style={{
                 opacity: cardOpacity,
                 transform: `scale(${cardScale})`,
-                width: 480,
-                flexShrink: 0,
+                flex: 1,
+                minWidth: 0,
                 zIndex: 1,
               }}
             >
@@ -238,7 +238,6 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
         </div>
       )}
 
-      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }
