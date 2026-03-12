@@ -104,13 +104,13 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   const headerY = spring({ frame, fps, from: 32, to: 0, config: SPRING })
 
   // ── Phase 2 : Content layout (90+) ──────────────────────────────────────
-  const contentOp = interpolate(frame, [85, 110], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const contentOp = interpolate(frame, [160, 185], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
   // ── Issues (frame 200+) ──────────────────────────────────────────────────
-  const issue1Op = interpolate(frame, [210, 235], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const issue1Y = spring({ frame: frame - 210, fps, from: 20, to: 0, config: SPRING })
-  const issue2Op = interpolate(frame, [240, 265], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
-  const issue2Y = spring({ frame: frame - 240, fps, from: 20, to: 0, config: SPRING })
+  const issue1Op = interpolate(frame, [285, 310], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const issue1Y = spring({ frame: frame - 285, fps, from: 20, to: 0, config: SPRING })
+  const issue2Op = interpolate(frame, [315, 340], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const issue2Y = spring({ frame: frame - 315, fps, from: 20, to: 0, config: SPRING })
 
   // ── CTA (last 90 frames) ─────────────────────────────────────────────────
   const ctaStart = durationInFrames - 90
@@ -123,7 +123,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
 
       {/* ── Header (0→90) ── */}
       <AbsoluteFill style={{
-        opacity: interpolate(frame, [0, 28, 75, 90], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
+        opacity: interpolate(frame, [0, 28, 150, 165], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 24,
       }}>
@@ -168,7 +168,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
           </div>
 
           {/* URL Bar */}
-          <UrlBar frame={Math.max(0, frame - 95)} fps={fps} />
+          <UrlBar frame={Math.max(0, frame - 170)} fps={fps} />
 
           {/* Score result card */}
           <div style={{
@@ -189,7 +189,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
                   vercel.com
                 </div>
               </div>
-              <ScoreRing frame={frame} startFrame={130} />
+              <ScoreRing frame={frame} startFrame={205} />
             </div>
 
             {/* Mini bars */}
@@ -199,7 +199,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
               { label: 'Social Proof', score: 40, color: '#ef4444' },
               { label: 'Trust', score: 95, color: '#22c55e' },
             ].map((cat, i) => {
-              const barStart = 145 + i * 18
+              const barStart = 220 + i * 18
               const bOp = interpolate(frame, [barStart, barStart + 15], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
               const bW = interpolate(frame, [barStart, barStart + 50], [0, cat.score], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
               return (
@@ -280,7 +280,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
               </div>
             )
           })}
-          <div style={{ opacity: ctaOp, transform: `scale(${ctaScale})`, marginTop: 'auto', paddingTop: 24, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ opacity: ctaOp, transform: `scale(${ctaScale})`, marginTop: 32, display: 'flex', justifyContent: 'center' }}>
             <GlowButton text={`⟶ ${ctaText}`} brand={brand} />
           </div>
         </div>

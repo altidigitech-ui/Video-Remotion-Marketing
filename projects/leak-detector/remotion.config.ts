@@ -4,7 +4,7 @@ import path from 'path'
 Config.setVideoImageFormat('jpeg')
 Config.setOverwriteOutput(true)
 Config.setPixelFormat('yuv420p')
-Config.setConcurrency(4)
+Config.setConcurrency(2)
 Config.setChromiumOpenGlRenderer('angle')
 Config.setDelayRenderTimeoutInMilliseconds(30000)
 Config.setJpegQuality(80)
