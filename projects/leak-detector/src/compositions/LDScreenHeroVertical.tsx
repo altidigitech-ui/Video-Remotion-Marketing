@@ -1,8 +1,10 @@
 import React from 'react'
 import {
   AbsoluteFill,
+  Img,
   interpolate,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
@@ -104,7 +106,10 @@ const PhoneFrame: React.FC<{ brand: BrandConfig; frame: number; fps: number }> =
         }}
       />
 
-      {/* Phone content */}
+      {/* Landing hero screenshot — always behind, fades in and zooms */}
+      <LandingHeroScreenshot frame={frame} />
+
+      {/* Phone content overlay */}
       <div
         style={{
           flex: 1,
@@ -112,6 +117,8 @@ const PhoneFrame: React.FC<{ brand: BrandConfig; frame: number; fps: number }> =
           display: 'flex',
           flexDirection: 'column',
           gap: 20,
+          position: 'relative',
+          zIndex: 1,
         }}
       >
         {/* Phase 1: Input */}
@@ -124,6 +131,46 @@ const PhoneFrame: React.FC<{ brand: BrandConfig; frame: number; fps: number }> =
           <ResultsPhase brand={brand} frame={frame} fps={fps} />
         )}
       </div>
+    </div>
+  )
+}
+
+// ── Landing Hero Screenshot ──────────────────────────────────────────────────
+
+const LandingHeroScreenshot: React.FC<{ frame: number }> = ({ frame }) => {
+  const opacity = interpolate(frame, [30, 60], [0, 0.2], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // Slow zoom 1→1.08 over full duration
+  const zoom = interpolate(frame, [0, 480], [1, 1.08], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 28,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        opacity,
+        overflow: 'hidden',
+        borderRadius: '0 0 37px 37px',
+      }}
+    >
+      <Img
+        src={staticFile('screenshots/landing-hero.png')}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          transform: `scale(${zoom})`,
+        }}
+      />
     </div>
   )
 }

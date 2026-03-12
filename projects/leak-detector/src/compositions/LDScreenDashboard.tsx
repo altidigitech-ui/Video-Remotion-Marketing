@@ -388,7 +388,6 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
-          flex: 1,
         }}
       >
         {CATEGORIES.map((cat, i) => (
@@ -403,6 +402,9 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
           />
         ))}
       </div>
+
+      {/* Real screenshots */}
+      <ScreenshotPanel frame={frame} fps={fps} />
 
       {/* Issue cards */}
       <div style={{ display: 'flex', gap: 16 }}>
@@ -463,6 +465,75 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
       >
         <GlowButton text="⟶ ANALYZE YOUR PAGE FREE" brand={brand} scale={ctaScale} />
       </div>
+    </div>
+  )
+}
+
+// ── Screenshot Panel ─────────────────────────────────────────────────────────
+
+const ScreenshotPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const SCREENSHOTS = [
+    { src: 'screenshots/dashboard-categories.png', delay: 220 },
+    { src: 'screenshots/dashboard-report.png', delay: 260 },
+  ]
+
+  return (
+    <div style={{ display: 'flex', gap: 16, flex: 1, minHeight: 0 }}>
+      {SCREENSHOTS.map((shot, i) => {
+        const slideX = interpolate(
+          frame,
+          [shot.delay, shot.delay + 40],
+          [120, 0],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+        )
+
+        const opacity = interpolate(
+          frame,
+          [shot.delay, shot.delay + 30],
+          [0, 1],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+        )
+
+        const zoom = interpolate(
+          frame,
+          [shot.delay, shot.delay + 50],
+          [1.05, 1],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+        )
+
+        // Subtle parallax scroll up after entrance
+        const parallaxY = interpolate(
+          frame,
+          [shot.delay + 50, 600],
+          [0, -30],
+          { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+        )
+
+        return (
+          <div
+            key={i}
+            style={{
+              flex: 1,
+              opacity,
+              transform: `translateX(${slideX}px)`,
+              borderRadius: 10,
+              overflow: 'hidden',
+              border: '1px solid rgba(245,158,11,0.15)',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            }}
+          >
+            <Img
+              src={staticFile(shot.src)}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                transform: `scale(${zoom}) translateY(${parallaxY}px)`,
+              }}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }

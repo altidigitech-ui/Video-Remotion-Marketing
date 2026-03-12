@@ -1,8 +1,10 @@
 import React from 'react'
 import {
   AbsoluteFill,
+  Img,
   interpolate,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
@@ -73,11 +75,14 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
           vercel.com
         </div>
 
+        {/* Screenshot with amber glow */}
+        <ScreenshotWithGlow frame={frame} fps={fps} />
+
         {/* Large ScoreCircle */}
         <ScoreCircle
           score={72}
-          size={400}
-          strokeWidth={16}
+          size={340}
+          strokeWidth={14}
           frame={frame}
           startFrame={30}
           animDuration={150}
@@ -114,6 +119,53 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
 
       <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
+  )
+}
+
+const ScreenshotWithGlow: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const scale = spring({
+    frame: frame - 10,
+    fps,
+    from: 0.95,
+    to: 1,
+    config: SPRING_ENTER,
+  })
+
+  const opacity = interpolate(frame, [10, 40], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // Pulsing glow
+  const glowIntensity = 0.3 + Math.sin(frame * 0.06) * 0.15
+
+  return (
+    <div
+      style={{
+        opacity,
+        transform: `scale(${scale})`,
+        position: 'absolute',
+        top: 80,
+        left: 60,
+        right: 60,
+        bottom: 80,
+        borderRadius: 16,
+        overflow: 'hidden',
+        border: `2px solid rgba(245,158,11,${glowIntensity + 0.1})`,
+        boxShadow: `0 0 ${40 * glowIntensity}px rgba(245,158,11,${glowIntensity}), 0 0 ${80 * glowIntensity}px rgba(245,158,11,${glowIntensity * 0.4}), 0 20px 60px rgba(0,0,0,0.5)`,
+        zIndex: 0,
+      }}
+    >
+      <Img
+        src={staticFile('screenshots/landing-stats.png')}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          opacity: 0.25,
+        }}
+      />
+    </div>
   )
 }
 
