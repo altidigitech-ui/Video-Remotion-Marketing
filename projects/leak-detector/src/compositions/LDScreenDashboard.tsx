@@ -33,19 +33,6 @@ const CATEGORIES: CategoryData[] = [
   { label: 'Performance', score: 95 },
 ]
 
-const ISSUES = [
-  {
-    severity: 'critical' as const,
-    title: 'No visible customer testimonials',
-    desc: 'The page lacks customer testimonials, case studies, or specific company logos.',
-  },
-  {
-    severity: 'warning' as const,
-    title: 'Generic CTA lacks compelling action',
-    desc: "The 'Get started' CTA is generic and doesn't communicate specific value.",
-  },
-]
-
 export const LDScreenDashboard: React.FC<LDScreenDashboardProps> = ({ brand }) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
@@ -249,38 +236,13 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
     extrapolateRight: 'clamp',
   })
 
-  // Issues
-  const issue1Y = spring({
-    frame: frame - 300,
-    fps,
-    from: 40,
-    to: 0,
-    config: SPRING_ENTER,
-  })
-  const issue1Opacity = interpolate(frame, [300, 330], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const issue2Y = spring({
-    frame: frame - 330,
-    fps,
-    from: 40,
-    to: 0,
-    config: SPRING_ENTER,
-  })
-  const issue2Opacity = interpolate(frame, [330, 360], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
   // CTA
-  const ctaOpacity = interpolate(frame, [480, 510], [0, 1], {
+  const ctaOpacity = interpolate(frame, [380, 410], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
   const ctaScale = spring({
-    frame: frame - 480,
+    frame: frame - 380,
     fps,
     from: 0.8,
     to: 1,
@@ -405,54 +367,6 @@ const MainContent: React.FC<{ brand: BrandConfig; frame: number; fps: number }> 
 
       {/* Real screenshots */}
       <ScreenshotPanel frame={frame} fps={fps} />
-
-      {/* Issue cards */}
-      <div style={{ display: 'flex', gap: 16 }}>
-        {ISSUES.map((issue, i) => {
-          const issueOpacity = i === 0 ? issue1Opacity : issue2Opacity
-          const issueY = i === 0 ? issue1Y : issue2Y
-          const borderColor = issue.severity === 'critical' ? '#ef4444' : '#f59e0b'
-          const bgColor =
-            issue.severity === 'critical' ? 'rgba(239,68,68,0.06)' : 'rgba(245,158,11,0.06)'
-
-          return (
-            <div
-              key={i}
-              style={{
-                opacity: issueOpacity,
-                transform: `translateY(${issueY}px)`,
-                flex: 1,
-                backgroundColor: bgColor,
-                borderLeft: `4px solid ${borderColor}`,
-                borderRadius: 10,
-                padding: '14px 18px',
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: 15,
-                  fontWeight: 600,
-                  color: '#F8FAFC',
-                  marginBottom: 6,
-                }}
-              >
-                {issue.title}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: 13,
-                  color: '#64748B',
-                  lineHeight: 1.4,
-                }}
-              >
-                {issue.desc}
-              </div>
-            </div>
-          )
-        })}
-      </div>
 
       {/* CTA */}
       <div
