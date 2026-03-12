@@ -22,6 +22,9 @@ import { LDLogoReveal } from './compositions/LDLogoReveal'
 import { LDScreenDashboard } from './compositions/LDScreenDashboard'
 import { LDScreenHeroVertical } from './compositions/LDScreenHeroVertical'
 import { LDScreenSquare } from './compositions/LDScreenSquare'
+import { LDCinematicHero } from './compositions/LDCinematicHero'
+import { LDProblemAgitation } from './compositions/LDProblemAgitation'
+import { LDBeforeAfter } from './compositions/LDBeforeAfter'
 
 // Load Space Grotesk for display text
 const { fontFamily } = loadFont()
@@ -312,6 +315,38 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{
           brand: ldBrand,
         }}
+      />
+
+      {/* ===== NOUVELLES COMPOSITIONS PREMIUM ===== */}
+
+      <Composition
+        id="leak-detector-cinematic-hero"
+        component={LDCinematicHero}
+        durationInFrames={sec(30, FPS_60)}
+        fps={FPS_60}
+        width={1920}
+        height={1080}
+        defaultProps={{ brand: ldBrand }}
+      />
+
+      <Composition
+        id="leak-detector-problem-agitation"
+        component={LDProblemAgitation}
+        durationInFrames={sec(15, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{ brand: ldBrand }}
+      />
+
+      <Composition
+        id="leak-detector-before-after"
+        component={LDBeforeAfter}
+        durationInFrames={sec(20, FPS_60)}
+        fps={FPS_60}
+        width={1920}
+        height={1080}
+        defaultProps={{ brand: ldBrand }}
       />
     </>
   )

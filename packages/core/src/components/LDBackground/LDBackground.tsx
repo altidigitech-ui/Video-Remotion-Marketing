@@ -9,7 +9,6 @@ const ROWS = 13
 
 export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
   const frame = useCurrentFrame()
-  const scanY = ((frame * 1.5) % 110) - 5
   const orbPulse = 0.10 + Math.sin(frame * 0.04) * 0.04
 
   const particles = Array.from({ length: 35 }, (_, i) => ({
@@ -55,14 +54,20 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
         background: 'radial-gradient(ellipse 600px 400px at 8% 92%, rgba(0,200,255,0.08) 0%, transparent 70%)',
       }} />
 
-      {/* Scanline */}
-      <div style={{
-        position: 'absolute',
-        top: `${scanY}%`,
-        left: 0, right: 0, height: 3,
-        background: 'linear-gradient(90deg, transparent 0%, rgba(245,158,11,0) 5%, rgba(245,158,11,0.9) 50%, rgba(245,158,11,0) 95%, transparent 100%)',
-        boxShadow: '0 0 20px rgba(245,158,11,0.8), 0 0 40px rgba(245,158,11,0.3)',
-      }} />
+      {/* Orbital light — trace une ellipse autour du canvas */}
+      {(() => {
+        const angle = frame * 0.008
+        const lx = 50 + 42 * Math.cos(angle)
+        const ly = 50 + 28 * Math.sin(angle)
+        return (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: `radial-gradient(ellipse 180px 120px at ${lx}% ${ly}%, rgba(245,158,11,0.12) 0%, transparent 70%)`,
+            pointerEvents: 'none',
+          }} />
+        )
+      })()}
 
       {/* Particles */}
       {particles.map((p, i) => (
