@@ -41,23 +41,27 @@ export const LeakDetectorScene: React.FC<LeakDetectorSceneProps> = ({
 
       {children}
 
-      {/* Logo — top left */}
+      {/* Logo — bottom right */}
       {showLogo && (
         <div
           style={{
             position: 'absolute',
-            top: 40,
-            left: 40,
+            bottom: 40,
+            right: 52,
             opacity: logoOpacity,
             transform: `scale(${logoScale})`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
           }}
         >
           <Img
             src={staticFile(brand.assets.logoPng)}
             style={{
-              width: logoSize,
-              height: logoSize,
-              borderRadius: logoSize * 0.18,
+              height: 52,
+              width: 52,
+              borderRadius: 10,
+              filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.85)) drop-shadow(0 0 8px rgba(245,158,11,0.3))',
             }}
           />
         </div>

@@ -27,14 +27,7 @@ export const LeakDetectorBadge: React.FC<LeakDetectorBadgeProps> = ({
     extrapolateRight: 'clamp',
   })
 
-  // Fade out after 2 seconds
-  const fadeOutStart = fps * 2 - 20
-  const fadeOut = interpolate(frame, [fadeOutStart, fadeOutStart + 20], [1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const opacity = Math.min(enterOpacity, fadeOut)
+  const opacity = enterOpacity
 
   // Green dot pulse
   const pulse = Math.sin(frame * 0.15) * 0.4 + 0.6

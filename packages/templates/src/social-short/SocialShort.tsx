@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   AbsoluteFill,
-  Sequence,
   interpolate,
   spring,
   useCurrentFrame,
@@ -9,7 +8,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, GlowButton, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, LogoOverlay, AIBadge } from '@altidigitech/core'
 
 export const socialShortSchema = z.object({
   brand: z.custom<BrandConfig>(),
@@ -27,141 +26,94 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
   ctaText,
 }) => {
   const frame = useCurrentFrame()
-  const { durationInFrames } = useVideoConfig()
+  const { fps, durationInFrames } = useVideoConfig()
 
-  // Divide timeline into 3 strict non-overlapping sections
-  const hookDuration = Math.round(durationInFrames * 0.4)
-  const bodyDuration = Math.round(durationInFrames * 0.3)
-  const ctaFrom = hookDuration + bodyDuration
-  const ctaDuration = durationInFrames - ctaFrom
+  // ── Timings ────────────────────────────────────────────────────────────────
+  // Phase 1: Badge + hook text (0 → ~60% duration)
+  // Phase 2: Body text appears below hook (frame 45 onwards)
+  // Phase 3: CTA appears (last 90 frames)
+
+  const badgeOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  const hookScale = spring({ frame, fps, from: 0.75, to: 1, config: brand.motion.springBouncy })
+  const hookOp = interpolate(frame, [0, 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  const bodyOp = interpolate(frame, [50, 75], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const bodyY = spring({ frame: frame - 50, fps, from: 24, to: 0, config: brand.motion.springBouncy })
+
+  const ctaStart = durationInFrames - 90
+  const ctaScale = spring({ frame: frame - ctaStart, fps, from: 0.85, to: 1, config: brand.motion.springBouncy })
+  const ctaOp = interpolate(frame, [ctaStart, ctaStart + 20], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
+  // Pulse for CTA
+  const pulse = 1 + Math.sin(frame * 0.12) * 0.02
 
   return (
     <AbsoluteFill>
       <LDBackground brand={brand} />
 
-      {/* Hook text -- big, centered, bouncy */}
-      <Sequence from={0} durationInFrames={hookDuration + bodyDuration + ctaDuration} name="Hook">
-        <HookSection brand={brand} text={hookText} />
-      </Sequence>
+      {/* Full-canvas layout — 3 zones stacked */}
+      <AbsoluteFill
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '100px 72px',
+          gap: 56,
+        }}
+      >
+        {/* Zone 1 — Badge top */}
+        <div style={{ opacity: badgeOp }}>
+          <AIBadge frame={frame} />
+        </div>
 
-      {/* Body text */}
-      {bodyText && (
-        <Sequence from={hookDuration} durationInFrames={bodyDuration} name="Body">
-          <BodySection brand={brand} text={bodyText} />
-        </Sequence>
-      )}
+        {/* Zone 2 — Hook text (main message, large) */}
+        <div
+          style={{
+            opacity: hookOp,
+            transform: `scale(${hookScale})`,
+            textAlign: 'center',
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <GlowText brand={brand} size={88}>
+            {hookText}
+          </GlowText>
+        </div>
 
-      {/* CTA */}
-      <Sequence from={ctaFrom} durationInFrames={ctaDuration} name="CTA">
-        <CTASection brand={brand} text={ctaText} />
-      </Sequence>
+        {/* Zone 3 — Body text */}
+        {bodyText && (
+          <div
+            style={{
+              opacity: bodyOp,
+              transform: `translateY(${bodyY}px)`,
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 38,
+              color: '#94A3B8',
+              textAlign: 'center',
+              lineHeight: 1.5,
+              maxWidth: 880,
+            }}
+          >
+            {bodyText}
+          </div>
+        )}
+
+        {/* Zone 4 — CTA */}
+        <div
+          style={{
+            opacity: ctaOp,
+            transform: `scale(${ctaScale * pulse})`,
+          }}
+        >
+          <GlowButton text={ctaText} brand={brand} />
+        </div>
+      </AbsoluteFill>
 
       <LogoOverlay brand={brand} frame={frame} />
-    </AbsoluteFill>
-  )
-}
-
-const HookSection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
-  const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
-
-  const scale = spring({
-    frame,
-    fps,
-    from: 0.7,
-    to: 1,
-    config: brand.motion.springBouncy,
-  })
-
-  const opacity = interpolate(frame, [0, 15], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  return (
-    <AbsoluteFill
-      style={{
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 60,
-      }}
-    >
-      <div
-        style={{
-          opacity,
-          transform: `scale(${scale})`,
-        }}
-      >
-        <GlowText brand={brand} size={86}>
-          {text}
-        </GlowText>
-      </div>
-    </AbsoluteFill>
-  )
-}
-
-const BodySection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
-  const frame = useCurrentFrame()
-
-  const opacity = interpolate(frame, [0, 30], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  return (
-    <AbsoluteFill
-      style={{
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingBottom: 350,
-        padding: 60,
-      }}
-    >
-      <div
-        style={{
-          opacity,
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 36,
-          color: '#94A3B8',
-          textAlign: 'center',
-          maxWidth: 800,
-          lineHeight: 1.4,
-        }}
-      >
-        {text}
-      </div>
-    </AbsoluteFill>
-  )
-}
-
-const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, text }) => {
-  const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
-
-  const scale = spring({
-    frame,
-    fps,
-    from: 0.85,
-    to: 1,
-    config: brand.motion.springBouncy,
-  })
-
-  const opacity = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  return (
-    <AbsoluteFill
-      style={{
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        paddingBottom: 120,
-      }}
-    >
-      <div style={{ opacity }}>
-        <GlowButton text={text} brand={brand} scale={scale} />
-      </div>
     </AbsoluteFill>
   )
 }

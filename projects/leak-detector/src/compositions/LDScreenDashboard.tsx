@@ -9,7 +9,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowButton, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowButton } from '@altidigitech/core'
 import { ScoreCircle } from '../components/ScoreCircle'
 import { CategoryScoreBar } from '../components/CategoryScoreBar'
 import type { CategoryData } from '../components/CategoryScoreBar'
@@ -62,7 +62,6 @@ export const LDScreenDashboard: React.FC<LDScreenDashboardProps> = ({ brand }) =
         </div>
       </AbsoluteFill>
 
-      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

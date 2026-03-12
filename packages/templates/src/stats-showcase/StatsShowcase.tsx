@@ -9,7 +9,7 @@ import {
 } from 'remotion'
 import { z } from 'zod'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText } from '@altidigitech/core'
 
 const statSchema = z.object({
   value: z.number(),
@@ -216,7 +216,6 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
         </div>
       </div>
 
-      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

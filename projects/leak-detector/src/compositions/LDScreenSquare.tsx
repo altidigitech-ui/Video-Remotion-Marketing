@@ -7,7 +7,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText } from '@altidigitech/core'
 import { ScoreCircle, getScoreColor } from '../components/ScoreCircle'
 
 export type LDScreenSquareProps = {
@@ -141,7 +141,6 @@ export const LDScreenSquare: React.FC<LDScreenSquareProps> = ({ brand }) => {
         </div>
       </AbsoluteFill>
 
-      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }

@@ -100,7 +100,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-product-demo"
         component={LDProductDemo}
-        durationInFrames={sec(10, FPS_60)}
+        durationInFrames={sec(8, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}

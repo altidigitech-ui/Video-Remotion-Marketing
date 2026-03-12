@@ -143,7 +143,7 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
               padding: 80,
             }}
           >
-            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 110 }}>
               {features.map((feature, i) => (
                 <FeaturePill key={i} brand={brand} feature={feature} index={i} />
               ))}
@@ -226,7 +226,7 @@ const CTASection: React.FC<{ brand: BrandConfig; text: string }> = ({ brand, tex
   })
 
   return (
-    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 80 }}>
+    <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 48 }}>
       <div style={{ opacity }}>
         <GlowButton text={text} brand={brand} scale={scale} />
       </div>

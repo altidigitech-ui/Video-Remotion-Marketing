@@ -226,17 +226,32 @@ export const LogoOverlay: React.FC<{ brand: BrandConfig; frame: number }> = ({
   brand,
   frame,
 }) => {
-  const opacity = interpolate(frame, [0, 20], [0, 1], {
+  const opacity = interpolate(frame, [0, 25], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
   return (
     <AbsoluteFill style={{ pointerEvents: 'none' }}>
-      <div style={{ position: 'absolute', top: 40, left: 60, opacity }}>
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 40,
+          left: 52,
+          opacity,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+        }}
+      >
         <Img
           src={staticFile(brand.assets.logoPng)}
-          style={{ height: 80, width: 'auto' }}
+          style={{
+            height: 52,
+            width: 52,
+            borderRadius: 10,
+            filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.85)) drop-shadow(0 0 8px rgba(245,158,11,0.3))',
+          }}
         />
       </div>
     </AbsoluteFill>

@@ -9,7 +9,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText } from '@altidigitech/core'
 
 export type LDLogoRevealProps = {
   brand: BrandConfig
@@ -179,7 +179,6 @@ export const LDLogoReveal: React.FC<LDLogoRevealProps> = ({
         </div>
       </AbsoluteFill>
 
-      <LogoOverlay brand={brand} frame={frame} />
     </AbsoluteFill>
   )
 }
