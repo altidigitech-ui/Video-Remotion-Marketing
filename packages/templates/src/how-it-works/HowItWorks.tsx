@@ -57,7 +57,7 @@ export const HowItWorksTemplate: React.FC<HowItWorksProps> = ({
 
   // ── CTA ─────────────────────────────────────────────────────────────────────
 
-  const ctaStart = durationInFrames - 90
+  const ctaStart = 300
   const ctaScale = spring({
     frame: frame - ctaStart,
     fps,

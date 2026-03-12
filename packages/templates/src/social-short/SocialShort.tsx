@@ -34,19 +34,19 @@ export const SocialShortTemplate: React.FC<SocialShortProps> = ({
       <LDBackground brand={brand} />
 
       {/* Hook text -- big, centered, bouncy */}
-      <Sequence from={0} durationInFrames={durationInFrames - 60} name="Hook">
+      <Sequence from={0} durationInFrames={durationInFrames} name="Hook">
         <HookSection brand={brand} text={hookText} />
       </Sequence>
 
       {/* Body text */}
       {bodyText && (
-        <Sequence from={45} durationInFrames={durationInFrames - 105} name="Body">
+        <Sequence from={Math.round(durationInFrames * 0.25)} durationInFrames={Math.round(durationInFrames * 0.55)} name="Body">
           <BodySection brand={brand} text={bodyText} />
         </Sequence>
       )}
 
       {/* CTA */}
-      <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
+      <Sequence from={Math.round(durationInFrames * 0.55)} durationInFrames={durationInFrames - Math.round(durationInFrames * 0.55)} name="CTA">
         <CTASection brand={brand} text={ctaText} />
       </Sequence>
 

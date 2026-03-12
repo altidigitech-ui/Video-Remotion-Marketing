@@ -110,7 +110,7 @@ export const FeatureHighlightTemplate: React.FC<FeatureHighlightProps> = ({
 
       {/* CTA */}
       {ctaText && (
-        <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
+        <Sequence from={250} durationInFrames={durationInFrames - 250} name="CTA">
           <CTAButton brand={brand} text={ctaText} />
         </Sequence>
       )}

@@ -134,7 +134,7 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
 
       {/* Feature pills */}
       {features && features.length > 0 && (
-        <Sequence from={90} durationInFrames={durationInFrames - 180} name="Features">
+        <Sequence from={120} durationInFrames={durationInFrames - 210} name="Features">
           <AbsoluteFill
             style={{
               alignItems: 'center',
@@ -153,7 +153,7 @@ export const LDLaunchAnnouncement: React.FC<LDLaunchAnnouncementProps> = ({
       )}
 
       {/* CTA */}
-      <Sequence from={durationInFrames - 90} durationInFrames={90} name="CTA">
+      <Sequence from={360} durationInFrames={durationInFrames - 360} name="CTA">
         <CTASection brand={brand} text={ctaText} />
       </Sequence>
 

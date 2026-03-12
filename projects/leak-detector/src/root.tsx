@@ -120,7 +120,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-launch"
         component={LDLaunchAnnouncement}
-        durationInFrames={sec(15, FPS_60)}
+        durationInFrames={sec(9, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
@@ -156,7 +156,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-how-it-works"
         component={LDHowItWorks}
-        durationInFrames={sec(12, FPS_60)}
+        durationInFrames={sec(8, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
@@ -186,7 +186,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-feature-cro"
         component={LDFeatureHighlight}
-        durationInFrames={sec(10, FPS_60)}
+        durationInFrames={sec(7, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
@@ -212,7 +212,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-social-vertical"
         component={LDSocialShort}
-        durationInFrames={sec(15, FPS_30)}
+        durationInFrames={sec(8, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -247,7 +247,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-social-square"
         component={LDSocialShort}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(6, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1080}
@@ -293,7 +293,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="leak-detector-screen-hero-vertical"
         component={LDScreenHeroVertical}
-        durationInFrames={sec(8, FPS_60)}
+        durationInFrames={sec(11, FPS_60)}
         fps={FPS_60}
         width={1080}
         height={1920}

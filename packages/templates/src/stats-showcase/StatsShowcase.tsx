@@ -32,7 +32,9 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
   stats,
 }) => {
   const frame = useCurrentFrame()
-  const { fps } = useVideoConfig()
+  const { fps, width, height } = useVideoConfig()
+
+  const isVertical = height > width
 
   const headlineOpacity = interpolate(frame, [0, 30], [0, 1], {
     extrapolateLeft: 'clamp',
@@ -87,11 +89,14 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
       >
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: stats.length >= 4 ? '1fr 1fr' : `repeat(${stats.length}, 1fr)`,
-            gap: 48,
+            display: 'flex',
+            flexDirection: isVertical ? 'column' : 'row',
+            flexWrap: isVertical ? 'nowrap' : 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: isVertical ? 32 : 48,
             width: '100%',
-            maxWidth: 1100,
+            maxWidth: isVertical ? 900 : 1100,
           }}
         >
           {stats.map((stat, i) => {
@@ -141,7 +146,8 @@ export const StatsShowcaseTemplate: React.FC<StatsShowcaseProps> = ({
                 style={{
                   opacity: cardOpacity,
                   transform: `scale(${cardScale})`,
-                  minWidth: 380,
+                  minWidth: isVertical ? undefined : 380,
+                  width: isVertical ? '100%' : undefined,
                 }}
               >
                 <div style={{
