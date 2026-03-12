@@ -241,7 +241,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
 
         {/* RIGHT — Features */}
         <div style={{
-          width: 380, flexShrink: 0,
+          flex: 1,
           display: 'flex', flexDirection: 'column', gap: 16,
           justifyContent: 'center',
         }}>
