@@ -38,6 +38,7 @@ export const LDBackground: React.FC<{ brand: BrandConfig; burstAt?: number }> = 
     }
   }) : []
 
+  // Intentionally darker than brand.colors.background (#0F172A) — cyberpunk depth effect. Do not replace with brand value.
   return (
     <AbsoluteFill style={{ background: '#050A14' }}>
 

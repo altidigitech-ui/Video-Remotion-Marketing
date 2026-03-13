@@ -13,7 +13,7 @@ Avant d'écrire la moindre ligne de code, lis dans cet ordre :
 
 ```
 1. Ce fichier (CLAUDE.md racine)          ← tu es ici
-2. docs/CONTEXT.md                        ← qui on est, pourquoi ce repo existe
+2. CONTEXT.md (racine)                    ← qui on est, pourquoi ce repo existe
 3. docs/ARCH.md                           ← structure complète du monorepo
 4. .claude/remotion-basics.md             ← API Remotion, hooks essentiels
 5. .claude/remotion-animations.md         ← animations, spring, interpolate
