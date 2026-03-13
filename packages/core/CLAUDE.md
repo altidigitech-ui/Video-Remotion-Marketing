@@ -111,3 +111,20 @@ packages/core/src/
 2. Exporter depuis `src/components/[NomComposant]/index.ts`
 3. Ajouter le re-export dans `src/index.ts`
 4. Documenter la signature dans ce fichier
+
+---
+
+## Packages Remotion avancés disponibles
+
+Ces packages sont installés dans le monorepo et disponibles dans tous les packages/projects.
+Lire `.claude/remotion-advanced-packages.md` pour la référence complète.
+
+| Package | Utilisation principale |
+|---|---|
+| `@remotion/transitions` | `<TransitionSeries>` avec `wipe`, `clockWipe`, `iris`, `fade`, `slide` |
+| `@remotion/noise` | `noise2D/3D/4D` — mouvements organiques, backgrounds flottants |
+| `@remotion/shapes` | `<Pie>`, `<Star>`, `<Polygon>` — score loaders, clipPath transitions |
+| `@remotion/paths` | `evolvePath`, `interpolatePath` — paths animés, morphing |
+| `@remotion/sfx` | `ding()`, `beep()` — sons sur score reveal et transitions |
+| `@remotion/motion-blur` | `<CameraMotionBlur>` — entrées de cartes cinématiques |
+| `@remotion/media-utils` | `useAudioData`, `visualizeAudio` — barres audio réactives |

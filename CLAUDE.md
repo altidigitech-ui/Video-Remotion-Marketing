@@ -17,6 +17,7 @@ Avant d'écrire la moindre ligne de code, lis dans cet ordre :
 3. docs/ARCH.md                           ← structure complète du monorepo
 4. .claude/remotion-basics.md             ← API Remotion, hooks essentiels
 5. .claude/remotion-animations.md         ← animations, spring, interpolate
+5b. .claude/remotion-advanced-packages.md ← @remotion/transitions, noise, shapes, paths, sfx, motion-blur, media-utils
 6. .claude/brand-system.md               ← BrandKit, couleurs, fonts
 7. [Si tu crées un template]              → .claude/new-template.md
 8. [Si tu rends une vidéo]                → .claude/remotion-rendering.md

@@ -238,6 +238,19 @@ bun typecheck                # TypeScript check
 
 ---
 
+## Packages recommandés par composition
+
+| Composition | Packages à utiliser |
+|---|---|
+| `LDBeforeAfter` | `@remotion/transitions` (wipe), `@remotion/sfx` (ding), `@remotion/shapes` (Pie score) |
+| `LDCinematicHero` | `@remotion/transitions` (iris/clockWipe), `@remotion/noise` (particles) |
+| `LDProductDemo` | `@remotion/motion-blur` (CameraMotionBlur), `@remotion/paths` (evolvePath catégories) |
+| `LDStatsShowcase` | `@remotion/shapes` (Pie), `@remotion/paths` (évolution graphique) |
+| `LDProblemAgitation` | `@remotion/transitions` (fade + slide), `@remotion/sfx` |
+| `LDLogoReveal` | `@remotion/transitions` (flip/iris), `@remotion/shapes` (Star clipPath) |
+
+---
+
 ## CTA principaux (à utiliser dans les compositions)
 
 - `"→ Scan your page free"`
