@@ -8,7 +8,7 @@ import {
   useVideoConfig,
 } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
-import { LDBackground, GlowText, GlowButton, GlassCard, LogoOverlay } from '@altidigitech/core'
+import { LDBackground, GlowText, GlowButton, TiltCard, LogoOverlay } from '@altidigitech/core'
 
 export type LDLaunchAnnouncementProps = {
   brand: BrandConfig
@@ -192,7 +192,7 @@ const FeaturePill: React.FC<{ brand: BrandConfig; feature: string; index: number
         transform: `scale(${scale})`,
       }}
     >
-      <GlassCard brand={brand} glow>
+      <TiltCard brand={brand} glow startFrame={itemDelay}>
         <div
           style={{
             color: '#F8FAFC',
@@ -203,7 +203,7 @@ const FeaturePill: React.FC<{ brand: BrandConfig; feature: string; index: number
         >
           {feature}
         </div>
-      </GlassCard>
+      </TiltCard>
     </div>
   )
 }

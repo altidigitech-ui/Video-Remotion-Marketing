@@ -103,6 +103,10 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
   const headerOp = interpolate(frame, [0, 28], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   const headerY = spring({ frame, fps, from: 32, to: 0, config: SPRING })
 
+  // Morph exit — title shrinks up instead of just fading
+  const headerScale = interpolate(frame, [120, 165], [1, 0.3], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+  const headerTY = interpolate(frame, [120, 165], [0, -280], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+
   // ── Phase 2 : Content layout (90+) ──────────────────────────────────────
   const contentOp = interpolate(frame, [160, 185], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
 
@@ -124,6 +128,7 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
       {/* ── Header (0→90) ── */}
       <AbsoluteFill style={{
         opacity: interpolate(frame, [0, 28, 150, 165], [0, 1, 1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
+        transform: `scale(${headerScale}) translateY(${headerTY}px)`,
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 24,
       }}>
@@ -133,11 +138,14 @@ export const LDProductDemo: React.FC<LDProductDemoProps> = ({
         <div style={{
           opacity: headerOp, transform: `translateY(${headerY}px)`,
           fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 96, fontWeight: 800, color: '#F8FAFC',
-          letterSpacing: '-0.03em', textAlign: 'center',
-          textShadow: '0 0 60px rgba(245,158,11,0.2)',
+          fontSize: 96, letterSpacing: '-0.03em', textAlign: 'center',
+          lineHeight: 1.1,
         }}>
-          {brand.name}
+          <span style={{ fontWeight: 300, color: '#64748B' }}>Leak </span>
+          <span style={{
+            fontWeight: 800, color: '#F8FAFC',
+            textShadow: '0 0 60px rgba(245,158,11,0.35)',
+          }}>Detector</span>
         </div>
         <div style={{
           opacity: interpolate(frame, [30, 55], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),

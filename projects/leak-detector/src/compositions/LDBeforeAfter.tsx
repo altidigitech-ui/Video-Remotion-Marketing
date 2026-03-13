@@ -177,15 +177,17 @@ export const LDBeforeAfter: React.FC<LDBeforeAfterProps> = ({ brand }) => {
 
   return (
     <AbsoluteFill>
-      <LDBackground brand={brand} />
+      <LDBackground brand={brand} burstAt={600} />
 
       {/* Intro title */}
       <AbsoluteFill style={{
         opacity: titleOp, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 16,
       }}>
-        <div style={{ transform: `translateY(${titleY}px)`, fontFamily: "'Space Grotesk', sans-serif", fontSize: 88, fontWeight: 800, color: '#F8FAFC', letterSpacing: '-0.03em', textAlign: 'center' }}>
-          Before vs After
+        <div style={{ transform: `translateY(${titleY}px)`, fontFamily: "'Space Grotesk', sans-serif", fontSize: 88, letterSpacing: '-0.03em', textAlign: 'center', lineHeight: 1.1 }}>
+          <span style={{ fontWeight: 300, color: '#64748B' }}>Before</span>
+          <span style={{ fontWeight: 300, color: '#475569' }}> vs </span>
+          <span style={{ fontWeight: 800, color: '#F8FAFC' }}>After</span>
         </div>
         <div style={{
           opacity: interpolate(frame, [30, 50], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),

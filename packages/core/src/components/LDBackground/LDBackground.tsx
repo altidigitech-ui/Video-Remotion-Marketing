@@ -1,5 +1,5 @@
 import React from 'react'
-import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from 'remotion'
+import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion'
 import type { BrandConfig } from '@altidigitech/brand'
 
 // ── LDBackground ──────────────────────────────────────────────────────────────
@@ -7,7 +7,7 @@ import type { BrandConfig } from '@altidigitech/brand'
 const COLS = 22
 const ROWS = 13
 
-export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
+export const LDBackground: React.FC<{ brand: BrandConfig; burstAt?: number }> = ({ brand, burstAt }) => {
   const frame = useCurrentFrame()
   const orbPulse = 0.10 + Math.sin(frame * 0.04) * 0.04
 
@@ -20,6 +20,23 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
     opacity: 0.3 + (i % 4) * 0.15,
     color: i % 3 === 0 ? '#F59E0B' : i % 3 === 1 ? '#00FFFF' : '#FFFFFF',
   }))
+
+  // Burst particles — appear when frame is near burstAt
+  const burstIntensity = burstAt !== undefined
+    ? Math.max(0, 1 - Math.abs(frame - burstAt) / 25)
+    : 0
+
+  const burstParticles = burstAt !== undefined ? Array.from({ length: 14 }, (_, i) => {
+    const angle = (i / 14) * Math.PI * 2
+    const dist = interpolate(Math.max(0, frame - burstAt), [0, 40], [0, 38], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    const op = burstIntensity * (1 - i % 3 * 0.15)
+    return {
+      x: 50 + Math.cos(angle) * dist,
+      y: 50 + Math.sin(angle) * dist,
+      op,
+      size: 4 + (i % 3) * 3,
+    }
+  }) : []
 
   return (
     <AbsoluteFill style={{ background: '#050A14' }}>
@@ -82,6 +99,21 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
         }} />
       ))}
 
+      {/* Burst particles */}
+      {burstParticles.map((p, i) => (
+        <div key={`b${i}`} style={{
+          position: 'absolute',
+          left: `${p.x}%`,
+          top: `${p.y}%`,
+          width: p.size, height: p.size,
+          borderRadius: '50%',
+          backgroundColor: '#F59E0B',
+          opacity: p.op,
+          boxShadow: '0 0 8px rgba(245,158,11,0.8)',
+          transform: 'translate(-50%, -50%)',
+        }} />
+      ))}
+
       {/* Corner HUD brackets */}
       {([
         { top: 20, left: 20 },
@@ -98,6 +130,23 @@ export const LDBackground: React.FC<{ brand: BrandConfig }> = ({ brand }) => {
           ...pos,
         }} />
       ))}
+
+      {/* Grain overlay — animated noise texture */}
+      <AbsoluteFill style={{ pointerEvents: 'none', mixBlendMode: 'overlay' as const }}>
+        <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0 }}>
+          <filter id={`grain-${frame}`}>
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.65"
+              numOctaves="3"
+              seed={frame % 100}
+              stitchTiles="stitch"
+            />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#grain-${frame})`} opacity="0.025" />
+        </svg>
+      </AbsoluteFill>
 
       {/* Vignette */}
       <AbsoluteFill style={{
@@ -183,6 +232,51 @@ export const GlassCard: React.FC<{
     {children}
   </div>
 )
+
+// ── TiltCard ──────────────────────────────────────────────────────────────────
+
+export const TiltCard: React.FC<{
+  children: React.ReactNode
+  brand: BrandConfig
+  glow?: boolean
+  startFrame?: number
+}> = ({ children, brand: _brand, glow = false, startFrame = 0 }) => {
+  const frame = useCurrentFrame()
+  const { fps } = useVideoConfig()
+
+  const tiltX = spring({
+    frame: Math.max(0, frame - startFrame),
+    fps,
+    from: 10,
+    to: 0,
+    config: { damping: 14, stiffness: 80 },
+  })
+  const tiltY = spring({
+    frame: Math.max(0, frame - startFrame),
+    fps,
+    from: -4,
+    to: 0,
+    config: { damping: 14, stiffness: 80 },
+  })
+
+  return (
+    <div style={{ perspective: '1200px' }}>
+      <div style={{
+        transform: `perspective(1200px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 16,
+        padding: '24px 32px',
+        backdropFilter: 'blur(12px)',
+        boxShadow: glow
+          ? '0 0 0 1px rgba(245,158,11,0.2), 0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)'
+          : '0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)',
+      }}>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 // ── AIBadge ───────────────────────────────────────────────────────────────────
 
