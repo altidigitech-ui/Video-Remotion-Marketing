@@ -5,6 +5,7 @@ import { storeMdBrand } from '@altidigitech/brand'
 import { ScoreCircle } from '../components/ScoreCircle'
 import { IssueCard } from '../components/IssueCard'
 import type { IssueSeverity } from '../components/IssueCard'
+import { RED } from '../utils/aggressive'
 
 // ─── Static dashboard data ────────────────────────────────────────────────────
 
@@ -36,7 +37,8 @@ const ISSUES: ReadonlyArray<{
   },
 ]
 
-const TREND_DATA: ReadonlyArray<number> = [62, 65, 64, 68, 67, 70, 72]
+// V-pattern tells a story: healthy → crash → recovery → now
+const TREND_DATA: ReadonlyArray<number> = [82, 71, 58, 52, 61, 68, 72]
 const TREND_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 const APP_IMPACT: ReadonlyArray<{ name: string; impact: number }> = [
@@ -45,19 +47,19 @@ const APP_IMPACT: ReadonlyArray<{ name: string; impact: number }> = [
   { name: 'Privy Popup', impact: 0.18 },
 ]
 
-// ─── Stagger timing — 15-frame cadence between blocks ────────────────────────
+// ─── Stagger timing — 8-frame cadence (2x faster than standard) ──────────────
 
 const T_SIDEBAR = 0
-const T_HEADER = 15
-const T_HERO_CARD = 30
-const T_HERO_SCORE = 60 // ScoreCircle starts after hero card has settled
-const T_ISSUES_TITLE = 150 // after the score-circle reveal completes (~140)
-const T_ISSUE_1 = 165
-const T_ISSUE_2 = 180
-const T_ISSUE_3 = 195
-const T_TREND = 240
-const T_APP_IMPACT = 285
-const T_QUICK_STATS = 300
+const T_HEADER = 8
+const T_HERO_CARD = 18
+const T_HERO_SCORE = 42 // ScoreCircle starts after hero card has settled
+const T_ISSUES_TITLE = 120
+const T_ISSUE_1 = 128
+const T_ISSUE_2 = 136
+const T_ISSUE_3 = 144
+const T_TREND = 180
+const T_APP_IMPACT = 225
+const T_QUICK_STATS = 240
 
 // ─── Light-theme palette (the StoreMD dashboard uses light slate) ────────────
 
@@ -184,7 +186,7 @@ const PageHeader: React.FC<{ frame: number }> = ({ frame }) => {
 
 const TrendBadge: React.FC<{ frame: number }> = ({ frame }) => {
   // Show after the score has counted up
-  const op = interpolate(frame, [T_HERO_SCORE + 60, T_HERO_SCORE + 90], [0, 1], {
+  const op = interpolate(frame, [T_HERO_SCORE + 40, T_HERO_SCORE + 60], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -251,22 +253,22 @@ const DeviceScore: React.FC<{ label: string; score: number }> = ({
 const ScoreHero: React.FC<{ frame: number }> = ({ frame }) => {
   const { opacity, y } = fadeUp(frame, T_HERO_CARD, 30)
 
-  // Counters animate alongside the score circle
+  // Counters drop from 100 alongside the score circle
   const mobileScore = Math.round(
-    interpolate(frame, [T_HERO_SCORE, T_HERO_SCORE + 80], [0, 68], {
+    interpolate(frame, [T_HERO_SCORE, T_HERO_SCORE + 50], [100, 68], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     }),
   )
   const desktopScore = Math.round(
-    interpolate(frame, [T_HERO_SCORE, T_HERO_SCORE + 80], [0, 76], {
+    interpolate(frame, [T_HERO_SCORE, T_HERO_SCORE + 50], [100, 76], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     }),
   )
   const buttonOp = interpolate(
     frame,
-    [T_HERO_CARD + 25, T_HERO_CARD + 55],
+    [T_HERO_CARD + 14, T_HERO_CARD + 30],
     [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
@@ -286,7 +288,7 @@ const ScoreHero: React.FC<{ frame: number }> = ({ frame }) => {
         boxShadow: C.cardShadow,
       }}
     >
-      <ScoreCircle score={72} startFrame={T_HERO_SCORE} duration={80} />
+      <ScoreCircle score={72} startFrame={T_HERO_SCORE} duration={50} from={100} />
 
       {/* Center column */}
       <div
@@ -638,8 +640,9 @@ const AppImpactCard: React.FC<{ frame: number }> = ({ frame }) => {
                   style={{
                     width: `${fillW}%`,
                     height: '100%',
-                    background: C.primary,
+                    background: RED,
                     borderRadius: 999,
+                    boxShadow: `0 0 6px rgba(220, 38, 38, 0.55)`,
                   }}
                 />
               </div>

@@ -5,31 +5,28 @@ import { loadFont as loadJakarta } from '@remotion/google-fonts/PlusJakartaSans'
 import {
   LogoRevealTemplate,
   LaunchAnnouncementTemplate,
-  StatsShowcaseTemplate,
-  HowItWorksTemplate,
   FeatureHighlightTemplate,
-  SocialShortTemplate,
 } from '@altidigitech/templates'
 import type {
   LogoRevealProps,
   LaunchAnnouncementProps,
-  StatsShowcaseProps,
-  HowItWorksProps,
   FeatureHighlightProps,
-  SocialShortProps,
 } from '@altidigitech/templates'
 import { storeMdBrand } from '@altidigitech/brand'
 import type { BrandConfig } from '@altidigitech/brand'
-import { StoreMDScene } from './components/StoreMDScene'
 import { SMDProductDemo } from './compositions/SMDProductDemo'
 import { SMDScanProgress } from './compositions/SMDScanProgress'
 import { SMDHealthDashboard } from './compositions/SMDHealthDashboard'
+import { SMDSocialAggressive } from './compositions/SMDSocialAggressive'
+import { SMDStatsAggressive } from './compositions/SMDStatsAggressive'
+import type { SMDStat } from './compositions/SMDStatsAggressive'
+import { SMDHowItWorksAggressive } from './compositions/SMDHowItWorksAggressive'
+import { SMDBeforeAfter } from './compositions/SMDBeforeAfter'
+import { SMDMoneyCounter } from './compositions/SMDMoneyCounter'
+import { SMDTestimonialFake } from './compositions/SMDTestimonialFake'
+import { SMDComparisonGrid } from './compositions/SMDComparisonGrid'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
-// loadFont() registers the @font-face CSS so `font-family: 'Outfit'` and
-// `'Plus Jakarta Sans'` resolve throughout all compositions. We also splice
-// the returned family strings back into the brand so templates that read
-// `brand.typography.fontDisplay` get the loaded version.
 
 const { fontFamily: outfitFamily } = loadOutfit()
 const { fontFamily: jakartaFamily } = loadJakarta()
@@ -43,34 +40,7 @@ const smdBrand: BrandConfig = {
   },
 }
 
-// ── Wrapped generic templates ─────────────────────────────────────────────────
-// Templates without their own LogoOverlay (StatsShowcase, HowItWorks) get wrapped
-// in StoreMDScene. Templates that already include LogoOverlay internally are
-// used directly — mirrors the leak-detector pattern.
-
-const SMDStatsShowcase: React.FC<StatsShowcaseProps> = (props) => (
-  <StoreMDScene brand={smdBrand}>
-    <StatsShowcaseTemplate
-      {...props}
-      brand={{
-        ...smdBrand,
-        colors: { ...smdBrand.colors, background: 'transparent' },
-      }}
-    />
-  </StoreMDScene>
-)
-
-const SMDHowItWorks: React.FC<HowItWorksProps> = (props) => (
-  <StoreMDScene brand={smdBrand}>
-    <HowItWorksTemplate
-      {...props}
-      brand={{
-        ...smdBrand,
-        colors: { ...smdBrand.colors, background: 'transparent' },
-      }}
-    />
-  </StoreMDScene>
-)
+// ── Generic templates wrapped with smdBrand ──────────────────────────────────
 
 const SMDLogoReveal: React.FC<LogoRevealProps> = (props) => (
   <LogoRevealTemplate {...props} brand={smdBrand} />
@@ -84,15 +54,32 @@ const SMDFeatureHighlight: React.FC<FeatureHighlightProps> = (props) => (
   <FeatureHighlightTemplate {...props} brand={smdBrand} />
 )
 
-const SMDSocialShort: React.FC<SocialShortProps> = (props) => (
-  <SocialShortTemplate {...props} brand={smdBrand} />
-)
-
 // ── Timing helpers ────────────────────────────────────────────────────────────
 
 const FPS_60 = 60
 const FPS_30 = 30
 const sec = (s: number, fps: number) => Math.round(s * fps)
+
+// ── Stat sets ────────────────────────────────────────────────────────────────
+// Shame-gap framing: average score, residual code, monthly loss, ghost billing.
+
+const STATS_FULL: ReadonlyArray<SMDStat> = [
+  { value: 41, suffix: '/100', label: 'Average health score — you\u2019re probably lower', icon: 'warning' },
+  { value: 73, suffix: '%', label: 'Have dead app code still running', icon: 'bug' },
+  { value: 2100, prefix: '$', label: 'Average monthly invisible loss', icon: 'dollar-slash' },
+  { value: 89, suffix: '%', label: 'Found at least 1 ghost billing app', icon: 'robot-x' },
+]
+
+const STATS_VERTICAL: ReadonlyArray<SMDStat> = [
+  { value: 41, suffix: '/100', label: 'Average score (you\u2019re probably lower)', icon: 'warning' },
+  { value: 2100, prefix: '$', label: 'You\u2019re losing this. Monthly.', icon: 'dollar-slash' },
+  { value: 89, suffix: '%', label: 'Of stores have ghost billing', icon: 'robot-x' },
+]
+
+const STATS_SQUARE: ReadonlyArray<SMDStat> = [
+  { value: 41, suffix: '/100', label: 'Average health score', icon: 'warning' },
+  { value: 89, suffix: '%', label: 'Of stores have ghost billing', icon: 'robot-x' },
+]
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 
@@ -143,66 +130,61 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{
           brand: smdBrand,
-          headline: 'StoreMD is live',
-          subline: 'Your Shopify store, monitored like a vital system.',
-          launchDate: 'Available now — Free forever plan',
+          headline: 'Your Shopify store has been lying to you.',
+          subline:
+            '14 hidden problems. $2,100/month bleeding. 73% running dead code. We found them all.',
+          launchDate: 'Available now \u2014 Free forever plan',
           features: [
-            '60-second store health score',
-            '5 audit modules — Performance, Apps, Listings, AI Ready, Accessibility',
-            'Auto-fix for common issues',
-            'Daily monitoring & score trends',
+            'Health score in 60 seconds \u2014 not 60 days',
+            'Ghost billing detector \u2014 stop paying for ghosts',
+            'Dead code scanner \u2014 remove what\u2019s killing your speed',
+            'AI readiness score \u2014 your competitors are already there',
           ],
-          ctaText: 'Scan your store free',
+          ctaText:
+            'Scan now. It\u2019s free. It takes 60 seconds. You have zero excuse.',
         }}
       />
 
       <Composition
         id="store-md-stats"
-        component={SMDStatsShowcase}
+        component={SMDStatsAggressive}
         durationInFrames={sec(8, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: smdBrand,
-          headline: 'What we learned scanning 2,000+ Shopify stores',
-          stats: [
-            { value: 14, label: 'Apps avg per store', prefix: '', suffix: '' },
-            { value: 73, label: 'Have residual app code', prefix: '', suffix: '%' },
-            { value: 2100, label: 'Lost/mo at 4s load', prefix: '$', suffix: '' },
-            { value: 34, label: 'AI readiness score avg', prefix: '', suffix: '%' },
-          ],
+          headline: 'We scanned 2,847 stores. The results are embarrassing.',
+          stats: STATS_FULL,
         }}
       />
 
       <Composition
         id="store-md-how-it-works"
-        component={SMDHowItWorks}
+        component={SMDHowItWorksAggressive}
         durationInFrames={sec(8, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
         defaultProps={{
-          brand: smdBrand,
-          headline: 'How StoreMD works',
+          headline: '3 steps. 60 seconds. $2,100/month saved.',
           steps: [
             {
-              title: 'Install from Shopify App Store',
+              title: 'Install \u2014 1 click',
               description:
-                'One click, zero config. StoreMD starts scanning immediately.',
+                'From the Shopify App Store. No config. No developer needed. No BS.',
             },
             {
-              title: 'AI scans 43 health signals',
+              title: 'Scan \u2014 60 seconds',
               description:
-                'Performance, apps, listings, AI readiness, accessibility — all in 60 seconds.',
+                'AI scans 43 signals. Performance, dead code, ghost billing, AI readiness, accessibility. Everything.',
             },
             {
-              title: 'Get your score & fix in 1 click',
+              title: 'Fix \u2014 1 click',
               description:
-                'Prioritized issues with auto-fix. Your store gets healthier every day.',
+                'Auto-fix for most issues. What took agencies $2,000 now costs you $0 and 60 seconds.',
             },
           ],
-          ctaText: 'Start free',
+          ctaText: 'Still reading? Your store is still bleeding.',
         }}
       />
 
@@ -244,71 +226,104 @@ export const RemotionRoot: React.FC = () => {
 
       <Composition
         id="store-md-social-vertical"
-        component={SMDSocialShort}
+        component={SMDSocialAggressive}
         durationInFrames={sec(8, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
-          brand: smdBrand,
           hookText:
-            "Your Shopify store is bleeding $2,100/month and you don't even know it",
+            'You\u2019re paying |$70/day| to run a |broken| store. Here\u2019s proof.',
           bodyText:
-            'Residual app code, bloated themes, slow apps — StoreMD finds it all in 60 seconds.',
-          ctaText: 'Free scan — link in bio',
+            'Ghost billing. Dead code. 4-second load times. StoreMD finds it ALL in 60 seconds.',
+          ctaText: 'Free scan. No excuses.',
+          showUrgencyBar: true,
         }}
       />
 
       <Composition
         id="store-md-stats-vertical"
-        component={SMDStatsShowcase}
+        component={SMDStatsAggressive}
         durationInFrames={sec(10, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
-          brand: smdBrand,
-          headline: 'Is your store healthy?',
-          stats: [
-            { value: 14, label: 'Apps avg per store', prefix: '', suffix: '' },
-            { value: 73, label: 'Have residual code', prefix: '', suffix: '%' },
-            { value: 2100, label: 'Lost/mo at 4s load', prefix: '$', suffix: '' },
-          ],
+          headline: 'Your store\u2019s report card is in.',
+          stats: STATS_VERTICAL,
         }}
+      />
+
+      <Composition
+        id="store-md-before-after"
+        component={SMDBeforeAfter}
+        durationInFrames={sec(10, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
+      />
+
+      <Composition
+        id="store-md-money-counter"
+        component={SMDMoneyCounter}
+        durationInFrames={sec(8, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
+      />
+
+      <Composition
+        id="store-md-testimonial"
+        component={SMDTestimonialFake}
+        durationInFrames={sec(6, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
       />
 
       {/* ═════════ SQUARE 1080x1080 @ 30fps ═════════ */}
 
       <Composition
         id="store-md-social-square"
-        component={SMDSocialShort}
+        component={SMDSocialAggressive}
         durationInFrames={sec(6, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1080}
         defaultProps={{
-          brand: smdBrand,
-          hookText: 'Your Shopify store has 14 apps. Most are hurting performance.',
-          bodyText: 'Scan your store health in 60 seconds with StoreMD.',
-          ctaText: 'Free scan now',
+          hookText:
+            'Every Shopify store has |dirty secrets.| Most owners never look.',
+          bodyText:
+            '14 apps. 3 are ghost billing. 4 are killing speed. We find them in 60 seconds.',
+          ctaText: 'Scan free or stay blind.',
+          showUrgencyBar: false,
         }}
       />
 
       <Composition
         id="store-md-stats-square"
-        component={SMDStatsShowcase}
+        component={SMDStatsAggressive}
         durationInFrames={sec(8, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1080}
         defaultProps={{
-          brand: smdBrand,
-          headline: 'Store health facts',
-          stats: [
-            { value: 14, label: 'Apps avg per store', prefix: '', suffix: '' },
-            { value: 73, label: 'Have residual code', prefix: '', suffix: '%' },
-          ],
+          headline: 'Think you\u2019re the exception?',
+          stats: STATS_SQUARE,
         }}
+      />
+
+      <Composition
+        id="store-md-comparison"
+        component={SMDComparisonGrid}
+        durationInFrames={sec(8, FPS_30)}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{}}
       />
     </>
   )

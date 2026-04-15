@@ -1,5 +1,5 @@
 import React from 'react'
-import { spring, useVideoConfig } from 'remotion'
+import { interpolate, spring, useVideoConfig } from 'remotion'
 import { storeMdBrand, storeMdSeverityColors } from '@altidigitech/brand'
 
 export type IssueSeverity = 'critical' | 'major' | 'minor' | 'info'
@@ -50,6 +50,16 @@ export const IssueCard: React.FC<IssueCardProps> = ({
   const borderColor = storeMdSeverityColors[severity]
   const chip = SEVERITY_CHIP[severity]
 
+  // Critical severity pulses its left border to grab attention (30-frame period).
+  const borderPulse =
+    severity === 'critical'
+      ? interpolate((frame % 30) / 30, [0, 0.5, 1], [0.55, 1, 0.55], {
+          extrapolateLeft: 'clamp',
+          extrapolateRight: 'clamp',
+        })
+      : 1
+  const borderGlow = severity === 'critical' ? borderPulse : 0
+
   const fontBody = `'${storeMdBrand.typography.fontBody}', sans-serif`
 
   return (
@@ -61,7 +71,9 @@ export const IssueCard: React.FC<IssueCardProps> = ({
         borderRadius: 8,
         borderLeft: `4px solid ${borderColor}`,
         boxShadow:
-          '0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04)',
+          severity === 'critical'
+            ? `0 1px 3px rgba(15, 23, 42, 0.08), inset 6px 0 16px rgba(220, 38, 38, ${0.25 * borderGlow}), -2px 0 14px rgba(220, 38, 38, ${0.45 * borderGlow})`
+            : '0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04)',
         padding: '16px 20px',
         display: 'flex',
         flexDirection: 'column',

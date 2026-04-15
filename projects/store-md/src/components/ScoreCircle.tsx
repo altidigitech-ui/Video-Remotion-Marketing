@@ -6,6 +6,9 @@ export type ScoreCircleProps = {
   score: number
   startFrame: number
   duration?: number
+  /** Initial value to count FROM (default 0). Set higher than `score` to make
+   *  the number appear to "fall" — used in dramatic dashboard reveals. */
+  from?: number
 }
 
 // Mirrors the StoreMD frontend `getScoreStroke` (5-tier scale).
@@ -28,16 +31,18 @@ export const ScoreCircle: React.FC<ScoreCircleProps> = ({
   score,
   startFrame,
   duration = 80,
+  from = 0,
 }) => {
   const frame = useCurrentFrame()
   const color = getScoreStroke(score)
 
+  const fromOffset = CIRCUMFERENCE * (1 - from / 100)
   const targetOffset = CIRCUMFERENCE * (1 - score / 100)
 
   const dashOffset = interpolate(
     frame,
     [startFrame, startFrame + duration],
-    [CIRCUMFERENCE, targetOffset],
+    [fromOffset, targetOffset],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
@@ -45,7 +50,7 @@ export const ScoreCircle: React.FC<ScoreCircleProps> = ({
     interpolate(
       frame,
       [startFrame, startFrame + duration],
-      [0, score],
+      [from, score],
       { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
     ),
   )
