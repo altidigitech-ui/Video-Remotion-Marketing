@@ -259,7 +259,7 @@ const UrgencyBar: React.FC<{ frame: number }> = ({ frame }) => {
         minHeight: 100,
         opacity: op * breathe,
         background: `linear-gradient(90deg, ${RED} 0%, #ea580c 100%)`,
-        padding: '26px 40px',
+        padding: '18px 40px',
         textAlign: 'center',
         boxShadow: '0 -8px 32px rgba(220, 38, 38, 0.45)',
         display: 'flex',
@@ -272,7 +272,7 @@ const UrgencyBar: React.FC<{ frame: number }> = ({ frame }) => {
       <span
         style={{
           fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-          fontSize: 32,
+          fontSize: 24,
           fontWeight: 900,
           color: brand.colors.white,
           letterSpacing: '-0.01em',
@@ -284,7 +284,7 @@ const UrgencyBar: React.FC<{ frame: number }> = ({ frame }) => {
       <span
         style={{
           fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-          fontSize: 24,
+          fontSize: 22,
           fontWeight: 700,
           color: brand.colors.white,
           letterSpacing: '0.02em',
@@ -302,8 +302,9 @@ export const SMDScanProgress: React.FC = () => {
   const frame = useCurrentFrame()
   const brand = storeMdBrand
 
-  // Title + spinner
-  const titleOpacity = interpolate(frame, [0, 20], [0, 1], {
+  // Title + spinner — fade OUT in sync with the rest of the scan content so
+  // nothing remains on screen when the score reveal takes over.
+  const titleOpacity = interpolate(frame, [0, 20, 245, 265], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -528,41 +529,48 @@ export const SMDScanProgress: React.FC = () => {
         </div>
       </AbsoluteFill>
 
-      {/* SCORE REVEAL (260-360) */}
+      {/* SCORE REVEAL (260-360) — column layout with fixed 400x400 score slot
+           so the text rows never overlap the circle or /100 baseline. */}
       {frame >= SCORE_REVEAL_START && (
         <AbsoluteFill
           style={{
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingBottom: 140,
+            gap: 40,
+            padding: '120px 60px 180px 60px',
             opacity: scoreOpacity,
-            transform: `translate(${scoreShake.x}px, ${scoreShake.y}px)`,
+            transform: `translate(${scoreShake.x}px, ${scoreShake.y}px) scale(${scoreScale})`,
             clipPath: scoreGlitch.clip,
             pointerEvents: 'none',
+            textAlign: 'center',
           }}
         >
-          <div
+          <span
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 44,
-              transform: `scale(${scoreScale})`,
-              textAlign: 'center',
+              fontFamily: `'${brand.typography.fontBody}', sans-serif`,
+              fontWeight: 600,
+              fontSize: 28,
+              color: brand.colors.textSecondary,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
             }}
           >
-            <span
-              style={{
-                fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-                fontWeight: 700,
-                fontSize: 34,
-                color: brand.colors.textSecondary,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Your Store Score
-            </span>
+            Your Store Score
+          </span>
+
+          {/* Fixed 400x400 slot reserves space — scale applied inside. */}
+          <div
+            style={{
+              width: 400,
+              height: 400,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+            }}
+          >
             <div
               style={{
                 position: 'relative',
@@ -587,24 +595,24 @@ export const SMDScanProgress: React.FC = () => {
                 duration={25}
               />
             </div>
-            <div
-              style={{
-                opacity: criticalOp * criticalBlink,
-                fontFamily: `'${brand.typography.fontMono}', monospace`,
-                fontSize: 36,
-                fontWeight: 900,
-                color: RED,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                textShadow: '0 0 24px rgba(220, 38, 38, 0.6)',
-                lineHeight: 1.2,
-              }}
-            >
-              CRITICAL
-              <br />
-              IMMEDIATE ACTION REQUIRED
-            </div>
           </div>
+
+          <span
+            style={{
+              opacity: criticalOp * criticalBlink,
+              fontFamily: `'${brand.typography.fontMono}', monospace`,
+              fontSize: 32,
+              fontWeight: 800,
+              color: RED,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              textShadow: '0 0 24px rgba(220, 38, 38, 0.6)',
+              lineHeight: 1.2,
+              maxWidth: 900,
+            }}
+          >
+            CRITICAL — IMMEDIATE ACTION REQUIRED
+          </span>
         </AbsoluteFill>
       )}
 
