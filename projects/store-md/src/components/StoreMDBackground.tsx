@@ -17,8 +17,14 @@ export const StoreMDBackground: React.FC<StoreMDBackgroundProps> = ({ brand }) =
   const progressA = (frame % PULSE_PERIOD) / PULSE_PERIOD
   const progressB = ((frame + PULSE_PERIOD / 2) % PULSE_PERIOD) / PULSE_PERIOD
 
-  const scaleA = interpolate(progressA, [0, 0.5, 1], [1, 1.05, 1])
-  const scaleB = interpolate(progressB, [0, 0.5, 1], [1, 1.05, 1])
+  const scaleA = interpolate(progressA, [0, 0.5, 1], [1, 1.05, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+  const scaleB = interpolate(progressB, [0, 0.5, 1], [1, 1.05, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
 
   return (
     <AbsoluteFill style={{ background: brand.colors.background }}>

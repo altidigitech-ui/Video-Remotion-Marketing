@@ -1,7 +1,7 @@
 import React from 'react'
 import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion'
 import { evolvePath } from '@remotion/paths'
-import { storeMdBrand } from '@altidigitech/brand'
+import { storeMdBrand, storeMdScoreColors } from '@altidigitech/brand'
 import { StoreMDBackground } from '../components/StoreMDBackground'
 import { ScoreCircle } from '../components/ScoreCircle'
 
@@ -127,7 +127,7 @@ const StepRow: React.FC<{ step: Step; frame: number }> = ({ step, frame }) => {
           <path
             d={CHECKMARK_PATH}
             fill="none"
-            stroke="#16a34a"
+            stroke={storeMdScoreColors.excellent}
             strokeWidth={3}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -384,7 +384,7 @@ export const SMDScanProgress: React.FC = () => {
       {/* Completion flash sits above all content, below the score reveal isn't needed */}
       <AbsoluteFill
         style={{
-          background: '#ffffff',
+          background: brand.colors.white,
           opacity: flashOpacity,
           pointerEvents: 'none',
         }}
