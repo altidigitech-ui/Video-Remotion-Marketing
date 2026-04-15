@@ -71,6 +71,11 @@
     "projects/store-md": {
       "name": "@altidigitech/project-store-md",
       "version": "0.1.0",
+      "dependencies": {
+        "@altidigitech/brand": "workspace:*",
+        "@altidigitech/core": "workspace:*",
+        "@altidigitech/templates": "workspace:*",
+      },
     },
   },
   "packages": {

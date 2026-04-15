@@ -6,5 +6,10 @@
     "dev": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@altidigitech/brand": "workspace:*",
+    "@altidigitech/core": "workspace:*",
+    "@altidigitech/templates": "workspace:*"
   }
 }
