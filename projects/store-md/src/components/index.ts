@@ -6,3 +6,6 @@ export type { StoreMDSceneProps } from './StoreMDScene'
 
 export { ScoreCircle, getScoreStroke } from './ScoreCircle'
 export type { ScoreCircleProps } from './ScoreCircle'
+
+export { IssueCard } from './IssueCard'
+export type { IssueCardProps, IssueSeverity } from './IssueCard'
