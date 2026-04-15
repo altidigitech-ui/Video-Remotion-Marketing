@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "remotion studio",
     "dev:leak-detector": "remotion studio --props='{\"saas\":\"leak-detector\"}' projects/leak-detector/src/index.ts",
+    "dev:store-md": "remotion studio --props='{\"saas\":\"store-md\"}' projects/store-md/src/index.ts",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
