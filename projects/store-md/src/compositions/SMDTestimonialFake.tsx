@@ -28,9 +28,9 @@ const BUBBLES: Bubble[] = [
   { side: 'them', text: "8 months. That's $1,512 I'll never get back" },
 ]
 
-const BUBBLE_GAP = 12 // 400ms @ 30fps
-const SLAM_START = 100
-const CTA_START = 140
+const BUBBLE_GAP = 16 // ~530ms @ 30fps — enough to read each message
+const SLAM_START = 200 // 4s of chat + reading pause before SLAM lands
+const CTA_START = 260
 
 // ─── Logo overlay ─────────────────────────────────────────────────────────────
 
@@ -171,7 +171,7 @@ const ChatHeader: React.FC = () => {
         <span
           style={{
             fontFamily: `-apple-system, sans-serif`,
-            fontSize: 18,
+            fontSize: 22,
             fontWeight: 500,
             color: '#8e8e93',
           }}

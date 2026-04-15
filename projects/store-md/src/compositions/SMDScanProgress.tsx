@@ -17,34 +17,31 @@ import {
 } from '../utils/aggressive'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+// 12s @ 30fps = 360 frames. Steps 40f apart. Score reveal 260-360 (3.3s visible).
 
-// Very low score for maximum drama — triggers heartbeat pulse (score < 40).
 const SCORE = 38
-const SCORE_REVEAL_START = 200
+const SCORE_REVEAL_START = 260
 
 const FACT =
   'Right now, 3 apps you deleted are still charging your credit card. StoreMD finds them in 60 seconds.'
 
 const CHECKMARK_PATH = 'M5 12 L10 17 L19 7'
 
-type Step = {
-  label: string
-  start: number
-}
+type Step = { label: string; start: number }
 
+// 40-frame windows, spaced 40f apart. Last step completes at 240.
 const STEPS: Step[] = [
-  { label: 'Theme analyzed', start: 30 },
-  { label: 'Apps detected', start: 60 },
-  { label: 'Products scanned', start: 90 },
-  { label: 'Checking app impact', start: 120 },
-  { label: 'Detecting residual code', start: 150 },
+  { label: 'Theme analyzed', start: 40 },
+  { label: 'Apps detected', start: 80 },
+  { label: 'Products scanned', start: 120 },
+  { label: 'Checking app impact', start: 160 },
+  { label: 'Detecting residual code', start: 200 },
 ]
-
-// Each checkmark completes at step.start + 50 — trigger the ding ring there.
 const DING_FRAMES = STEPS.map((s) => s.start + 30)
 
-const SCAN_KEYFRAMES = [20, 60, 110, 140, 170, 190, 210] as const
-const SCAN_PERCENTS = [0, 20, 40, 60, 80, 95, 100] as const
+// Progress keyframes — 0% at 40, 100% at 240 aligned with step completion.
+const SCAN_KEYFRAMES = [30, 80, 120, 160, 200, 240] as const
+const SCAN_PERCENTS = [0, 20, 40, 60, 80, 100] as const
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -80,7 +77,6 @@ const Spinner: React.FC<{ rotation: number; primary: string }> = ({
   </div>
 )
 
-// DING ring: expands from the check circle and fades over 14 frames.
 const DingRing: React.FC<{ frame: number; triggerFrame: number }> = ({
   frame,
   triggerFrame,
@@ -113,21 +109,19 @@ const StepRow: React.FC<{ step: Step; frame: number; dingFrame: number }> = ({
   const { start } = step
   const brand = storeMdBrand
 
-  const rowOpacity = interpolate(frame, [start, start + 20], [0, 1], {
+  const rowOpacity = interpolate(frame, [start, start + 18], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const rowY = interpolate(frame, [start, start + 20], [12, 0], {
+  const rowY = interpolate(frame, [start, start + 18], [12, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-
-  const circleFill = interpolate(frame, [start + 10, start + 30], [0, 1], {
+  const circleFill = interpolate(frame, [start + 8, start + 24], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-
-  const checkProgress = interpolate(frame, [start + 20, start + 50], [0, 1], {
+  const checkProgress = interpolate(frame, [start + 18, start + 38], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -179,7 +173,7 @@ const StepRow: React.FC<{ step: Step; frame: number; dingFrame: number }> = ({
         style={{
           fontFamily: `'${brand.typography.fontBody}', sans-serif`,
           fontWeight: brand.typography.weightMedium,
-          fontSize: 38,
+          fontSize: 36,
           color: brand.colors.textPrimary,
           letterSpacing: '-0.005em',
         }}
@@ -190,7 +184,7 @@ const StepRow: React.FC<{ step: Step; frame: number; dingFrame: number }> = ({
   )
 }
 
-// ─── Live-loss counter (persistent, top-right, vertical-sized) ──────────────
+// ─── Live-loss counter (persistent, top-right) ───────────────────────────────
 
 const LiveLossCounter: React.FC<{ frame: number }> = ({ frame }) => {
   const brand = storeMdBrand
@@ -221,7 +215,7 @@ const LiveLossCounter: React.FC<{ frame: number }> = ({ frame }) => {
       <span
         style={{
           fontFamily: `'${brand.typography.fontMono}', monospace`,
-          fontSize: 12,
+          fontSize: 13,
           color: brand.colors.textMuted,
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
@@ -232,7 +226,7 @@ const LiveLossCounter: React.FC<{ frame: number }> = ({ frame }) => {
       <span
         style={{
           fontFamily: `'${brand.typography.fontMono}', monospace`,
-          fontSize: 22,
+          fontSize: 24,
           fontWeight: 900,
           color: RED,
           fontVariantNumeric: 'tabular-nums',
@@ -253,7 +247,7 @@ const UrgencyBar: React.FC<{ frame: number }> = ({ frame }) => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const breathe = pulse(frame, 40, 0.85, 1)
+  const breathe = pulse(frame, 40, 0.88, 1)
 
   return (
     <div
@@ -262,31 +256,41 @@ const UrgencyBar: React.FC<{ frame: number }> = ({ frame }) => {
         bottom: 0,
         left: 0,
         right: 0,
+        minHeight: 100,
         opacity: op * breathe,
         background: `linear-gradient(90deg, ${RED} 0%, #ea580c 100%)`,
-        padding: '24px 40px',
+        padding: '26px 40px',
         textAlign: 'center',
         boxShadow: '0 -8px 32px rgba(220, 38, 38, 0.45)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
       }}
     >
       <span
         style={{
           fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-          fontSize: 36,
+          fontSize: 32,
           fontWeight: 900,
           color: brand.colors.white,
           letterSpacing: '-0.01em',
-          textAlign: 'center',
-          lineHeight: 1.2,
-          display: 'block',
         }}
       >
         2,847 stores scanned · Avg:{' '}
         <span style={{ color: '#fecaca' }}>41/100</span>
-        <br />
-        <span style={{ fontSize: 28, letterSpacing: '0.04em' }}>
-          What&apos;s yours? → link in bio
-        </span>
+      </span>
+      <span
+        style={{
+          fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+          fontSize: 24,
+          fontWeight: 700,
+          color: brand.colors.white,
+          letterSpacing: '0.02em',
+        }}
+      >
+        What&apos;s yours? → link in bio
       </span>
     </div>
   )
@@ -298,6 +302,7 @@ export const SMDScanProgress: React.FC = () => {
   const frame = useCurrentFrame()
   const brand = storeMdBrand
 
+  // Title + spinner
   const titleOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -308,7 +313,8 @@ export const SMDScanProgress: React.FC = () => {
   })
   const spinnerRotation = frame * 9
 
-  const progressOpacity = interpolate(frame, [20, 40], [0, 1], {
+  // Progress bar
+  const progressOpacity = interpolate(frame, [25, 50], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -318,60 +324,61 @@ export const SMDScanProgress: React.FC = () => {
     SCAN_PERCENTS as unknown as number[],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
-  // Gradient "flow" position for the animated bar.
   const gradientShift = (frame * 2) % 200
 
+  // White flash when progress hits 100%
   const flashOpacity = interpolate(
     frame,
-    [190, 200, 210],
+    [240, 250, 260],
     [0, 0.45, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  const scanContentOpacity = interpolate(frame, [200, 220], [1, 0], {
+  // Scan content fades out before score reveal
+  const scanContentOpacity = interpolate(frame, [245, 265], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const scoreOpacity = interpolate(frame, [205, 225], [0, 1], {
+  const scoreOpacity = interpolate(frame, [260, 285], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const scoreScale = interpolate(frame, [205, 235], [0.85, 1], {
+  const scoreScale = interpolate(frame, [260, 295], [0.85, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  // Score reveal — prolonged 14-frame shake + glitch.
   const scoreShake = shake(frame, SCORE_REVEAL_START + 10, 10, 14)
   const scoreGlitch = glitch(frame, SCORE_REVEAL_START + 10)
 
-  // Red flash on score reveal + pulsing CRITICAL tag.
   const redFlashOp = Math.max(
     redFlashOpacity(frame, SCORE_REVEAL_START + 10),
     redFlashOpacity(frame, SCORE_REVEAL_START + 12),
     0,
   )
-  // Blinking "CRITICAL — IMMEDIATE ACTION REQUIRED" every 10 frames.
   const criticalBlink =
     Math.floor((frame - (SCORE_REVEAL_START + 20)) / 10) % 2 === 0 ? 1 : 0
   const criticalOp = interpolate(
     frame,
-    [SCORE_REVEAL_START + 20, SCORE_REVEAL_START + 28],
+    [SCORE_REVEAL_START + 20, SCORE_REVEAL_START + 30],
     [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // Heartbeat on score (runs after initial reveal settles).
+  // Heartbeat on score after reveal settles
   const beatStart = SCORE_REVEAL_START + 40
   const beatScale = frame >= beatStart ? heartbeat(frame - beatStart, 28) : 1
-  const ring = frame >= beatStart ? heartbeatRing(frame - beatStart, 28) : { scale: 1, opacity: 0 }
+  const ring =
+    frame >= beatStart
+      ? heartbeatRing(frame - beatStart, 28)
+      : { scale: 1, opacity: 0 }
 
-  // Fact box — higher on screen since we now have an urgency bar at the bottom.
-  const factOpacity = interpolate(frame, [60, 95], [0, 1], {
+  // Fact box — appears earlier (step 1 already landing)
+  const factOpacity = interpolate(frame, [70, 110, 245, 260], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const factY = interpolate(frame, [60, 95], [20, 0], {
+  const factY = interpolate(frame, [70, 110], [20, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
@@ -381,7 +388,11 @@ export const SMDScanProgress: React.FC = () => {
       <StoreMDBackground brand={brand} />
 
       <AbsoluteFill
-        style={{ padding: 80, display: 'flex', flexDirection: 'column' }}
+        style={{
+          padding: '60px 60px 180px 60px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
         {/* TITLE + SPINNER */}
         <div
@@ -389,7 +400,7 @@ export const SMDScanProgress: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             gap: 24,
-            marginTop: 200,
+            marginTop: 120,
             opacity: titleOpacity,
             transform: `translateY(${titleY}px)`,
           }}
@@ -399,7 +410,7 @@ export const SMDScanProgress: React.FC = () => {
             style={{
               fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
               fontWeight: 900,
-              fontSize: 56,
+              fontSize: 64,
               color: brand.colors.textPrimary,
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
@@ -407,14 +418,15 @@ export const SMDScanProgress: React.FC = () => {
           >
             Your store&apos;s{' '}
             <span style={{ color: RED }}>dirty secrets</span>
-            <br /> in 60 seconds…
+            <br />
+            in 60 seconds…
           </span>
         </div>
 
         {/* SCAN CONTENT */}
-        <div style={{ opacity: scanContentOpacity, marginTop: 100 }}>
+        <div style={{ opacity: scanContentOpacity, marginTop: 80 }}>
           {/* PROGRESS BAR */}
-          <div style={{ opacity: progressOpacity, marginBottom: 80 }}>
+          <div style={{ opacity: progressOpacity, marginBottom: 60 }}>
             <div
               style={{
                 display: 'flex',
@@ -462,7 +474,7 @@ export const SMDScanProgress: React.FC = () => {
           </div>
 
           {/* STEPS */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
             {STEPS.map((step, i) => (
               <StepRow
                 key={step.label}
@@ -474,93 +486,13 @@ export const SMDScanProgress: React.FC = () => {
           </div>
         </div>
 
-        {/* SCORE REVEAL */}
-        {frame >= SCORE_REVEAL_START && (
-          <AbsoluteFill
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              opacity: scoreOpacity,
-              transform: `translate(${scoreShake.x}px, ${scoreShake.y}px)`,
-              clipPath: scoreGlitch.clip,
-              pointerEvents: 'none',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 34,
-                transform: `scale(${scoreScale})`,
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-                  fontWeight: 700,
-                  fontSize: 32,
-                  color: brand.colors.textSecondary,
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Your Store Score
-              </span>
-              <div
-                style={{
-                  position: 'relative',
-                  transform: `scale(${2.5 * beatScale})`,
-                  transformOrigin: 'center',
-                }}
-              >
-                {/* Heartbeat expanding ring */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: -10,
-                    borderRadius: '50%',
-                    border: `3px solid ${RED}`,
-                    transform: `scale(${ring.scale})`,
-                    opacity: ring.opacity,
-                    pointerEvents: 'none',
-                  }}
-                />
-                <ScoreCircle
-                  score={SCORE}
-                  startFrame={SCORE_REVEAL_START + 10}
-                  duration={25}
-                />
-              </div>
-              <div
-                style={{
-                  opacity: criticalOp * criticalBlink,
-                  fontFamily: `'${brand.typography.fontMono}', monospace`,
-                  fontSize: 36,
-                  fontWeight: 900,
-                  color: RED,
-                  letterSpacing: '0.24em',
-                  textTransform: 'uppercase',
-                  textShadow: '0 0 24px rgba(220, 38, 38, 0.6)',
-                  textAlign: 'center',
-                  lineHeight: 1.2,
-                }}
-              >
-                CRITICAL
-                <br />
-                IMMEDIATE ACTION REQUIRED
-              </div>
-            </div>
-          </AbsoluteFill>
-        )}
-
-        {/* FACT BOX */}
+        {/* FACT BOX — above the urgency bar, safe zone */}
         <div
           style={{
             position: 'absolute',
             bottom: 220,
-            left: 80,
-            right: 80,
+            left: 60,
+            right: 60,
             opacity: factOpacity,
             transform: `translateY(${factY}px)`,
             background: 'rgba(13, 17, 23, 0.88)',
@@ -573,7 +505,7 @@ export const SMDScanProgress: React.FC = () => {
           <div
             style={{
               fontFamily: `'${brand.typography.fontMono}', monospace`,
-              fontSize: 18,
+              fontSize: 22,
               color: brand.colors.accent,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
@@ -596,6 +528,86 @@ export const SMDScanProgress: React.FC = () => {
         </div>
       </AbsoluteFill>
 
+      {/* SCORE REVEAL (260-360) */}
+      {frame >= SCORE_REVEAL_START && (
+        <AbsoluteFill
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingBottom: 140,
+            opacity: scoreOpacity,
+            transform: `translate(${scoreShake.x}px, ${scoreShake.y}px)`,
+            clipPath: scoreGlitch.clip,
+            pointerEvents: 'none',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 44,
+              transform: `scale(${scoreScale})`,
+              textAlign: 'center',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: `'${brand.typography.fontBody}', sans-serif`,
+                fontWeight: 700,
+                fontSize: 34,
+                color: brand.colors.textSecondary,
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Your Store Score
+            </span>
+            <div
+              style={{
+                position: 'relative',
+                transform: `scale(${2.5 * beatScale})`,
+                transformOrigin: 'center',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: -10,
+                  borderRadius: '50%',
+                  border: `3px solid ${RED}`,
+                  transform: `scale(${ring.scale})`,
+                  opacity: ring.opacity,
+                  pointerEvents: 'none',
+                }}
+              />
+              <ScoreCircle
+                score={SCORE}
+                startFrame={SCORE_REVEAL_START + 10}
+                duration={25}
+              />
+            </div>
+            <div
+              style={{
+                opacity: criticalOp * criticalBlink,
+                fontFamily: `'${brand.typography.fontMono}', monospace`,
+                fontSize: 36,
+                fontWeight: 900,
+                color: RED,
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                textShadow: '0 0 24px rgba(220, 38, 38, 0.6)',
+                lineHeight: 1.2,
+              }}
+            >
+              CRITICAL
+              <br />
+              IMMEDIATE ACTION REQUIRED
+            </div>
+          </div>
+        </AbsoluteFill>
+      )}
+
       {/* White completion flash */}
       <AbsoluteFill
         style={{
@@ -614,10 +626,7 @@ export const SMDScanProgress: React.FC = () => {
         }}
       />
 
-      {/* Live-loss counter (persistent) */}
       <LiveLossCounter frame={frame} />
-
-      {/* URGENCY BAR — always last before logo */}
       <UrgencyBar frame={frame} />
     </AbsoluteFill>
   )

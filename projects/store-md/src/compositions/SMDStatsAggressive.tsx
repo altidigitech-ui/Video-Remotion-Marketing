@@ -102,8 +102,7 @@ const StatTile: React.FC<{
   startFrame: number
   frame: number
   fps: number
-  size: 'lg' | 'md'
-}> = ({ stat, startFrame, frame, fps, size }) => {
+}> = ({ stat, startFrame, frame, fps }) => {
   const brand = storeMdBrand
 
   const countupFrames = 28
@@ -112,7 +111,7 @@ const StatTile: React.FC<{
   const slam = spring({
     frame: Math.max(0, frame - startFrame),
     fps,
-    from: 1.2,
+    from: 1.15,
     to: 1,
     config: SLAM_SPRING,
   })
@@ -130,11 +129,6 @@ const StatTile: React.FC<{
 
   const tileShake = shake(frame, arriveFrame, 5, 7)
 
-  // Tile-level 2x ratio: numberSize = 2x labelSize.
-  const numberSize = size === 'lg' ? 180 : 140
-  const labelSize = size === 'lg' ? 32 : 24
-  const iconSize = size === 'lg' ? 110 : 84
-
   const displayValue =
     stat.value >= 1000 ? Math.round(value).toLocaleString('en-US') : Math.round(value)
 
@@ -145,26 +139,27 @@ const StatTile: React.FC<{
         transform: `translate(${tileShake.x}px, ${tileShake.y}px) scale(${slam})`,
         background: 'rgba(13, 17, 23, 0.75)',
         border: `1px solid ${brand.colors.border}`,
-        borderRadius: 24,
-        padding: '36px 40px',
+        borderRadius: 16,
+        padding: 32,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'flex-start',
-        gap: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 12,
         backdropFilter: 'blur(10px)',
-        minHeight: size === 'lg' ? 380 : 280,
+        textAlign: 'center',
       }}
     >
-      <StatIcon id={stat.icon} size={iconSize} />
+      <StatIcon id={stat.icon} size={40} />
 
       <div
         style={{
           fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-          fontSize: numberSize,
+          fontSize: 80,
           fontWeight: 900,
           color: brand.colors.white,
           letterSpacing: '-0.04em',
-          lineHeight: 0.95,
+          lineHeight: 1,
           fontVariantNumeric: 'tabular-nums',
           textShadow: '0 0 40px rgba(220, 38, 38, 0.35)',
         }}
@@ -177,12 +172,12 @@ const StatTile: React.FC<{
       <div
         style={{
           fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-          fontSize: labelSize,
+          fontSize: 22,
           fontWeight: 600,
           color: brand.colors.textSecondary,
           letterSpacing: '-0.005em',
-          lineHeight: 1.25,
-          maxWidth: 520,
+          lineHeight: 1.3,
+          maxWidth: 280,
         }}
       >
         {stat.label}
@@ -254,10 +249,8 @@ export const SMDStatsAggressive: React.FC<SMDStatsAggressiveProps> = ({
   const brand = storeMdBrand
 
   const isVertical = height > width
-  const isSquare = width === height
-  // Widescreen uses a 2-column grid; vertical stacks; square uses 2x2.
+  // Widescreen + square: 2x2 grid. Vertical: 1-column stack.
   const columns = isVertical ? 1 : 2
-  const tileSize: 'lg' | 'md' = isSquare || isVertical ? 'md' : 'lg'
 
   // Headline appears first, stats stagger.
   const headlineOp = interpolate(frame, [0, 20], [0, 1], {
@@ -282,10 +275,12 @@ export const SMDStatsAggressive: React.FC<SMDStatsAggressiveProps> = ({
 
       <AbsoluteFill
         style={{
-          padding: isVertical ? '90px 60px 90px 60px' : '70px 90px',
+          paddingTop: 60,
+          paddingBottom: 60,
+          paddingLeft: 40,
+          paddingRight: 40,
           display: 'flex',
           flexDirection: 'column',
-          gap: isVertical ? 30 : 50,
         }}
       >
         {/* HEADLINE */}
@@ -294,37 +289,46 @@ export const SMDStatsAggressive: React.FC<SMDStatsAggressiveProps> = ({
             opacity: headlineOp,
             transform: `translateY(${headlineY}px)`,
             fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-            fontSize: isVertical ? 72 : 84,
+            fontSize: isVertical ? 64 : 72,
             fontWeight: 900,
             color: brand.colors.white,
             letterSpacing: '-0.025em',
-            lineHeight: 1.05,
+            lineHeight: 1.1,
+            textAlign: 'center',
             textShadow: `0 0 40px rgba(6, 182, 212, ${0.35 * headlinePulseGlow})`,
+            padding: '0 20px',
           }}
         >
           {headline}
         </div>
 
-        {/* STATS GRID */}
+        {/* STATS GRID — centered vertically in remaining space */}
         <div
           style={{
             flex: 1,
-            display: 'grid',
-            gridTemplateColumns: `repeat(${columns}, 1fr)`,
-            gap: isVertical ? 24 : 32,
-            alignContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          {stats.map((stat, i) => (
-            <StatTile
-              key={`${stat.label}-${i}`}
-              stat={stat}
-              startFrame={statStartFrames[i] as number}
-              frame={frame}
-              fps={fps}
-              size={tileSize}
-            />
-          ))}
+          <div
+            style={{
+              width: '100%',
+              display: 'grid',
+              gridTemplateColumns: `repeat(${columns}, 1fr)`,
+              gap: 24,
+            }}
+          >
+            {stats.map((stat, i) => (
+              <StatTile
+                key={`${stat.label}-${i}`}
+                stat={stat}
+                startFrame={statStartFrames[i] as number}
+                frame={frame}
+                fps={fps}
+              />
+            ))}
+          </div>
         </div>
       </AbsoluteFill>
 

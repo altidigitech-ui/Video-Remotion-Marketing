@@ -246,17 +246,21 @@ export const SMDSocialAggressive: React.FC<SMDSocialAggressiveProps> = ({
             bottom: 0,
             left: 0,
             right: 0,
+            minHeight: 100,
             opacity: urgencyOp * urgencyBreathe,
             background: `linear-gradient(90deg, ${RED} 0%, #ea580c 100%)`,
             padding: '26px 40px',
             textAlign: 'center',
             boxShadow: '0 -8px 32px rgba(220, 38, 38, 0.45)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           <span
             style={{
               fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-              fontSize: 42,
+              fontSize: 38,
               fontWeight: 900,
               color: brand.colors.white,
               letterSpacing: '-0.01em',

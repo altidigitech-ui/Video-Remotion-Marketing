@@ -13,23 +13,27 @@ import {
   RED,
   SLAM_SPRING,
   formatDollarsCents,
-  glitch,
   pulse,
   redFlashOpacity,
   shake,
 } from '../utils/aggressive'
 
-// ─── Timings (30fps, 240-frame comp) ──────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
+// 12s @ 30fps = 360 frames. Reading time prioritized over speed.
 
 const INTRO_TEXT = 'While you read your morning emails…'
-const INTRO_CHAR_RATE = 0.8
-const COUNTER_START = 30
-const COUNTER_END = 180
+const INTRO_CHAR_RATE = 0.75
+const COUNTER_START = 40
+const COUNTER_END = 240 // 200-frame ramp (6.7s)
 const TARGET_VALUE = 2100
-const SLAM_START = 180
-const CTA_START = 210
+const FREEZE_START = 240
+const SLAM_ABOVE_START = 260
+const EVERY_START = 280
+const SINGLE_START = 288
+const MONTH_START = 296
+const CTA_START = 330
 
-// Named thresholds (in $). Each subtitle is shown once value crosses it.
+// Named paliers — displayed BELOW the counter, not over it.
 type Palier = { from: number; to: number; subtitle: string }
 const PALIERS: Palier[] = [
   { from: 0, to: 200, subtitle: 'ghost app #1 charging…' },
@@ -39,14 +43,12 @@ const PALIERS: Palier[] = [
   { from: 1400, to: 2100, subtitle: 'AI shopping agents skipping your store…' },
 ]
 
-// Ease-in: value = target * t^2. Compute frame at which each palier boundary hits.
+// Frame at which each palier boundary is hit (ease-in: value = target * t^2).
 const thresholdHitFrame = (target: number): number => {
   const ratio = target / TARGET_VALUE
   const t = Math.sqrt(ratio)
   return Math.round(COUNTER_START + t * (COUNTER_END - COUNTER_START))
 }
-
-// Boundary frames = frames at which a new palier takes over.
 const BOUNDARY_FRAMES = PALIERS.slice(1).map((p) => thresholdHitFrame(p.from))
 
 // ─── Logo overlay ─────────────────────────────────────────────────────────────
@@ -62,8 +64,8 @@ const SMDLogoOverlay: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           position: 'absolute',
-          bottom: 150,
-          right: 48,
+          bottom: 140,
+          right: 40,
           opacity,
         }}
       >
@@ -82,24 +84,25 @@ const SMDLogoOverlay: React.FC<{ frame: number }> = ({ frame }) => {
   )
 }
 
-// ─── Main composition ────────────────────────────────────────────────────────
+// ─── Main composition ─────────────────────────────────────────────────────────
 
 export const SMDMoneyCounter: React.FC = () => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const brand = storeMdBrand
 
-  // Intro typewriter
-  const introChars = Math.floor(Math.max(0, frame * INTRO_CHAR_RATE))
+  // Intro typewriter (top zone)
+  const introChars = Math.floor(Math.max(0, (frame - 2) * INTRO_CHAR_RATE))
   const introDisplay = INTRO_TEXT.slice(0, Math.min(introChars, INTRO_TEXT.length))
+  // Visible until SLAM_ABOVE_START (intro clears to make room for the SLAM line).
   const introOp = interpolate(
     frame,
-    [0, 6, COUNTER_END - 20, COUNTER_END],
+    [2, 14, SLAM_ABOVE_START - 10, SLAM_ABOVE_START],
     [0, 1, 1, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // Counter value — ease-in (t squared).
+  // Counter ramp — ease-in (t squared)
   const counterT = interpolate(
     frame,
     [COUNTER_START, COUNTER_END],
@@ -109,23 +112,26 @@ export const SMDMoneyCounter: React.FC = () => {
   const easedT = counterT * counterT
   const counterValue = easedT * TARGET_VALUE
 
+  // Counter stays fully visible from appearance through the end — no fade-out
+  // until the very last few frames (keeps it anchored behind the SLAM words).
   const counterOp = interpolate(
     frame,
-    [COUNTER_START - 5, COUNTER_START + 5, SLAM_START - 5, SLAM_START + 5],
-    [0, 1, 1, 0],
+    [COUNTER_START - 5, COUNTER_START + 8],
+    [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
+  // Small pulse once counter freezes.
+  const frozenPulse =
+    frame >= FREEZE_START ? pulse(frame, 20, 0.98, 1.04) : 1
 
-  // Active palier — last one whose `from <= counterValue`.
+  // Active palier
   let activePalier: Palier = PALIERS[0] as Palier
-  for (const p of PALIERS) {
-    if (counterValue >= p.from) activePalier = p
-  }
+  for (const p of PALIERS) if (counterValue >= p.from) activePalier = p
 
-  // Boundary flashes + shakes (brief red pulse when the subtitle changes).
+  // Boundary shake + flash
   const boundaryShake = BOUNDARY_FRAMES.reduce(
     (acc, f) => {
-      const s = shake(frame, f, 7, 10)
+      const s = shake(frame, f, 6, 8)
       return { x: acc.x + s.x, y: acc.y + s.y }
     },
     { x: 0, y: 0 },
@@ -135,30 +141,51 @@ export const SMDMoneyCounter: React.FC = () => {
     0,
   )
 
-  // Freeze + SLAM block ($2,100 holds, big text appears)
-  const freezeGlitch = glitch(frame, SLAM_START + 2)
-  const slamScale = spring({
-    frame: Math.max(0, frame - SLAM_START),
-    fps,
-    from: 1.6,
-    to: 1,
-    config: SLAM_SPRING,
-  })
-  const slamOp = interpolate(
+  // Palier subtitle opacity — hidden once SLAM words take that lower band
+  const palierOp = interpolate(
     frame,
-    [SLAM_START, SLAM_START + 6, CTA_START - 8, CTA_START],
+    [COUNTER_START, COUNTER_START + 20, EVERY_START - 8, EVERY_START],
     [0, 1, 1, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
-  const slamShake = shake(frame, SLAM_START + 3, 10, 14)
+  const palierPulse = pulse(frame, 40, 0.8, 1)
 
-  // Frozen max-value number visible in background during SLAM overlay
-  const frozenCounterOp = interpolate(
+  // "THIS IS YOUR STORE." SLAM above
+  const aboveSlam = spring({
+    frame: Math.max(0, frame - SLAM_ABOVE_START),
+    fps,
+    from: 1.4,
+    to: 1,
+    config: SLAM_SPRING,
+  })
+  const aboveOp = interpolate(
     frame,
-    [SLAM_START, SLAM_START + 5, CTA_START - 8, CTA_START],
-    [1, 0.35, 0.35, 0],
+    [SLAM_ABOVE_START, SLAM_ABOVE_START + 6],
+    [0, 1],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
+  const aboveShake = shake(frame, SLAM_ABOVE_START + 2, 8, 10)
+
+  // "EVERY. SINGLE. MONTH." word-by-word below
+  const mkWordOp = (start: number) =>
+    interpolate(frame, [start, start + 6], [0, 1], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    })
+  const mkWordSlam = (start: number) =>
+    spring({
+      frame: Math.max(0, frame - start),
+      fps,
+      from: 1.3,
+      to: 1,
+      config: SLAM_SPRING,
+    })
+  const everyOp = mkWordOp(EVERY_START)
+  const singleOp = mkWordOp(SINGLE_START)
+  const monthOp = mkWordOp(MONTH_START)
+  const everySlam = mkWordSlam(EVERY_START)
+  const singleSlam = mkWordSlam(SINGLE_START)
+  const monthSlam = mkWordSlam(MONTH_START)
 
   // CTA
   const ctaScale = spring({
@@ -174,53 +201,44 @@ export const SMDMoneyCounter: React.FC = () => {
   })
   const ctaGlow = pulse(frame, 20, 0.6, 1.3)
 
-  // Urgency bar
-  const urgencyBreathe = pulse(frame, 40, 0.85, 1)
+  // Urgency bar breath
+  const urgencyBreathe = pulse(frame, 40, 0.88, 1)
   const urgencyOp = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
-  // Subtitle change — fade current subtitle in when frame crosses its boundary.
-  const subtitleKey = activePalier.subtitle
-  const subtitleOp =
-    frame >= COUNTER_START
-      ? pulse(frame, 40, 0.75, 1)
-      : 0
-
   return (
-    <AbsoluteFill style={{ background: '#000000' }}>
-      {/* Subtle red pulse tint during counter phase */}
+    <AbsoluteFill style={{ background: '#000000', overflow: 'hidden' }}>
+      {/* Red-tinted radial background during counter */}
       <AbsoluteFill
         style={{
           background:
             'radial-gradient(circle at 50% 45%, rgba(220, 38, 38, 0.12) 0%, transparent 60%)',
           opacity:
-            frame >= COUNTER_START && frame < SLAM_START
+            frame >= COUNTER_START && frame < CTA_START
               ? pulse(frame, 60, 0.5, 1)
-              : frame >= SLAM_START && frame < CTA_START
-                ? 0.9
-                : 0,
+              : 0,
           pointerEvents: 'none',
         }}
       />
 
-      {/* INTRO */}
+      {/* ═════════ TOP ZONE (y: 180 → 360) — intro OR "THIS IS YOUR STORE." ═════════ */}
       <div
         style={{
           position: 'absolute',
-          top: '18%',
-          left: 0,
-          right: 0,
-          opacity: introOp,
-          padding: '0 60px',
+          top: 220,
+          left: 60,
+          right: 60,
           textAlign: 'center',
         }}
       >
+        {/* Intro */}
         <div
           style={{
+            opacity: introOp,
             fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-            fontSize: 52,
+            fontSize: 44,
             fontWeight: 700,
             color: brand.colors.white,
             letterSpacing: '-0.015em',
@@ -229,29 +247,54 @@ export const SMDMoneyCounter: React.FC = () => {
         >
           {introDisplay}
         </div>
+
+        {/* "THIS IS YOUR STORE." SLAM */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            opacity: aboveOp,
+            transform: `translate(${aboveShake.x}px, ${aboveShake.y}px) scale(${aboveSlam})`,
+            fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+            fontSize: 72,
+            fontWeight: 900,
+            color: brand.colors.white,
+            letterSpacing: '-0.03em',
+            lineHeight: 1.05,
+            textShadow: '0 0 40px rgba(220, 38, 38, 0.55)',
+          }}
+        >
+          THIS IS <span style={{ color: RED }}>YOUR STORE.</span>
+        </div>
       </div>
 
-      {/* COUNTER + palier subtitle */}
-      <AbsoluteFill
+      {/* ═════════ COUNTER ZONE (centered around y: 720) ═════════ */}
+      <div
         style={{
-          opacity: counterOp,
-          transform: `translate(${boundaryShake.x}px, ${boundaryShake.y}px)`,
+          position: 'absolute',
+          top: 560,
+          left: 60,
+          right: 60,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: 24,
+          gap: 16,
+          opacity: counterOp,
+          transform: `translate(${boundaryShake.x}px, ${boundaryShake.y}px) scale(${frozenPulse})`,
         }}
       >
         <div
           style={{
             fontFamily: `'${brand.typography.fontMono}', monospace`,
-            fontSize: 200,
+            fontSize: 120,
             fontWeight: 900,
             color: RED,
             letterSpacing: '-0.03em',
             lineHeight: 1,
             fontVariantNumeric: 'tabular-nums',
+            textAlign: 'center',
             textShadow:
               '0 0 60px rgba(220, 38, 38, 0.7), 0 0 30px rgba(220, 38, 38, 0.5)',
           }}
@@ -261,35 +304,107 @@ export const SMDMoneyCounter: React.FC = () => {
         <div
           style={{
             fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: 600,
             color: brand.colors.textSecondary,
             letterSpacing: '-0.005em',
             textTransform: 'uppercase',
+            textAlign: 'center',
           }}
         >
           per month in invisible costs
         </div>
-        {/* Palier subtitle — changes as counter crosses each threshold */}
+      </div>
+
+      {/* ═════════ LOWER BAND (y: 1040 → 1280) — palier OR EVERY/SINGLE/MONTH ═════════ */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 1000,
+          left: 40,
+          right: 40,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 16,
+          textAlign: 'center',
+        }}
+      >
+        {/* Palier subtitle (during counter ramp) */}
         <div
-          key={subtitleKey}
+          key={activePalier.subtitle}
           style={{
-            marginTop: 20,
-            opacity: subtitleOp,
+            opacity: palierOp * palierPulse,
             fontFamily: `'${brand.typography.fontMono}', monospace`,
-            fontSize: 34,
+            fontSize: 28,
             fontWeight: 800,
             color: '#fca5a5',
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
-            textAlign: 'center',
-            padding: '0 40px',
             textShadow: '0 0 14px rgba(220, 38, 38, 0.45)',
+            maxWidth: 900,
+            lineHeight: 1.25,
           }}
         >
           ↯ {activePalier.subtitle}
         </div>
-      </AbsoluteFill>
+
+        {/* EVERY. SINGLE. MONTH. — word by word */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 28,
+            flexWrap: 'wrap',
+          }}
+        >
+          <span
+            style={{
+              opacity: everyOp,
+              transform: `scale(${everySlam})`,
+              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+              fontSize: 64,
+              fontWeight: 900,
+              color: brand.colors.white,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            EVERY.
+          </span>
+          <span
+            style={{
+              opacity: singleOp,
+              transform: `scale(${singleSlam})`,
+              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+              fontSize: 64,
+              fontWeight: 900,
+              color: RED,
+              letterSpacing: '-0.02em',
+              textShadow: '0 0 24px rgba(220, 38, 38, 0.5)',
+            }}
+          >
+            SINGLE.
+          </span>
+          <span
+            style={{
+              opacity: monthOp,
+              transform: `scale(${monthSlam})`,
+              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+              fontSize: 64,
+              fontWeight: 900,
+              color: brand.colors.white,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            MONTH.
+          </span>
+        </div>
+      </div>
 
       {/* BOUNDARY RED FLASH */}
       <AbsoluteFill
@@ -300,107 +415,44 @@ export const SMDMoneyCounter: React.FC = () => {
         }}
       />
 
-      {/* FROZEN $2,100 behind the SLAM overlay */}
-      {frame >= SLAM_START && frame < CTA_START && (
-        <AbsoluteFill
-          style={{
-            opacity: frozenCounterOp,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            clipPath: freezeGlitch.clip,
-            pointerEvents: 'none',
-          }}
-        >
-          <div
-            style={{
-              fontFamily: `'${brand.typography.fontMono}', monospace`,
-              fontSize: 200,
-              fontWeight: 900,
-              color: RED,
-              letterSpacing: '-0.03em',
-              transform: `translateX(${freezeGlitch.redShift}px)`,
-              textShadow: '0 0 60px rgba(220, 38, 38, 0.7)',
-            }}
-          >
-            $2,100.00
-          </div>
-        </AbsoluteFill>
-      )}
-
-      {/* SLAM "THIS IS YOUR STORE. EVERY. SINGLE. MONTH." */}
-      <AbsoluteFill
+      {/* ═════════ CTA ZONE (y: 1380 → 1680) ═════════ */}
+      <div
         style={{
-          opacity: slamOp,
-          transform: `translate(${slamShake.x}px, ${slamShake.y}px) scale(${slamScale})`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0 50px',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-            fontSize: 98,
-            fontWeight: 900,
-            color: brand.colors.white,
-            letterSpacing: '-0.025em',
-            lineHeight: 1.04,
-            textAlign: 'center',
-            textShadow: '0 0 50px rgba(220, 38, 38, 0.55)',
-          }}
-        >
-          THIS IS
-          <br />
-          <span style={{ color: RED }}>YOUR STORE.</span>
-          <br />
-          EVERY.
-          <br />
-          <span style={{ color: RED }}>SINGLE.</span>
-          <br />
-          MONTH.
-        </div>
-      </AbsoluteFill>
-
-      {/* CTA */}
-      <AbsoluteFill
-        style={{
+          position: 'absolute',
+          top: 1340,
+          left: 40,
+          right: 40,
           opacity: ctaOp,
           transform: `scale(${ctaScale})`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          gap: 32,
-          padding: '0 50px',
+          gap: 24,
+          textAlign: 'center',
         }}
       >
         <div
           style={{
             fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-            fontSize: 68,
+            fontSize: 48,
             fontWeight: 900,
             color: brand.colors.white,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.08,
-            textAlign: 'center',
+            letterSpacing: '-0.025em',
+            lineHeight: 1.1,
           }}
         >
-          60 seconds to
-          <br />
-          stop the bleeding.
+          60 seconds to stop the bleeding.
           <br />
           <span style={{ color: brand.colors.accent }}>Free.</span>
         </div>
         <div
           style={{
             fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-            fontSize: 44,
+            fontSize: 42,
             fontWeight: 900,
             color: brand.colors.white,
             background: `linear-gradient(135deg, ${brand.colors.primary} 0%, ${brand.colors.accent} 100%)`,
-            padding: '24px 52px',
+            padding: '22px 48px',
             borderRadius: 18,
             boxShadow: `0 0 ${54 * ctaGlow}px rgba(37, 99, 235, ${0.6 * ctaGlow}), 0 0 ${110 * ctaGlow}px rgba(6, 182, 212, ${0.35 * ctaGlow}), inset 0 1px 0 rgba(255, 255, 255, 0.25)`,
             letterSpacing: '-0.015em',
@@ -415,14 +467,14 @@ export const SMDMoneyCounter: React.FC = () => {
             color: brand.colors.textMuted,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            textAlign: 'center',
+            lineHeight: 1.3,
           }}
         >
           Or keep paying.
           <br />
           Your competitor won&apos;t.
         </div>
-      </AbsoluteFill>
+      </div>
 
       {/* URGENCY BAR */}
       <div
@@ -431,17 +483,21 @@ export const SMDMoneyCounter: React.FC = () => {
           bottom: 0,
           left: 0,
           right: 0,
+          minHeight: 100,
           opacity: urgencyOp * urgencyBreathe,
           background: `linear-gradient(90deg, ${RED} 0%, #ea580c 100%)`,
-          padding: '24px 40px',
+          padding: '26px 40px',
           textAlign: 'center',
           boxShadow: '0 -8px 32px rgba(220, 38, 38, 0.45)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <span
           style={{
             fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-            fontSize: 38,
+            fontSize: 32,
             fontWeight: 900,
             color: brand.colors.white,
             letterSpacing: '-0.01em',

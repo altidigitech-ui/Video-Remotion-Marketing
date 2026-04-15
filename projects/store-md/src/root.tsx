@@ -91,7 +91,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-product-demo"
         component={SMDProductDemo}
-        durationInFrames={sec(15, FPS_60)}
+        durationInFrames={sec(18, FPS_60)}
         fps={FPS_60}
         width={1920}
         height={1080}
@@ -217,7 +217,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-scan-progress"
         component={SMDScanProgress}
-        durationInFrames={sec(8, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -257,7 +257,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-before-after"
         component={SMDBeforeAfter}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -267,7 +267,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-counter"
         component={SMDMoneyCounter}
-        durationInFrames={sec(8, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -277,7 +277,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-testimonial"
         component={SMDTestimonialFake}
-        durationInFrames={sec(6, FPS_30)}
+        durationInFrames={sec(10, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}

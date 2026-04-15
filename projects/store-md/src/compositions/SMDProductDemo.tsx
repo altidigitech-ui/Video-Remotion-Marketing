@@ -17,7 +17,6 @@ import {
   RED,
   SLAM_SPRING,
   formatDollarsCents,
-  glitch,
   liveLoss,
   pulse,
   redFlashOpacity,
@@ -25,6 +24,10 @@ import {
 } from '../utils/aggressive'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+// 18s @ 60fps = 1080 frames total.
+//   Hook  : 0   → 200   (money block 0-100, "Yours is probably worse." 100-200)
+//   Scan  : 200 → 830
+//   CTA   : 830 → 1080
 
 const URL = 'storemd.app/scan'
 
@@ -36,13 +39,20 @@ const CATEGORIES: ReadonlyArray<{ label: string; score: number }> = [
   { label: 'Accessibility', score: 78 },
 ]
 
-const SCAN_START = 120
-const CTA_START = 750
+const HOOK_BLOCK_END = 100
+const HOOK_YOURS_START = 100
+const SCAN_START = 200
+const CTA_START = 830
 const CRITICAL_SCORE_THRESHOLD = 50
 
-const CAT_START = 170
+const CAT_START = SCAN_START + 50
 const CAT_GAP = 22
 const CAT_REVEAL_FRAMES = CATEGORIES.map((_, i) => CAT_START + i * CAT_GAP + 18)
+
+const WARNING_TITLE_START = SCAN_START + 260
+const ISSUE_1_START = SCAN_START + 300
+const ISSUE_2_START = SCAN_START + 370
+const RECOVERY_START = SCAN_START + 280
 
 // ─── Live-loss counter (persistent, top-right) ───────────────────────────────
 
@@ -52,7 +62,6 @@ const LiveLossCounter: React.FC<{ frame: number }> = ({ frame }) => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  // Begin counting once the scan phase begins.
   const value = liveLoss(Math.max(0, frame - SCAN_START), 0.04)
   return (
     <div
@@ -100,15 +109,14 @@ const LiveLossCounter: React.FC<{ frame: number }> = ({ frame }) => {
   )
 }
 
-// ─── Recovery counter (green, top-left during issue phase) ───────────────────
-
 const RecoveryCounter: React.FC<{ frame: number }> = ({ frame }) => {
   const brand = storeMdBrand
-  const start = 400
-  const op = interpolate(frame, [start, start + 25, CTA_START - 20, CTA_START], [0, 1, 1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  const op = interpolate(
+    frame,
+    [RECOVERY_START, RECOVERY_START + 25, CTA_START - 20, CTA_START],
+    [0, 1, 1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  )
   return (
     <div
       style={{
@@ -155,7 +163,7 @@ const RecoveryCounter: React.FC<{ frame: number }> = ({ frame }) => {
   )
 }
 
-// ─── URL bar (fast) ───────────────────────────────────────────────────────────
+// ─── URL bar (fast typewriter) ───────────────────────────────────────────────
 
 const UrlBar: React.FC<{ frame: number }> = ({ frame }) => {
   const brand = storeMdBrand
@@ -230,7 +238,7 @@ const UrlBar: React.FC<{ frame: number }> = ({ frame }) => {
   )
 }
 
-// ─── Category bar with FAILING tag + Top-stores reference ────────────────────
+// ─── Category bar ─────────────────────────────────────────────────────────────
 
 const CategoryBar: React.FC<{
   label: string
@@ -273,7 +281,9 @@ const CategoryBar: React.FC<{
       })
     : 0
   const failingBlink = isFailing
-    ? Math.floor(frame / 8) % 2 === 0 ? 1 : 0.35
+    ? Math.floor(frame / 8) % 2 === 0
+      ? 1
+      : 0.35
     : 1
 
   return (
@@ -319,7 +329,6 @@ const CategoryBar: React.FC<{
             borderRadius: 999,
           }}
         />
-        {/* Top-stores reference marker (at 92%) */}
         <div
           style={{
             position: 'absolute',
@@ -346,7 +355,6 @@ const CategoryBar: React.FC<{
       >
         {Math.round(fillWidth)}
       </div>
-      {/* FAILING tag for low scores */}
       <div
         style={{
           width: 110,
@@ -374,7 +382,6 @@ const SMDLogoOverlay: React.FC<{ frame: number }> = ({ frame }) => {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-
   return (
     <AbsoluteFill style={{ pointerEvents: 'none' }}>
       <div
@@ -407,57 +414,62 @@ export const SMDProductDemo: React.FC = () => {
   const { fps } = useVideoConfig()
   const brand = storeMdBrand
 
-  // ── PHASE 1: Hook timing ──
-  // 0-15: black silence
-  // 15-30: small gray pre-title
-  // 40: SLAM $2,100 with glitch + shake
-  // 55: "/month" slides from right
-  // 70: "in invisible costs" fades in
-  // 90-93: HARD CUT (everything drops in 4 frames)
-  // 94-120: "Yours is probably worse." SLAM, then CUT.
-  const preTitleOp = interpolate(frame, [15, 30, 85, 90], [0, 1, 1, 0], {
+  // ── PHASE 1a: centered money block (0-100) ──
+  const moneyBlockOp = interpolate(frame, [8, 20, 85, 95], [0, 1, 1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
+
+  // Line 1: "the average Shopify store loses..."
+  const line1Op = interpolate(frame, [10, 20], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // Line 2: "$2,100" SLAM scale + shake
   const moneySlam = spring({
-    frame: Math.max(0, frame - 40),
+    frame: Math.max(0, frame - 20),
     fps,
     from: 1.4,
     to: 1,
     config: SLAM_SPRING,
   })
-  const moneyOp = interpolate(frame, [40, 48, 85, 90], [0, 1, 1, 0], {
+  const line2Op = interpolate(frame, [20, 30], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const moneyShake = shake(frame, 40, 10, 12)
-  const moneyGlitch = glitch(frame, 40)
+  const hookShake = shake(frame, 20, 8, 12)
 
-  const monthOp = interpolate(frame, [55, 65, 85, 90], [0, 1, 1, 0], {
+  // Line 3: "/month" slide up from below
+  const line3Op = interpolate(frame, [40, 55], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
-  const monthX = interpolate(frame, [55, 65], [80, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
-
-  const subOp = interpolate(frame, [70, 82, 85, 90], [0, 1, 1, 0], {
+  const line3Y = interpolate(frame, [40, 55], [30, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   })
 
+  // Line 4: "in invisible costs" fade in (red .8)
+  const line4Op = interpolate(frame, [55, 70], [0, 0.85], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  })
+
+  // ── PHASE 1b: "Yours is probably worse." (100-200) ──
   const yoursSlam = spring({
-    frame: Math.max(0, frame - 94),
+    frame: Math.max(0, frame - HOOK_YOURS_START),
     fps,
-    from: 1.5,
+    from: 1.3,
     to: 1,
     config: SLAM_SPRING,
   })
-  const yoursOp = interpolate(frame, [94, 100, 116, 120], [0, 1, 1, 0], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  const yoursOp = interpolate(
+    frame,
+    [HOOK_YOURS_START, HOOK_YOURS_START + 8, 190, 200],
+    [0, 1, 1, 0],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  )
 
   // ── PHASE 2 + 3 ──
   const contentOp = interpolate(
@@ -467,23 +479,24 @@ export const SMDProductDemo: React.FC = () => {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  const scoreCardOp = interpolate(frame, [150, 180], [0, 1], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  })
+  const scoreCardOp = interpolate(
+    frame,
+    [SCAN_START + 30, SCAN_START + 60],
+    [0, 1],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+  )
 
   const zoomStep = 1 + 0.015 * Math.sin((frame - SCAN_START) / 40)
 
-  // "Let's expose the damage." cyan mono caption
+  // "Let's expose the damage." caption
   const damageOp = interpolate(
     frame,
-    [SCAN_START + 4, SCAN_START + 20, 380, 395],
+    [SCAN_START + 4, SCAN_START + 20, WARNING_TITLE_START - 10, WARNING_TITLE_START],
     [0, 1, 1, 0],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // WARNING title reveal
-  const WARNING_TITLE_START = 380
+  // WARNING typewriter
   const WARNING = 'WARNING: 2 CRITICAL PROBLEMS FOUND'
   const warnChars = Math.floor(
     interpolate(
@@ -508,8 +521,6 @@ export const SMDProductDemo: React.FC = () => {
   )
 
   // Issue cards
-  const ISSUE_1_START = 420
-  const ISSUE_2_START = 490
   const issue1Slide = spring({
     frame: Math.max(0, frame - ISSUE_1_START),
     fps,
@@ -539,7 +550,6 @@ export const SMDProductDemo: React.FC = () => {
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
   )
 
-  // Pulsing $282 cumulative tag
   const wastedPulse = pulse(frame, 36, 0.82, 1.08)
   const wastedOp = interpolate(
     frame,
@@ -564,10 +574,9 @@ export const SMDProductDemo: React.FC = () => {
     to: 1,
     config: brand.motion.springBouncy,
   })
-  // Fast-pulsing CTA button (period 20).
   const ctaGlow = pulse(frame, 20, 0.55, 1.35)
 
-  // ── Red flashes on low-score reveals ──
+  // Red flashes on low-score reveals
   const criticalFlashFrames: number[] = CATEGORIES.flatMap((cat, i) =>
     cat.score < CRITICAL_SCORE_THRESHOLD ? [CAT_REVEAL_FRAMES[i] as number] : [],
   )
@@ -587,146 +596,85 @@ export const SMDProductDemo: React.FC = () => {
     <AbsoluteFill>
       <StoreMDBackground brand={brand} />
 
-      {/* ═════════ PHASE 1 — HOOK ═════════ */}
-      {/* Pre-title in gray */}
+      {/* ═════════ PHASE 1a — Centered money block ═════════ */}
       <AbsoluteFill
         style={{
-          opacity: preTitleOp,
+          opacity: moneyBlockOp,
+          transform: `translate(${hookShake.x}px, ${hookShake.y}px)`,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          paddingTop: 260,
+          padding: '80px',
+          textAlign: 'center',
         }}
       >
+        {/* Line 1 */}
         <div
           style={{
+            opacity: line1Op,
             fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-            fontSize: 36,
-            fontWeight: 600,
+            fontSize: 32,
+            fontWeight: 500,
             color: brand.colors.textMuted,
-            letterSpacing: '0.04em',
-            textAlign: 'center',
+            letterSpacing: '0.02em',
+            marginBottom: 20,
           }}
         >
           the average Shopify store loses…
         </div>
-      </AbsoluteFill>
 
-      {/* BIG RED NUMBER */}
-      <AbsoluteFill
-        style={{
-          opacity: moneyOp,
-          transform: `translate(${moneyShake.x}px, ${moneyShake.y}px) scale(${moneySlam})`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          clipPath: moneyGlitch.clip,
-        }}
-      >
+        {/* Line 2: $2,100 */}
         <div
           style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: 16,
+            opacity: line2Op,
+            transform: `scale(${moneySlam})`,
+            fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+            fontSize: 240,
+            fontWeight: 900,
+            color: RED,
+            letterSpacing: '-0.05em',
+            lineHeight: 1,
+            textShadow:
+              '0 0 60px rgba(220, 38, 38, 0.65), 0 0 30px rgba(220, 38, 38, 0.4)',
           }}
         >
-          {/* RGB split ghosts */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              transform: `translateX(${moneyGlitch.redShift}px)`,
-              color: 'rgba(220, 38, 38, 0.65)',
-              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-              fontSize: 280,
-              fontWeight: 900,
-              letterSpacing: '-0.05em',
-              lineHeight: 1,
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 16,
-              mixBlendMode: 'screen',
-              pointerEvents: 'none',
-            }}
-          >
-            <span>$2,100</span>
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              transform: `translateX(${moneyGlitch.blueShift}px)`,
-              color: 'rgba(6, 182, 212, 0.55)',
-              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-              fontSize: 280,
-              fontWeight: 900,
-              letterSpacing: '-0.05em',
-              lineHeight: 1,
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 16,
-              mixBlendMode: 'screen',
-              pointerEvents: 'none',
-            }}
-          >
-            <span>$2,100</span>
-          </div>
-          <span
-            style={{
-              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-              fontSize: 280,
-              fontWeight: 900,
-              color: RED,
-              letterSpacing: '-0.05em',
-              lineHeight: 1,
-              textShadow: '0 0 60px rgba(220, 38, 38, 0.65), 0 0 30px rgba(220, 38, 38, 0.4)',
-            }}
-          >
-            $2,100
-          </span>
-          <span
-            style={{
-              opacity: monthOp,
-              transform: `translateX(${monthX}px)`,
-              fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
-              fontSize: 80,
-              fontWeight: 800,
-              color: brand.colors.white,
-              letterSpacing: '-0.02em',
-              textShadow: '0 0 30px rgba(255, 255, 255, 0.25)',
-            }}
-          >
-            /month
-          </span>
+          $2,100
         </div>
-      </AbsoluteFill>
 
-      {/* Subtitle "in invisible costs" */}
-      <AbsoluteFill
-        style={{
-          opacity: subOp,
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-          paddingBottom: 280,
-        }}
-      >
+        {/* Line 3: /month */}
         <div
           style={{
+            opacity: line3Op,
+            transform: `translateY(${line3Y}px)`,
+            fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
+            fontSize: 72,
+            fontWeight: 700,
+            color: brand.colors.white,
+            letterSpacing: '-0.02em',
+            marginTop: -10,
+          }}
+        >
+          /month
+        </div>
+
+        {/* Line 4: in invisible costs */}
+        <div
+          style={{
+            opacity: line4Op,
             fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-            fontSize: 42,
-            fontWeight: 600,
-            color: brand.colors.textSecondary,
-            letterSpacing: '-0.01em',
-            textAlign: 'center',
+            fontSize: 36,
+            fontWeight: 500,
+            color: RED,
+            letterSpacing: '-0.005em',
+            marginTop: 20,
           }}
         >
           in invisible costs
         </div>
       </AbsoluteFill>
 
-      {/* "Yours is probably worse." SLAM */}
+      {/* ═════════ PHASE 1b — "Yours is probably worse." ═════════ */}
       <AbsoluteFill
         style={{
           opacity: yoursOp,
@@ -734,7 +682,8 @@ export const SMDProductDemo: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '0 120px',
+          padding: '80px 120px',
+          textAlign: 'center',
         }}
       >
         <div
@@ -745,7 +694,6 @@ export const SMDProductDemo: React.FC = () => {
             color: brand.colors.white,
             letterSpacing: '-0.035em',
             lineHeight: 1.02,
-            textAlign: 'center',
             textShadow: '0 0 50px rgba(220, 38, 38, 0.45)',
           }}
         >
@@ -759,14 +707,13 @@ export const SMDProductDemo: React.FC = () => {
         style={{
           opacity: contentOp * scanFade,
           transform: `translate(${scanShake.x}px, ${scanShake.y}px) scale(${zoomStep})`,
-          padding: '64px 80px',
+          padding: '80px',
           display: 'flex',
           flexDirection: 'column',
           gap: 24,
           justifyContent: 'center',
         }}
       >
-        {/* "Let's expose the damage." caption */}
         <div
           style={{
             opacity: damageOp,
@@ -782,10 +729,8 @@ export const SMDProductDemo: React.FC = () => {
           Let&apos;s expose the damage.
         </div>
 
-        {/* URL bar */}
         <UrlBar frame={Math.max(0, frame - SCAN_START)} />
 
-        {/* Score card */}
         <div
           style={{
             opacity: scoreCardOp,
@@ -811,7 +756,11 @@ export const SMDProductDemo: React.FC = () => {
             }}
           >
             <div style={{ transform: 'scale(1.6)', transformOrigin: 'center' }}>
-              <ScoreCircle score={72} startFrame={280} duration={60} />
+              <ScoreCircle
+                score={72}
+                startFrame={SCAN_START + 160}
+                duration={60}
+              />
             </div>
           </div>
 
@@ -851,7 +800,7 @@ export const SMDProductDemo: React.FC = () => {
           </div>
         </div>
 
-        {/* WARNING title */}
+        {/* WARNING typewriter */}
         <div
           style={{
             opacity: warningOp,
@@ -875,7 +824,7 @@ export const SMDProductDemo: React.FC = () => {
             style={{
               opacity: issue1Op,
               transform: `translateX(${issue1X}px)`,
-              marginBottom: 14,
+              marginBottom: 16,
               position: 'relative',
             }}
           >
@@ -925,12 +874,12 @@ export const SMDProductDemo: React.FC = () => {
         </div>
       </AbsoluteFill>
 
-      {/* Live-loss counter (top-right, persistent through scan+issues) */}
+      {/* Live-loss counter */}
       {frame >= SCAN_START && frame < CTA_START && (
         <LiveLossCounter frame={frame} />
       )}
 
-      {/* Recovery counter (top-left, appears during issues) */}
+      {/* Recovery counter */}
       <RecoveryCounter frame={frame} />
 
       {/* Red flash overlay */}
@@ -952,7 +901,8 @@ export const SMDProductDemo: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 44,
-          padding: '0 140px',
+          padding: '80px 140px',
+          textAlign: 'center',
           pointerEvents: 'none',
         }}
       >
@@ -964,7 +914,6 @@ export const SMDProductDemo: React.FC = () => {
             color: brand.colors.white,
             letterSpacing: '-0.035em',
             lineHeight: 1.02,
-            textAlign: 'center',
             maxWidth: 1500,
           }}
         >
@@ -979,7 +928,6 @@ export const SMDProductDemo: React.FC = () => {
             fontWeight: 600,
             color: brand.colors.textSecondary,
             letterSpacing: '-0.005em',
-            textAlign: 'center',
             maxWidth: 1300,
           }}
         >

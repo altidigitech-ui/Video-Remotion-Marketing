@@ -19,12 +19,12 @@ import {
   shake,
 } from '../utils/aggressive'
 
-// Phase boundaries (30fps, 300-frame composition)
+// Phase boundaries (30fps, 360-frame composition — 12s for reading time)
 const BEFORE_START = 0
-const SPLIT_PULSE_START = 60
-const AFTER_START = 90
-const SLAM_START = 200
-const CTA_START = 240
+const SPLIT_PULSE_START = 70
+const AFTER_START = 120
+const SLAM_START = 260
+const CTA_START = 310
 
 // ─── Logo overlay ─────────────────────────────────────────────────────────────
 
@@ -93,7 +93,7 @@ const IssuePill: React.FC<{
         borderRadius: 10,
         padding: '14px 18px',
         fontFamily: `'${storeMdBrand.typography.fontBody}', sans-serif`,
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 700,
         color: '#fecaca',
         letterSpacing: '-0.005em',
@@ -186,8 +186,8 @@ const BeforeSide: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           opacity: intro,
-          transform: `scale(${1.35 * beatScale})`,
-          marginBottom: 50,
+          transform: `scale(${1.8 * beatScale})`,
+          marginBottom: 70,
           position: 'relative',
         }}
       >
@@ -224,8 +224,8 @@ const BeforeSide: React.FC<{ frame: number }> = ({ frame }) => {
           <IssuePill
             key={label}
             label={label}
-            startFrame={30 + i * 8}
-            exitFrame={110 + i * 4}
+            startFrame={30 + i * 10}
+            exitFrame={160 + i * 4}
             frame={frame}
           />
         ))}
@@ -291,8 +291,8 @@ const AfterSide: React.FC<{ frame: number }> = ({ frame }) => {
       <div
         style={{
           opacity: appear,
-          transform: 'scale(1.35)',
-          marginBottom: 50,
+          transform: 'scale(1.8)',
+          marginBottom: 70,
         }}
       >
         <ScoreCircle
@@ -334,7 +334,7 @@ const AfterSide: React.FC<{ frame: number }> = ({ frame }) => {
                 borderRadius: 10,
                 padding: '14px 18px',
                 fontFamily: `'${brand.typography.fontBody}', sans-serif`,
-                fontSize: 20,
+                fontSize: 24,
                 fontWeight: 700,
                 color: '#bbf7d0',
                 letterSpacing: '-0.005em',
