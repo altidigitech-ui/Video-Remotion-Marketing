@@ -334,7 +334,7 @@ const ScoreHero: React.FC<{ frame: number }> = ({ frame }) => {
         style={{
           opacity: buttonOp,
           background: C.primary,
-          color: '#ffffff',
+          color: storeMdBrand.colors.white,
           fontFamily: `'${storeMdBrand.typography.fontDisplay}', sans-serif`,
           fontSize: 16,
           fontWeight: 600,

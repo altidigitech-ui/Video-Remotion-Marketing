@@ -8,7 +8,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
-import { storeMdBrand } from '@altidigitech/brand'
+import { storeMdBrand, storeMdScoreColors } from '@altidigitech/brand'
 import { StoreMDBackground } from '../components/StoreMDBackground'
 import { ScoreCircle, getScoreStroke } from '../components/ScoreCircle'
 import { IssueCard } from '../components/IssueCard'
@@ -66,7 +66,7 @@ const UrlBar: React.FC<{ frame: number }> = ({ frame }) => {
           width: 12,
           height: 12,
           borderRadius: '50%',
-          background: '#16a34a',
+          background: storeMdScoreColors.excellent,
           boxShadow: '0 0 12px rgba(22, 163, 74, 0.85)',
           flexShrink: 0,
         }}
@@ -88,7 +88,7 @@ const UrlBar: React.FC<{ frame: number }> = ({ frame }) => {
           fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
           fontSize: 22,
           fontWeight: brand.typography.weightBold,
-          color: '#ffffff',
+          color: brand.colors.white,
           background: brand.colors.primary,
           padding: '12px 32px',
           borderRadius: 10,
@@ -511,7 +511,7 @@ export const SMDProductDemo: React.FC = () => {
             fontFamily: `'${brand.typography.fontDisplay}', sans-serif`,
             fontSize: 36,
             fontWeight: brand.typography.weightBold,
-            color: '#ffffff',
+            color: brand.colors.white,
             background: `linear-gradient(135deg, ${brand.colors.primary} 0%, ${brand.colors.accent} 100%)`,
             padding: '24px 64px',
             borderRadius: 16,
