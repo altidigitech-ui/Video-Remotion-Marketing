@@ -68,6 +68,10 @@
         "@altidigitech/templates": "workspace:*",
       },
     },
+    "projects/store-md": {
+      "name": "@altidigitech/project-store-md",
+      "version": "0.1.0",
+    },
   },
   "packages": {
     "@altidigitech/brand": ["@altidigitech/brand@workspace:packages/brand"],
@@ -75,6 +79,8 @@
     "@altidigitech/core": ["@altidigitech/core@workspace:packages/core"],
 
     "@altidigitech/project-leak-detector": ["@altidigitech/project-leak-detector@workspace:projects/leak-detector"],
+
+    "@altidigitech/project-store-md": ["@altidigitech/project-store-md@workspace:projects/store-md"],
 
     "@altidigitech/project-template": ["@altidigitech/project-template@workspace:projects/_template"],
 

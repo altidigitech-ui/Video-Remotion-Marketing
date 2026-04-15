@@ -14,3 +14,5 @@ export { baseColors, baseTypography, baseSpacing, baseMotion, baseBrand } from '
 
 export { templateBrand } from './_template/config'
 export { leakDetectorBrand } from './leak-detector/config'
+
+export { storeMdBrand, storeMdScoreColors, storeMdSeverityColors } from './store-md/config'
