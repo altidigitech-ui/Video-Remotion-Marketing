@@ -15,12 +15,22 @@ import { RED, SLAM_SPRING, pulse } from '../utils/aggressive'
 // Generic format (no names, no photos, no brands). The *format* — iMessage /
 // DM conversation — is itself the creative device; it's not a real testimonial.
 
-type Bubble = {
+export type Bubble = {
   side: 'them' | 'us'
   text: string
 }
 
-const BUBBLES: Bubble[] = [
+export type SMDTestimonialFakeProps = {
+  bubbles?: ReadonlyArray<Bubble>
+  headerName?: string
+  slamLine1?: string
+  slamLine2?: string
+  slamLine3?: string
+  ctaHeadline?: string
+  ctaButtonText?: string
+}
+
+const DEFAULT_BUBBLES: ReadonlyArray<Bubble> = [
   { side: 'them', text: 'bro I just scanned my store' },
   { side: 'them', text: 'I had 4 dead apps still charging me' },
   { side: 'them', text: '$189/month for NOTHING' },
@@ -28,8 +38,8 @@ const BUBBLES: Bubble[] = [
   { side: 'them', text: "8 months. That's $1,512 I'll never get back" },
 ]
 
-const BUBBLE_GAP = 16 // ~530ms @ 30fps — enough to read each message
-const SLAM_START = 200 // 4s of chat + reading pause before SLAM lands
+const BUBBLE_GAP = 16
+const SLAM_START = 200
 const CTA_START = 260
 
 // ─── Logo overlay ─────────────────────────────────────────────────────────────
@@ -121,7 +131,7 @@ const ChatBubble: React.FC<{
 
 // ─── Chat header (iMessage-style) ────────────────────────────────────────────
 
-const ChatHeader: React.FC = () => {
+const ChatHeader: React.FC<{ name: string }> = ({ name }) => {
   return (
     <div
       style={{
@@ -176,7 +186,7 @@ const ChatHeader: React.FC = () => {
             color: '#8e8e93',
           }}
         >
-          Shopify owner
+          {name}
         </span>
       </div>
       <span style={{ width: 30 }} />
@@ -186,7 +196,15 @@ const ChatHeader: React.FC = () => {
 
 // ─── Main composition ────────────────────────────────────────────────────────
 
-export const SMDTestimonialFake: React.FC = () => {
+export const SMDTestimonialFake: React.FC<SMDTestimonialFakeProps> = ({
+  bubbles = DEFAULT_BUBBLES,
+  headerName = 'Shopify owner',
+  slamLine1 = "Don't be",
+  slamLine2 = 'this guy.',
+  slamLine3 = 'Scan free.',
+  ctaHeadline = '60 seconds.\n$0.',
+  ctaButtonText = 'Scan my store →',
+}) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const brand = storeMdBrand
@@ -238,7 +256,7 @@ export const SMDTestimonialFake: React.FC = () => {
           flexDirection: 'column',
         }}
       >
-        <ChatHeader />
+        <ChatHeader name={headerName} />
 
         <div
           style={{
@@ -250,7 +268,7 @@ export const SMDTestimonialFake: React.FC = () => {
             justifyContent: 'flex-end',
           }}
         >
-          {BUBBLES.map((bubble, i) => (
+          {bubbles.map((bubble, i) => (
             <ChatBubble
               key={i}
               bubble={bubble}
@@ -287,11 +305,11 @@ export const SMDTestimonialFake: React.FC = () => {
             textShadow: '0 0 40px rgba(220, 38, 38, 0.45)',
           }}
         >
-          Don&apos;t be
+          {slamLine1}
           <br />
-          <span style={{ color: RED }}>this guy.</span>
+          <span style={{ color: RED }}>{slamLine2}</span>
           <br />
-          <span style={{ color: brand.colors.accent }}>Scan free.</span>
+          <span style={{ color: brand.colors.accent }}>{slamLine3}</span>
         </div>
       </AbsoluteFill>
 
@@ -327,9 +345,16 @@ export const SMDTestimonialFake: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            60 seconds.
-            <br />
-            <span style={{ color: brand.colors.accent }}>$0.</span>
+            {ctaHeadline.split('\n').map((line, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <br />}
+                {i === ctaHeadline.split('\n').length - 1 ? (
+                  <span style={{ color: brand.colors.accent }}>{line}</span>
+                ) : (
+                  line
+                )}
+              </React.Fragment>
+            ))}
           </div>
           <div
             style={{
@@ -344,7 +369,7 @@ export const SMDTestimonialFake: React.FC = () => {
               letterSpacing: '-0.015em',
             }}
           >
-            Scan my store →
+            {ctaButtonText}
           </div>
         </div>
       </AbsoluteFill>

@@ -30,16 +30,32 @@ const AFTER_SCORE_START = 170
 const AFTER_WINS_START = 200 // 4 wins at 200, 220, 240, 260
 const CTA_START = 320
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const BEFORE_ISSUES: Array<{ icon: string; text: string }> = [
+export type BeforeAfterRow = { icon: string; text: string }
+
+export type SMDBeforeAfterProps = {
+  beforeTitle?: string
+  afterTitle?: string
+  beforeScore?: number
+  afterScore?: number
+  beforeIssues?: ReadonlyArray<BeforeAfterRow>
+  afterWins?: ReadonlyArray<BeforeAfterRow>
+  slamHeadline?: string
+  slamSub?: string
+  ctaLabel?: string
+}
+
+// ─── Default data ─────────────────────────────────────────────────────────────
+
+const DEFAULT_BEFORE_ISSUES: ReadonlyArray<BeforeAfterRow> = [
   { icon: '💀', text: 'Ghost billing: $47/mo' },
   { icon: '🐌', text: 'Load: 4.1s (−53% visitors)' },
   { icon: '🚫', text: '14 products invisible to AI' },
   { icon: '💸', text: '$2,100/mo in hidden costs' },
 ]
 
-const AFTER_WINS: Array<{ icon: string; text: string }> = [
+const DEFAULT_AFTER_WINS: ReadonlyArray<BeforeAfterRow> = [
   { icon: '✅', text: 'Billing fixed: +$47/mo' },
   { icon: '⚡', text: 'Load: 1.8s (+53% visitors)' },
   { icon: '✅', text: 'All products AI-ready' },
@@ -136,7 +152,17 @@ const IssueRow: React.FC<{
 
 // ─── Main composition ────────────────────────────────────────────────────────
 
-export const SMDBeforeAfter: React.FC = () => {
+export const SMDBeforeAfter: React.FC<SMDBeforeAfterProps> = ({
+  beforeTitle = 'Your store now',
+  afterTitle = 'After 60 sec with StoreMD',
+  beforeScore = 34,
+  afterScore = 91,
+  beforeIssues = DEFAULT_BEFORE_ISSUES,
+  afterWins = DEFAULT_AFTER_WINS,
+  slamHeadline = 'Same store.\n60 seconds apart.',
+  slamSub = "What's your excuse?",
+  ctaLabel = 'Scan free →',
+}) => {
   const frame = useCurrentFrame()
   const { fps } = useVideoConfig()
   const brand = storeMdBrand
@@ -275,7 +301,7 @@ export const SMDBeforeAfter: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            Your store now
+            {beforeTitle}
           </div>
 
           {/* Score */}
@@ -308,7 +334,7 @@ export const SMDBeforeAfter: React.FC = () => {
                   pointerEvents: 'none',
                 }}
               />
-              <ScoreCircle score={34} startFrame={BEFORE_SCORE_START} duration={35} from={100} />
+              <ScoreCircle score={beforeScore} startFrame={BEFORE_SCORE_START} duration={35} from={100} />
             </div>
           </div>
 
@@ -322,7 +348,7 @@ export const SMDBeforeAfter: React.FC = () => {
               maxWidth: 720,
             }}
           >
-            {BEFORE_ISSUES.map((item, i) => (
+            {beforeIssues.map((item, i) => (
               <IssueRow
                 key={item.text}
                 icon={item.icon}
@@ -364,7 +390,7 @@ export const SMDBeforeAfter: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            After 60 sec with StoreMD
+            {afterTitle}
           </div>
 
           <div
@@ -385,7 +411,7 @@ export const SMDBeforeAfter: React.FC = () => {
                 filter: 'drop-shadow(0 0 20px rgba(22, 163, 74, 0.45))',
               }}
             >
-              <ScoreCircle score={91} startFrame={AFTER_SCORE_START} duration={35} from={0} />
+              <ScoreCircle score={afterScore} startFrame={AFTER_SCORE_START} duration={35} from={0} />
             </div>
           </div>
 
@@ -398,7 +424,7 @@ export const SMDBeforeAfter: React.FC = () => {
               maxWidth: 720,
             }}
           >
-            {AFTER_WINS.map((item, i) => (
+            {afterWins.map((item, i) => (
               <IssueRow
                 key={item.text}
                 icon={item.icon}
@@ -454,11 +480,14 @@ export const SMDBeforeAfter: React.FC = () => {
             lineHeight: 1.08,
           }}
         >
-          Same store.
+          {slamHeadline.split('\n').map((line, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <br />}
+              {line}
+            </React.Fragment>
+          ))}
           <br />
-          60 seconds apart.
-          <br />
-          <span style={{ color: RED }}>What&apos;s your excuse?</span>
+          <span style={{ color: RED }}>{slamSub}</span>
         </div>
         <div
           style={{
@@ -473,7 +502,7 @@ export const SMDBeforeAfter: React.FC = () => {
             letterSpacing: '-0.015em',
           }}
         >
-          Scan free →
+          {ctaLabel}
         </div>
       </AbsoluteFill>
 
