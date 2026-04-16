@@ -6,6 +6,7 @@ import { ScoreCircle } from '../components/ScoreCircle'
 import { IssueCard } from '../components/IssueCard'
 import type { IssueSeverity } from '../components/IssueCard'
 import { RED } from '../utils/aggressive'
+import { SMDLogoOverlay } from '../components/SMDOverlays'
 
 // ─── Static dashboard data ────────────────────────────────────────────────────
 
@@ -795,6 +796,7 @@ export const SMDHealthDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      <SMDLogoOverlay bottomOffset={40} />
     </AbsoluteFill>
   )
 }

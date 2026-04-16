@@ -3,6 +3,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion'
 import { evolvePath } from '@remotion/paths'
 import { storeMdBrand, storeMdScoreColors } from '@altidigitech/brand'
 import { StoreMDBackground } from '../components/StoreMDBackground'
+import { SMDLogoOverlay } from '../components/SMDOverlays'
 import { ScoreCircle } from '../components/ScoreCircle'
 import {
   RED,
@@ -636,6 +637,7 @@ export const SMDScanProgress: React.FC = () => {
 
       <LiveLossCounter frame={frame} />
       <UrgencyBar frame={frame} />
+      <SMDLogoOverlay />
     </AbsoluteFill>
   )
 }
