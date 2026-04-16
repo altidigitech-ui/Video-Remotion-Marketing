@@ -1,0 +1,56 @@
+name: Render StoreMD Videos
+
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: 'Composition ID (ex: store-md-product-demo) ou "all" pour tout rendre'
+        required: true
+        default: 'store-md-product-demo'
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install Chromium
+        run: bunx playwright install chromium --with-deps
+
+      - name: Render video
+        run: |
+          mkdir -p renders
+          if [ "${{ github.event.inputs.composition }}" = "all" ]; then
+            # Render toutes les compositions store-md
+            COMPOSITIONS=$(cd projects/store-md && bun remotion compositions src/index.ts --columns=id 2>/dev/null | grep "^store-md-" || echo "")
+            if [ -z "$COMPOSITIONS" ]; then
+              echo "Fallback: render compositions from list"
+              COMPOSITIONS="store-md-product-demo store-md-health-dashboard store-md-scan-progress store-md-money-counter store-md-before-after store-md-testimonial store-md-comparison store-md-horror-ghost-apps store-md-horror-slow-store store-md-horror-ai-invisible store-md-horror-agency-ripoff store-md-money-daily store-md-money-yearly store-md-money-visitors store-md-money-ai-missed store-md-money-ghost-cumulative store-md-tier-apps-danger store-md-tier-merchant-types store-md-tier-hidden-costs store-md-myth-apps-fine store-md-myth-speed store-md-myth-audit-cost store-md-myth-ai-future store-md-countdown-money store-md-countdown-time store-md-countdown-apps store-md-list-hidden store-md-list-fixes store-md-list-ghost store-md-quiz-healthy store-md-pov-first-scan store-md-pov-competitor store-md-social-vertical store-md-social-square store-md-stats store-md-stats-vertical store-md-stats-square store-md-launch store-md-how-it-works store-md-feature-health store-md-logo-reveal store-md-before-after-speed store-md-before-after-ai store-md-before-after-billing store-md-testimonial-agency store-md-testimonial-founder"
+            fi
+            for COMP in $COMPOSITIONS; do
+              echo "🎬 Rendering $COMP..."
+              cd projects/store-md
+              bun remotion render src/index.ts "$COMP" "../../renders/${COMP}.mp4" || echo "⚠️ Failed: $COMP"
+              cd ../..
+            done
+          else
+            echo "🎬 Rendering ${{ github.event.inputs.composition }}..."
+            cd projects/store-md
+            bun remotion render src/index.ts "${{ github.event.inputs.composition }}" "../../renders/${{ github.event.inputs.composition }}.mp4"
+          fi
+
+      - name: Upload videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: storemd-videos
+          path: renders/*.mp4
+          retention-days: 7
