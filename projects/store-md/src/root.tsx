@@ -347,7 +347,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-daily"
         component={SMDMoneyCounterVariant}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -371,7 +371,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-yearly"
         component={SMDMoneyCounterVariant}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -395,7 +395,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-visitors"
         component={SMDMoneyCounterVariant}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -419,7 +419,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-ai-missed"
         component={SMDMoneyCounterVariant}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -443,7 +443,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-money-ghost-cumulative"
         component={SMDMoneyCounterVariant}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(12, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
@@ -471,20 +471,20 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-horror-ghost-apps"
         component={SMDHorrorStory}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(25, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
           chapters: [
-            { text: 'A merchant came to us last week.', duration: 28, emphasis: 'normal' as const },
-            { text: "He'd been running his store for 4 years.", duration: 28, emphasis: 'normal' as const },
-            { text: 'Revenue was stable. $85K/month.', duration: 28, emphasis: 'normal' as const },
-            { text: 'But he was hemorrhaging money.', duration: 28, emphasis: 'shock' as const },
-            { text: '3 apps he uninstalled in 2023...', duration: 28, emphasis: 'normal' as const },
-            { text: 'Were still billing him.', duration: 28, emphasis: 'shock' as const },
-            { text: '$189/month \u00d7 22 months = $4,158', duration: 35, emphasis: 'money' as const },
-            { text: 'Gone. For nothing.', duration: 30, emphasis: 'shock' as const },
+            { text: 'A merchant came to us last week.', duration: 70, emphasis: 'normal' as const },
+            { text: "He'd been running his store for 4 years.", duration: 75, emphasis: 'normal' as const },
+            { text: 'Revenue was stable. $85K/month.', duration: 70, emphasis: 'normal' as const },
+            { text: 'But he was hemorrhaging money.', duration: 75, emphasis: 'shock' as const },
+            { text: '3 apps he uninstalled in 2023...', duration: 70, emphasis: 'normal' as const },
+            { text: 'Were still billing him.', duration: 65, emphasis: 'shock' as const },
+            { text: '$189/month \u00d7 22 months = $4,158', duration: 90, emphasis: 'money' as const },
+            { text: 'Gone. For nothing.', duration: 65, emphasis: 'shock' as const },
           ],
           resolution: 'StoreMD would have found it in 60 seconds.',
           ctaText: "Don't be next. Scan free \u2192",
@@ -494,19 +494,19 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-horror-slow-store"
         component={SMDHorrorStory}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(23, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
           chapters: [
-            { text: 'Black Friday 2024.', duration: 25, emphasis: 'normal' as const },
-            { text: 'A DTC brand spent $12K on Facebook ads.', duration: 28, emphasis: 'normal' as const },
-            { text: 'Traffic spiked 8x.', duration: 25, emphasis: 'normal' as const },
-            { text: 'But their store loaded in 4.7 seconds.', duration: 30, emphasis: 'shock' as const },
-            { text: '62% of visitors bounced before seeing a product.', duration: 32, emphasis: 'money' as const },
-            { text: '$7,440 in ad spend. Wasted.', duration: 30, emphasis: 'money' as const },
-            { text: 'Because nobody checked load time.', duration: 28, emphasis: 'shock' as const },
+            { text: 'Black Friday 2024.', duration: 55, emphasis: 'normal' as const },
+            { text: 'A DTC brand spent $12K on Facebook ads.', duration: 80, emphasis: 'normal' as const },
+            { text: 'Traffic spiked 8x.', duration: 55, emphasis: 'normal' as const },
+            { text: 'But their store loaded in 4.7 seconds.', duration: 80, emphasis: 'shock' as const },
+            { text: '62% of visitors bounced before seeing a product.', duration: 90, emphasis: 'money' as const },
+            { text: '$7,440 in ad spend. Wasted.', duration: 75, emphasis: 'money' as const },
+            { text: 'Because nobody checked load time.', duration: 75, emphasis: 'shock' as const },
           ],
           resolution: 'StoreMD monitors speed 24/7. No surprises.',
           ctaText: 'Check your speed \u2192',
@@ -516,19 +516,19 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-horror-ai-invisible"
         component={SMDHorrorStory}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(25, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
           chapters: [
-            { text: 'She noticed sales dropping in Q1 2025.', duration: 28, emphasis: 'normal' as const },
-            { text: 'Same traffic. Same ads. Fewer orders.', duration: 28, emphasis: 'normal' as const },
-            { text: 'Her competitor? Revenue up 35%.', duration: 28, emphasis: 'shock' as const },
-            { text: 'The difference? AI shopping agents.', duration: 28, emphasis: 'normal' as const },
-            { text: 'ChatGPT, Copilot, Gemini\u2014all recommending competitors.', duration: 32, emphasis: 'shock' as const },
-            { text: 'Her store was invisible to every single one.', duration: 30, emphasis: 'money' as const },
-            { text: 'Missing schema. Broken feeds. Zero AI readiness.', duration: 30, emphasis: 'shock' as const },
+            { text: 'She noticed sales dropping in Q1 2025.', duration: 80, emphasis: 'normal' as const },
+            { text: 'Same traffic. Same ads. Fewer orders.', duration: 80, emphasis: 'normal' as const },
+            { text: 'Her competitor? Revenue up 35%.', duration: 70, emphasis: 'shock' as const },
+            { text: 'The difference? AI shopping agents.', duration: 75, emphasis: 'normal' as const },
+            { text: 'ChatGPT, Copilot, Gemini\u2014all recommending competitors.', duration: 100, emphasis: 'shock' as const },
+            { text: 'Her store was invisible to every single one.', duration: 85, emphasis: 'money' as const },
+            { text: 'Missing schema. Broken feeds. Zero AI readiness.', duration: 90, emphasis: 'shock' as const },
           ],
           resolution: 'StoreMD checks AI readiness in 60 seconds.',
           ctaText: 'Get visible \u2192',
@@ -538,19 +538,19 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-horror-agency-ripoff"
         component={SMDHorrorStory}
-        durationInFrames={sec(10, FPS_30)}
+        durationInFrames={sec(25, FPS_30)}
         fps={FPS_30}
         width={1080}
         height={1920}
         defaultProps={{
           chapters: [
-            { text: 'He hired an agency for a Shopify audit.', duration: 28, emphasis: 'normal' as const },
-            { text: '$2,000. One PDF. 47 pages.', duration: 28, emphasis: 'money' as const },
-            { text: 'Took them 3 weeks to deliver.', duration: 28, emphasis: 'normal' as const },
-            { text: 'Half the findings were already outdated.', duration: 28, emphasis: 'shock' as const },
-            { text: 'He fixed 5 issues. New ones appeared the next week.', duration: 30, emphasis: 'normal' as const },
-            { text: 'One-shot audits are snapshots of the past.', duration: 28, emphasis: 'shock' as const },
-            { text: '$2,000 for a PDF vs $0 for continuous monitoring.', duration: 32, emphasis: 'money' as const },
+            { text: 'He hired an agency for a Shopify audit.', duration: 80, emphasis: 'normal' as const },
+            { text: '$2,000. One PDF. 47 pages.', duration: 70, emphasis: 'money' as const },
+            { text: 'Took them 3 weeks to deliver.', duration: 70, emphasis: 'normal' as const },
+            { text: 'Half the findings were already outdated.', duration: 80, emphasis: 'shock' as const },
+            { text: 'He fixed 5 issues. New ones appeared the next week.', duration: 95, emphasis: 'normal' as const },
+            { text: 'One-shot audits are snapshots of the past.', duration: 85, emphasis: 'shock' as const },
+            { text: '$2,000 for a PDF vs $0 for continuous monitoring.', duration: 95, emphasis: 'money' as const },
           ],
           resolution: 'StoreMD monitors 24/7. Not once a quarter.',
           ctaText: 'Free forever plan \u2192',

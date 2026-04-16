@@ -39,15 +39,16 @@ export type SMDMoneyCounterVariantProps = {
   ctaText: string
 }
 
-// ─── Timings (30fps, 300 frames = 10s) ───────────────────────────────────────
+// ─── Timings (30fps, 360 frames = 12s) ───────────────────────────────────────
 
 const INTRO_START = 2
 const INTRO_CHAR_RATE = 0.75
 const COUNTER_START = 40
-const COUNTER_END = 200 // 160-frame ramp
-const FREEZE_START = 200
-const FINAL_MSG_START = 220
-const CTA_START = 260
+const COUNTER_END = 220 // 180-frame ramp (6 seconds)
+const FREEZE_START = 220
+const FINAL_MSG_START = 250
+const CTA_START = 310
+const MILESTONE_DWELL = 35 // minimum frames a milestone label stays visible
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -105,18 +106,45 @@ export const SMDMoneyCounterVariant: React.FC<SMDMoneyCounterVariantProps> = ({
 
   const frozenPulse = frame >= FREEZE_START ? pulse(frame, 20, 0.98, 1.04) : 1
 
-  // Active milestone
-  let activeLabel = milestones.length > 0 ? (milestones[0] as MoneyMilestone).label : ''
-  for (const m of milestones) {
-    if (counterValue >= m.threshold) activeLabel = m.label
-  }
-
-  // Milestone boundary shakes
+  // Active milestone with dwell time — each label stays visible at least
+  // MILESTONE_DWELL frames before being replaced, with 8-frame fade transition.
   const boundaryFrames = milestones.slice(1).map((m) => {
     const ratio = m.threshold / targetAmount
     const t = Math.sqrt(ratio)
     return Math.round(COUNTER_START + t * (COUNTER_END - COUNTER_START))
   })
+
+  // Determine which milestone SHOULD be active based on counter value
+  let rawMilestoneIdx = 0
+  for (let i = 0; i < milestones.length; i++) {
+    if (counterValue >= (milestones[i] as MoneyMilestone).threshold) rawMilestoneIdx = i
+  }
+
+  // Apply dwell: a milestone won't change until MILESTONE_DWELL frames after it
+  // was first triggered. Track the frame at which each milestone was first reached.
+  let activeMilestoneIdx = 0
+  for (let i = 0; i < boundaryFrames.length; i++) {
+    const hitFrame = boundaryFrames[i] as number
+    if (frame >= hitFrame + MILESTONE_DWELL) {
+      activeMilestoneIdx = i + 1
+    } else if (frame >= hitFrame) {
+      // Within dwell period — stay on current milestone
+      break
+    }
+  }
+  activeMilestoneIdx = Math.min(activeMilestoneIdx, milestones.length - 1)
+  const activeLabel = (milestones[activeMilestoneIdx] as MoneyMilestone).label
+
+  // Fade between milestones: 8-frame crossfade at each boundary
+  let milestoneFade = 1
+  for (const bf of boundaryFrames) {
+    if (frame >= bf && frame < bf + 8) {
+      milestoneFade = interpolate(frame, [bf, bf + 8], [0.3, 1], {
+        extrapolateLeft: 'clamp',
+        extrapolateRight: 'clamp',
+      })
+    }
+  }
 
   const boundaryShake = boundaryFrames.reduce(
     (acc, f) => {
@@ -258,7 +286,7 @@ export const SMDMoneyCounterVariant: React.FC<SMDMoneyCounterVariantProps> = ({
           left: 60,
           right: 60,
           textAlign: 'center',
-          opacity: milestoneOp,
+          opacity: milestoneOp * milestoneFade,
         }}
       >
         <span

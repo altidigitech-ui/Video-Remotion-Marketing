@@ -60,17 +60,22 @@ export const SMDHorrorStory: React.FC<SMDHorrorStoryProps> = ({
   // Chapter text rendering
   const renderChapter = (ch: HorrorChapter, startFrame: number, idx: number) => {
     const localFrame = frame - startFrame
-    const charRate = 0.8
+    // Phase 1: typewriter (2 chars/frame → 32-char text done in 16 frames)
+    const charRate = 2.0
+    const typewriterEnd = Math.ceil(ch.text.length / charRate)
     const chars = Math.floor(Math.max(0, localFrame * charRate))
     const display = ch.text.slice(0, Math.min(chars, ch.text.length))
 
+    // Phase 2: reading pause (text stays fully visible)
+    // Phase 3: fade out (last 8 frames)
+    const FADE_OUT_FRAMES = 8
     const fadeIn = interpolate(frame, [startFrame, startFrame + 8], [0, 1], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
     const fadeOut = interpolate(
       frame,
-      [startFrame + ch.duration - 8, startFrame + ch.duration],
+      [startFrame + ch.duration - FADE_OUT_FRAMES, startFrame + ch.duration],
       [1, 0],
       { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
     )
