@@ -33,6 +33,7 @@ import { SMDCountdownReveal } from './compositions/SMDCountdownReveal'
 import { SMDFastList } from './compositions/SMDFastList'
 import { SMDQuiz } from './compositions/SMDQuiz'
 import { SMDPOV } from './compositions/SMDPOV'
+import { SMDBetaQuestionChoc } from './compositions/SMDBetaQuestionChoc'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1042,6 +1043,20 @@ export const RemotionRoot: React.FC = () => {
           ctaHeadline: 'Check your score.\nBeat your friends.',
           ctaButtonText: 'Get my score \u2192',
         }}
+      />
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          GROUP BETA — TIKTOK/REELS CAMPAIGN (10)
+          ═══════════════════════════════════════════════════════════════════════ */}
+
+      <Composition
+        id="store-md-beta-question-choc"
+        component={SMDBetaQuestionChoc}
+        durationInFrames={360}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
       />
     </>
   )
