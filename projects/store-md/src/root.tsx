@@ -34,6 +34,7 @@ import { SMDFastList } from './compositions/SMDFastList'
 import { SMDQuiz } from './compositions/SMDQuiz'
 import { SMDPOV } from './compositions/SMDPOV'
 import { SMDBetaQuestionChoc } from './compositions/SMDBetaQuestionChoc'
+import { SMDBetaConfession } from './compositions/SMDBetaConfession'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1052,6 +1053,16 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="store-md-beta-question-choc"
         component={SMDBetaQuestionChoc}
+        durationInFrames={360}
+        fps={FPS_30}
+        width={1080}
+        height={1920}
+        defaultProps={{}}
+      />
+
+      <Composition
+        id="store-md-beta-confession"
+        component={SMDBetaConfession}
         durationInFrames={360}
         fps={FPS_30}
         width={1080}
