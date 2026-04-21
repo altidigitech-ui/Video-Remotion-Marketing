@@ -29,9 +29,9 @@ const SCORE = 34
 // ── Issue lines for Phase 1 ───────────────────────────────────────────────────
 
 const ISSUES = [
-  "✗ Bouton 'Payer' cassé sur mobile",
-  '✗ Code promo ignoré au checkout',
-  '✗ Taxes mal calculées (Belgique)',
+  "✗ 'Pay Now' button broken on mobile",
+  '✗ Promo codes ignored at checkout',
+  '✗ Taxes wrongly calculated (UK/EU)',
 ] as const
 
 // ── Composition ───────────────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            OUI.
+            YES.
           </span>
 
           {/* "ton-shop.com" — apparaît à frame 20 */}
@@ -232,7 +232,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               color: '#000000',
             }}
           >
-            {'EN '}
+            {'IN '}
           </span>
           <span
             style={{
@@ -252,7 +252,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               color: '#000000',
             }}
           >
-            {' SECONDES'}
+            {' SECONDS'}
           </span>
         </div>
       </AbsoluteFill>
@@ -284,7 +284,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               textTransform: 'uppercase',
             }}
           >
-            SCORE SANTÉ
+            HEALTH SCORE
           </span>
         </div>
 
@@ -389,7 +389,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
                 transform: `scale(${l1Scale})`,
               }}
             >
-              TON CHECKOUT
+              YOUR CHECKOUT
             </span>
 
             <span
@@ -406,7 +406,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
                 transform: `scale(${l2Scale})`,
               }}
             >
-              FUIT
+              BLEEDS
             </span>
 
             <span
@@ -422,7 +422,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
                 transform: `scale(${l3Scale})`,
               }}
             >
-              {`DE L'ARGENT ?`}
+              MONEY ?
             </span>
           </div>
         </AbsoluteFill>
@@ -466,7 +466,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               textTransform: 'uppercase',
             }}
           >
-            10 PLACES · BETA TEST
+            10 SPOTS · BETA TEST
           </span>
 
           <div style={{ height: 20 }} />
@@ -499,7 +499,7 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            @StoreMD sur Insta
+            @StoreMD on Instagram
           </span>
 
           <div style={{ height: 20 }} />
@@ -539,14 +539,14 @@ export const SMDBetaQuestionChoc: React.FC = () => {
               textAlign: 'center',
             }}
           >
-            1 mois PRO gratuit · -10% à vie
+            1 month PRO free · -10% for life
           </span>
         </AbsoluteFill>
       </AbsoluteFill>
 
       {/* ── Overlays persistants dès frame 0 ─────────────────────────────────── */}
       <SMDLogoOverlay />
-      <SMDUrgencyBar text="Chaque seconde te coûte de l'argent" />
+      <SMDUrgencyBar />
     </AbsoluteFill>
   )
 }
