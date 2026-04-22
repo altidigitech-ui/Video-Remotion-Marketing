@@ -38,6 +38,7 @@ import { SMDBetaConfession } from './compositions/SMDBetaConfession'
 import { SMDBetaHook1 } from './compositions/SMDBetaHook1'
 import { SMDScanDemoAgency } from './compositions/SMDScanDemoAgency'
 import { SMDScanCTA } from './compositions/SMDScanCTA'
+import { SMDBetaUrgence } from './compositions/SMDBetaUrgence'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1108,6 +1109,22 @@ export const RemotionRoot: React.FC = () => {
         id="store-md-scan-cta"
         component={SMDScanCTA}
         durationInFrames={420}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{}}
+      />
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          BRIEF 3 — BETA URGENCE
+          Square 1080×1080 @ 30fps — Twitter Thursday/Friday
+          Style F2: brand cyan, "10" oversized hero, clean typography
+          ═══════════════════════════════════════════════════════════════════════ */}
+
+      <Composition
+        id="store-md-beta-urgence"
+        component={SMDBetaUrgence}
+        durationInFrames={360}
         fps={FPS_30}
         width={1080}
         height={1080}
