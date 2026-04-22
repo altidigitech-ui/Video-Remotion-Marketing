@@ -38,7 +38,8 @@ import { SMDBetaConfession } from './compositions/SMDBetaConfession'
 import { SMDBetaHook1 } from './compositions/SMDBetaHook1'
 import { SMDScanDemoAgency } from './compositions/SMDScanDemoAgency'
 import { SMDScanCTA } from './compositions/SMDScanCTA'
-import { SMDBetaUrgence } from './compositions/SMDBetaUrgence'
+import { SMDBetaCounter, BETA_COUNTER_DURATION } from './compositions/SMDBetaCounter'
+import type { SMDBetaCounterProps } from './compositions/SMDBetaCounter'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1116,19 +1117,42 @@ export const RemotionRoot: React.FC = () => {
       />
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          BRIEF 3 — BETA URGENCE
-          Square 1080×1080 @ 30fps — Twitter Thursday/Friday
-          Style F2: brand cyan, "10" oversized hero, clean typography
+          BRIEF 1 — BETA COUNTER "10 Pro beta spots"
+          Square 1080×1080 @ 30fps — Twitter Wednesday (mutualisée R + F + F2)
+          13s | Séquence: compteur → scan → durée → end card URL
           ═══════════════════════════════════════════════════════════════════════ */}
 
+      {/* Style R — orange/rouge/noir, typo bold, urgent */}
       <Composition
-        id="store-md-beta-urgence"
-        component={SMDBetaUrgence}
-        durationInFrames={360}
+        id="store-md-beta-counter-r"
+        component={SMDBetaCounter as React.FC<SMDBetaCounterProps>}
+        durationInFrames={BETA_COUNTER_DURATION}
         fps={FPS_30}
         width={1080}
         height={1080}
-        defaultProps={{}}
+        defaultProps={{ variant: 'R' }}
+      />
+
+      {/* Style F — bleu foncé/gris/vert terminal, monospace pour "10" */}
+      <Composition
+        id="store-md-beta-counter-f"
+        component={SMDBetaCounter as React.FC<SMDBetaCounterProps>}
+        durationInFrames={BETA_COUNTER_DURATION}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{ variant: 'F' }}
+      />
+
+      {/* Style F2 — palette brand StoreMD, clean pro */}
+      <Composition
+        id="store-md-beta-counter-f2"
+        component={SMDBetaCounter as React.FC<SMDBetaCounterProps>}
+        durationInFrames={BETA_COUNTER_DURATION}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{ variant: 'F2' }}
       />
     </>
   )
