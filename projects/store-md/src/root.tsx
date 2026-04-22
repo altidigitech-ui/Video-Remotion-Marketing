@@ -36,6 +36,7 @@ import { SMDPOV } from './compositions/SMDPOV'
 import { SMDBetaQuestionChoc } from './compositions/SMDBetaQuestionChoc'
 import { SMDBetaConfession } from './compositions/SMDBetaConfession'
 import { SMDBetaHook1 } from './compositions/SMDBetaHook1'
+import { SMDScanDemoAgency } from './compositions/SMDScanDemoAgency'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1078,6 +1079,21 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS_30}
         width={1080}
         height={1920}
+        defaultProps={{}}
+      />
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          BRIEF 2 — SCAN DEMO AGENCY
+          Square 1080×1080 @ 30fps — Twitter Thursday
+          ═══════════════════════════════════════════════════════════════════════ */}
+
+      <Composition
+        id="store-md-scan-demo-agency"
+        component={SMDScanDemoAgency}
+        durationInFrames={720}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
         defaultProps={{}}
       />
     </>
