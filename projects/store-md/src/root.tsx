@@ -37,6 +37,7 @@ import { SMDBetaQuestionChoc } from './compositions/SMDBetaQuestionChoc'
 import { SMDBetaConfession } from './compositions/SMDBetaConfession'
 import { SMDBetaHook1 } from './compositions/SMDBetaHook1'
 import { SMDScanDemoAgency } from './compositions/SMDScanDemoAgency'
+import { SMDScanCTA } from './compositions/SMDScanCTA'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -1091,6 +1092,22 @@ export const RemotionRoot: React.FC = () => {
         id="store-md-scan-demo-agency"
         component={SMDScanDemoAgency}
         durationInFrames={720}
+        fps={FPS_30}
+        width={1080}
+        height={1080}
+        defaultProps={{}}
+      />
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          BRIEF 4 — SCAN CTA
+          Square 1080×1080 @ 30fps — Twitter Thursday
+          Style R: orange/red/black, kinetic text CTA
+          ═══════════════════════════════════════════════════════════════════════ */}
+
+      <Composition
+        id="store-md-scan-cta"
+        component={SMDScanCTA}
+        durationInFrames={420}
         fps={FPS_30}
         width={1080}
         height={1080}
