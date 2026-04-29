@@ -40,7 +40,6 @@ import { SMDScanDemoAgency } from './compositions/SMDScanDemoAgency'
 import { SMDScanCTA } from './compositions/SMDScanCTA'
 import { SMDBetaCounter, BETA_COUNTER_DURATION } from './compositions/SMDBetaCounter'
 import type { SMDBetaCounterProps } from './compositions/SMDBetaCounter'
-import { SMDWebsiteDemo } from './compositions/SMDWebsiteDemo'
 
 // ── Font loading ──────────────────────────────────────────────────────────────
 
@@ -238,16 +237,6 @@ export const RemotionRoot: React.FC = () => {
         id="store-md-scan-progress"
         component={SMDScanProgress}
         durationInFrames={sec(12, FPS_30)}
-        fps={FPS_30}
-        width={1080}
-        height={1920}
-        defaultProps={{}}
-      />
-
-      <Composition
-        id="store-md-website-demo"
-        component={SMDWebsiteDemo}
-        durationInFrames={750}
         fps={FPS_30}
         width={1080}
         height={1920}
