@@ -9,3 +9,9 @@ export type { ScoreCircleProps } from './ScoreCircle'
 
 export { IssueCard } from './IssueCard'
 export type { IssueCardProps, IssueSeverity } from './IssueCard'
+
+export { Cursor } from './Cursor'
+export type { CursorProps, CursorWaypoint } from './Cursor'
+
+export { BrowserFrame } from './BrowserFrame'
+export type { BrowserFrameProps } from './BrowserFrame'
