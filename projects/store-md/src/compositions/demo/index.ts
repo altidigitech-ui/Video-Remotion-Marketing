@@ -1,4 +1,5 @@
-export { DemoPhase1to3 } from './DemoPhase1to3'
-export type { DemoPhase1to3Props } from './DemoPhase1to3'
-
-export { DemoPhase4to7 } from './DemoPhase4to7'
+export { DemoIssueCard } from './DemoIssueCard'
+export { DemoLockedModule } from './DemoLockedModule'
+export { DemoHomepage } from './DemoHomepage'
+export { DemoModalAndScan } from './DemoModalAndScan'
+export { DemoResults } from './DemoResults'
